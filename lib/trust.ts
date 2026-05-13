@@ -1,0 +1,2 @@
+export function calculateTrustScore(i:{practiceConsistency:number;proofQuality:number;feedbackHelpfulness:number;conduct:number;contextFit:number}){return Math.max(0,Math.min(100,Math.round(i.practiceConsistency*.2+i.proofQuality*.2+i.feedbackHelpfulness*.3+i.conduct*.2+i.contextFit*.1)));}
+export function trustLevel(score:number){ if(score>=90) return "Guide Candidate"; if(score>=75) return "Trusted Contributor"; if(score>=50) return "Contributor"; if(score>=20) return "Participant"; return "Observer"; }
