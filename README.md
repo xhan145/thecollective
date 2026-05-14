@@ -11,6 +11,18 @@ npm install
 npm run dev
 ```
 
+## Local validation
+
+The project has been validated from the repository root with:
+
+```bash
+npm install
+npm run build
+npm run typecheck
+```
+
+Demo mode renders without Supabase or OpenAI keys. Connect those services later from `/setup` when you are ready to move beyond the local prototype flow.
+
 ## Important
 
 This version runs in demo mode before Supabase/OpenAI keys are connected.
