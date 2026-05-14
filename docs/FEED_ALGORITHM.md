@@ -1,21 +1,19 @@
-# Homepage Feed Algorithm
+# Feed Algorithm
 
-The homepage feed is not decoration. It is the behavioral engine.
-
-People will scroll. Collective's job is to turn passive scrolling into progress.
-
-## Rhythm
+The homepage feed is a core product system. It should guide passive scrolling into action:
 
 Passive -> Bridge -> Active
 
-- Passive: relatable proof, reflection, milestone, story.
-- Bridge: question, feedback example, prompt preview.
-- Active: start practice, submit proof, give feedback, join path.
+Passive examples include proof posts, reflections, stories, milestones, and progress updates. Bridge examples include prompt previews, feedback examples, reflection questions, and "someone like you tried this." Active examples include starting practice, submitting proof, giving feedback, or joining a path.
 
-## Ranking
+The ranking logic remains in `lib/feedAlgorithm.ts` and keeps rewarding usefulness, actionability, proof strength, trust, recency, low friction, and mode.
 
-Score = relevance + usefulness + actionability + proof strength + trust weight + recency + low-friction boost + mode boost - passive penalty.
+## Media Proof Signals
 
-## Success metrics
+- Video proof can have higher proof strength because it shows effort and context, but it also has higher friction.
+- Image and screenshot proof can be quick and concrete, making them strong bridge cards.
+- Text and checklist proof are low-friction ways to prove small practices.
+- Audio proof can be especially useful in confidence and communication paths because tone and pacing matter.
+- Contribution potential increases when reviewers can see proof type, media kind, and feedback request before opening a proof.
 
-Do not only measure time spent. Measure card viewed, CTA tapped, practice started, proof submitted, feedback rated useful, user returned tomorrow, and contribution made.
+Media-rich proof should never turn the feed into random social content. Every card must still point toward practice, proof, feedback, trust, or contribution.

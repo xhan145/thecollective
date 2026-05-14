@@ -1,6 +1,6 @@
-# Collective v7 Android Agent Prototype
+# Collective v8 Android Agent Prototype
 
-A mobile-first Next.js prototype for Collective: practice, proof, feedback, trust, and contribution.
+A mobile-first Next.js prototype for Collective: discover, practice, prove, feedback, trust, and contribution.
 
 ## Run in Replit
 
@@ -25,7 +25,7 @@ Demo mode renders without Supabase or OpenAI keys. Connect those services later 
 
 ## Important
 
-This version runs in demo mode before Supabase/OpenAI keys are connected.
+This version runs in demo mode before Supabase/OpenAI keys are connected. V8 adds multimodal proof submission for text, images, videos, audio, documents/PDFs, screenshots, links, and checklist/reflection proof.
 
 ## Test pages
 
