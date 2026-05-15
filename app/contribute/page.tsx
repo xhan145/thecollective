@@ -1,1 +1,27 @@
-import { AppShell } from "@/components/AppShell"; export default function ContributePage(){const items=[["Give Feedback","Help someone with their practice proof."],["Answer Questions","Support beginners with clear, kind answers."],["Share an Example","Show a useful before/after or reflection."],["Lead a Circle","Later: host a small guided group."]]; return <AppShell title="Contribution Hub" subtitle="The product asks: who can you help today?"><div className="space-y-3">{items.map(([title,body],i)=><div key={title} className="card p-4"><p className="text-xs font-black text-purple2">Option {i+1}</p><h2 className="mt-1 font-black">{title}</h2><p className="mt-1 text-sm text-slate-400">{body}</p></div>)}</div></AppShell>}
+import { AppShell } from "@/components/AppShell";
+import { ProofTypeBadge } from "@/components/ProofMediaCard";
+import { proofNeedsFeedback } from "@/lib/data";
+
+export default function ContributePage() {
+  return (
+    <AppShell title="Contribution Hub" subtitle="Choose proof you can review kindly and specifically.">
+      <div className="space-y-4">
+        {proofNeedsFeedback.map((item) => (
+          <article key={item.id} className="card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-black text-purple2">{item.path}</p>
+                <h2 className="mt-1 font-black">{item.prompt}</h2>
+              </div>
+              <ProofTypeBadge proofType={item.proofType} mediaKind={item.mediaKind} />
+            </div>
+            <p className="mt-3 rounded-2xl bg-white/[0.04] p-3 text-sm leading-6 text-slate-300">{item.feedbackRequest}</p>
+            <p className="mt-3 text-xs text-slate-500">Visibility: {item.visibility}</p>
+            <p className="mt-2 text-xs leading-5 text-orange">{item.safetyNote}</p>
+            <button className="btn-primary mt-4 w-full" type="button">Review proof</button>
+          </article>
+        ))}
+      </div>
+    </AppShell>
+  );
+}
