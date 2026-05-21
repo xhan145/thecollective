@@ -21,7 +21,7 @@ export type ProofType =
 
 export type MediaKind = "text" | "image" | "video" | "audio" | "document" | "link" | "checklist";
 export type UploadStatus = "idle" | "validating" | "ready" | "uploading" | "uploaded" | "demo-uploaded" | "error";
-export type ProofVisibility = "private" | "reviewers" | "path" | "public";
+export type ProofVisibility = "private" | "feedback-only" | "reviewers" | "path" | "public";
 
 export type PracticePrompt = {
   id: string;
@@ -89,6 +89,8 @@ export type MediaAwareFeedback = {
 
 export type FeedMode = "passive" | "bridge" | "active";
 export type FeedType = "practice" | "proof" | "reflection" | "feedback" | "milestone" | "prompt" | "lesson" | "question" | "contribution";
+export type EngagementIntent = "reflect" | "context" | "try" | "feedback" | "save";
+export type MediaLane = "photo" | "video";
 
 export type FeedItem = {
   id: string;
@@ -104,12 +106,39 @@ export type FeedItem = {
   proofType?: ProofType;
   mediaKind?: MediaKind;
   mediaLabel?: string;
+  engagementPrompt?: string;
+  contributionPotential?: number;
   usefulness: number;
   actionability: number;
   proofStrength: number;
   trustWeight: number;
   recency: number;
   friction: number;
+};
+
+export type EngagementAction = {
+  id: string;
+  label: string;
+  intent: EngagementIntent;
+  href?: string;
+};
+
+export type MediaProofSpotlight = {
+  id: string;
+  lane: MediaLane;
+  actor: string;
+  pathTitle: string;
+  promptTitle: string;
+  title: string;
+  body: string;
+  proofType: ProofType;
+  mediaKind: MediaKind;
+  feedbackRequest: string;
+  strengthLabel: string;
+  frictionLabel: string;
+  trustSignal: string;
+  actionHref: string;
+  thumbnailTone: "purple" | "green" | "orange";
 };
 
 export type DemoUser = {

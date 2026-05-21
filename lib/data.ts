@@ -1,4 +1,4 @@
-import type { FeedItem, GrowthPath, MediaKind, PracticePrompt, ProofSubmission, ProofType, ProofVisibility } from "./types";
+import type { FeedItem, GrowthPath, MediaKind, MediaProofSpotlight, PracticePrompt, ProofSubmission, ProofType, ProofVisibility } from "./types";
 
 export const paths: GrowthPath[] = [
   { slug: "speak-up", title: "Speak Up", description: "Build confidence and communicate clearly.", promise: "Practice direct, respectful expression in small steps.", color: "from-orange-400 to-orange-600", estimatedDays: 14 },
@@ -17,13 +17,87 @@ export const prompts: PracticePrompt[] = [
 ];
 
 export const demoFeedItems: FeedItem[] = [
-  { id: "f1", type: "proof", mode: "passive", actor: "Maya", title: "Maya uploaded a short audio practice before sending the real message.", body: "Audio proof captured tone and hesitation better than text. The next step was one clearer sentence.", pathSlug: "speak-up", proofType: "audio", mediaKind: "audio", mediaLabel: "Audio proof", trustSignal: "Participant - 4 proofs", actionLabel: "Try this practice", actionHref: "/practice/speak-up-1", usefulness: 87, actionability: 78, proofStrength: 88, trustWeight: 62, recency: 92, friction: 28 },
-  { id: "f2", type: "prompt", mode: "active", title: "Your next 5-minute practice", body: "Write one honest sentence, record it, or upload a screenshot of your private draft. Keep it private if you want.", pathSlug: "speak-up", proofType: "text", mediaKind: "text", mediaLabel: "Text, audio, screenshot", actionLabel: "Start now", actionHref: "/practice/speak-up-1", usefulness: 96, actionability: 100, proofStrength: 65, trustWeight: 70, recency: 88, friction: 10 },
-  { id: "f3", type: "feedback", mode: "bridge", actor: "Ava", title: "Video proof can show effort, but the feedback request still matters.", body: "Ava asked reviewers to focus only on clarity, not appearance. That kept feedback useful and safe.", pathSlug: "give-better-feedback", proofType: "video", mediaKind: "video", mediaLabel: "Video proof", trustSignal: "Trusted Contributor", actionLabel: "Practice feedback", actionHref: "/contribute", usefulness: 92, actionability: 82, proofStrength: 94, trustWeight: 90, recency: 75, friction: 48 },
-  { id: "f4", type: "milestone", mode: "passive", actor: "Jordan", title: "Jordan hit 7 days of Daily Momentum with checklist proof.", body: "The pattern was not huge effort. It was one small action checked off before distractions.", pathSlug: "daily-momentum", proofType: "checklist", mediaKind: "checklist", mediaLabel: "Checklist proof", trustSignal: "7-day streak", actionLabel: "Try a 5-minute step", actionHref: "/practice/momentum-1", usefulness: 76, actionability: 70, proofStrength: 72, trustWeight: 58, recency: 80, friction: 8 },
-  { id: "f5", type: "question", mode: "bridge", title: "What are you avoiding saying clearly?", body: "You do not have to send it yet. Draft it privately, add a link or screenshot if useful, then ask for focused feedback.", pathSlug: "speak-up", proofType: "screenshot", mediaKind: "image", mediaLabel: "Screenshot proof", actionLabel: "Draft privately", actionHref: "/practice/speak-up-1", usefulness: 88, actionability: 92, proofStrength: 75, trustWeight: 64, recency: 86, friction: 12 },
-  { id: "f6", type: "contribution", mode: "active", title: "3 media-rich proofs need kind feedback.", body: "Reviewers can see whether a proof is text, image, video, audio, document, link, or checklist before choosing it.", pathSlug: "give-better-feedback", actionLabel: "Open Contribution Hub", actionHref: "/contribute", usefulness: 83, actionability: 95, proofStrength: 70, trustWeight: 76, recency: 95, friction: 35 },
-  { id: "f7", type: "proof", mode: "passive", actor: "Sam", title: "Image proof made progress visible without a long explanation.", body: "A before/after screenshot helped Sam notice the task was actually finished.", pathSlug: "daily-momentum", proofType: "image", mediaKind: "image", mediaLabel: "Image proof", trustSignal: "Private proof shared with reviewers", actionLabel: "Submit your proof", actionHref: "/proof/new", usefulness: 80, actionability: 74, proofStrength: 82, trustWeight: 60, recency: 84, friction: 14 }
+  { id: "f1", type: "proof", mode: "passive", actor: "Maya", title: "Maya uploaded a short audio practice before sending the real message.", body: "Audio proof captured tone and hesitation better than text. The next step was one clearer sentence.", pathSlug: "speak-up", proofType: "audio", mediaKind: "audio", mediaLabel: "Audio proof", trustSignal: "Participant - 4 proofs", actionLabel: "Try this practice", actionHref: "/practice/speak-up-1", engagementPrompt: "What would you ask Maya before giving feedback?", contributionPotential: 76, usefulness: 87, actionability: 78, proofStrength: 88, trustWeight: 62, recency: 92, friction: 28 },
+  { id: "f2", type: "prompt", mode: "active", title: "Your next 5-minute practice", body: "Write one honest sentence, record it, or upload a screenshot of your private draft. Keep it private if you want.", pathSlug: "speak-up", proofType: "text", mediaKind: "text", mediaLabel: "Text, audio, screenshot", actionLabel: "Start now", actionHref: "/practice/speak-up-1", engagementPrompt: "Turn the scroll into one private draft.", contributionPotential: 66, usefulness: 96, actionability: 100, proofStrength: 65, trustWeight: 70, recency: 88, friction: 10 },
+  { id: "f3", type: "feedback", mode: "bridge", actor: "Ava", title: "Video proof can show effort, but the feedback request still matters.", body: "Ava asked reviewers to focus only on clarity, not appearance. That kept feedback useful and safe.", pathSlug: "give-better-feedback", proofType: "video", mediaKind: "video", mediaLabel: "Video proof", trustSignal: "Trusted Contributor", actionLabel: "Practice feedback", actionHref: "/contribute", engagementPrompt: "Could you give feedback that stays inside the request?", contributionPotential: 92, usefulness: 92, actionability: 82, proofStrength: 94, trustWeight: 90, recency: 75, friction: 48 },
+  { id: "f4", type: "milestone", mode: "passive", actor: "Jordan", title: "Jordan hit 7 days of Daily Momentum with checklist proof.", body: "The pattern was not huge effort. It was one small action checked off before distractions.", pathSlug: "daily-momentum", proofType: "checklist", mediaKind: "checklist", mediaLabel: "Checklist proof", trustSignal: "7-day streak", actionLabel: "Try a 5-minute step", actionHref: "/practice/momentum-1", engagementPrompt: "Name the next tiny step you would suggest.", contributionPotential: 58, usefulness: 76, actionability: 70, proofStrength: 72, trustWeight: 58, recency: 80, friction: 8 },
+  { id: "f5", type: "question", mode: "bridge", title: "What are you avoiding saying clearly?", body: "You do not have to send it yet. Draft it privately, add a link or screenshot if useful, then ask for focused feedback.", pathSlug: "speak-up", proofType: "screenshot", mediaKind: "image", mediaLabel: "Screenshot proof", actionLabel: "Draft privately", actionHref: "/practice/speak-up-1", engagementPrompt: "Answer privately before you ask anyone to react.", contributionPotential: 72, usefulness: 88, actionability: 92, proofStrength: 75, trustWeight: 64, recency: 86, friction: 12 },
+  { id: "f6", type: "contribution", mode: "active", title: "3 media-rich proofs need kind feedback.", body: "Reviewers can see whether a proof is text, image, video, audio, document, link, or checklist before choosing it.", pathSlug: "give-better-feedback", actionLabel: "Open Contribution Hub", actionHref: "/contribute", engagementPrompt: "Choose one proof where you can be specific and useful.", contributionPotential: 98, usefulness: 83, actionability: 95, proofStrength: 70, trustWeight: 76, recency: 95, friction: 35 },
+  { id: "f7", type: "proof", mode: "passive", actor: "Sam", title: "Image proof made progress visible without a long explanation.", body: "A before/after screenshot helped Sam notice the task was actually finished.", pathSlug: "daily-momentum", proofType: "image", mediaKind: "image", mediaLabel: "Image proof", trustSignal: "Private proof shared with reviewers", actionLabel: "Submit your proof", actionHref: "/proof/new", engagementPrompt: "Would a quick photo make your next step easier to prove?", contributionPotential: 70, usefulness: 80, actionability: 74, proofStrength: 82, trustWeight: 60, recency: 84, friction: 14 }
+];
+
+export const demoPhotoProofSpotlights: MediaProofSpotlight[] = [
+  {
+    id: "photo-lane-1",
+    lane: "photo",
+    actor: "Sam",
+    pathTitle: "Daily Momentum",
+    promptTitle: "Five-Minute Useful Step",
+    title: "A cleared desk became proof of momentum.",
+    body: "The photo is quick to understand, low-friction to submit, and easy for a reviewer to connect to the next step.",
+    proofType: "image",
+    mediaKind: "image",
+    feedbackRequest: "What is the next useful five-minute step?",
+    strengthLabel: "concrete proof",
+    frictionLabel: "quick upload",
+    trustSignal: "Shared with reviewers",
+    actionHref: "/proof/new",
+    thumbnailTone: "green"
+  },
+  {
+    id: "photo-lane-2",
+    lane: "photo",
+    actor: "Rin",
+    pathTitle: "Social Momentum",
+    promptTitle: "Thoughtful Message",
+    title: "A screenshot kept the feedback specific.",
+    body: "The reviewer can respond to wording and warmth without guessing what happened.",
+    proofType: "screenshot",
+    mediaKind: "image",
+    feedbackRequest: "Does this message feel warm and low-pressure?",
+    strengthLabel: "fast context",
+    frictionLabel: "low friction",
+    trustSignal: "Path-visible proof",
+    actionHref: "/practice/social-1",
+    thumbnailTone: "purple"
+  }
+];
+
+export const demoVideoProofSpotlights: MediaProofSpotlight[] = [
+  {
+    id: "video-lane-1",
+    lane: "video",
+    actor: "Ava",
+    pathTitle: "Speak Up",
+    promptTitle: "Ask Directly",
+    title: "A 22-second rehearsal made tone visible.",
+    body: "Video adds effort and context, so the app keeps the feedback request tight and safety-first.",
+    proofType: "video",
+    mediaKind: "video",
+    feedbackRequest: "Focus only on clarity and pacing.",
+    strengthLabel: "high proof strength",
+    frictionLabel: "higher effort",
+    trustSignal: "Trusted contributor reviewing",
+    actionHref: "/contribute",
+    thumbnailTone: "orange"
+  },
+  {
+    id: "video-lane-2",
+    lane: "video",
+    actor: "Noor",
+    pathTitle: "Give Better Feedback",
+    promptTitle: "Specific, Not Vague",
+    title: "A video walkthrough showed the before and after.",
+    body: "Reviewers can see the work, then respond to the requested part instead of reacting broadly.",
+    proofType: "video",
+    mediaKind: "video",
+    feedbackRequest: "Is the next step actionable?",
+    strengthLabel: "rich context",
+    frictionLabel: "review carefully",
+    trustSignal: "Reviewer-only proof",
+    actionHref: "/contribute",
+    thumbnailTone: "purple"
+  }
 ];
 
 export const demoProofSubmissions: ProofSubmission[] = [

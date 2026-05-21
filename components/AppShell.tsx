@@ -1,4 +1,66 @@
+"use client";
+
 import Link from "next/link";
-import { Home, Map, Plus, ShieldCheck, User } from "lucide-react";
-export function AppShell({children,title,subtitle}:{children:React.ReactNode;title?:string;subtitle?:string}){return <main className="mobile-shell bottom-safe"><div className="sticky top-0 z-20 border-b border-white/10 bg-ink/85 px-5 py-4 backdrop-blur-xl"><div className="flex items-center justify-between"><Link href="/" className="flex items-center gap-2"><div className="grid h-9 w-9 place-items-center rounded-2xl bg-gradient-to-br from-purple to-purple2 font-black">C</div><div><p className="text-sm font-black leading-none">Collective</p><p className="text-[11px] text-slate-400">practice proof feedback</p></div></Link><Link href="/setup" className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">Setup</Link></div>{title&&<div className="mt-4"><h1 className="text-2xl font-black tracking-tight">{title}</h1>{subtitle&&<p className="mt-1 text-sm text-slate-400">{subtitle}</p>}</div>}</div><div className="px-5 py-5">{children}</div><BottomNav /></main>}
-function BottomNav(){const items=[["/",Home,"Home"],["/paths",Map,"Paths"],["/proof/new",Plus,"Proof"],["/contribute",ShieldCheck,"Help"],["/dashboard",User,"You"]] as const;return <nav className="fixed bottom-0 left-1/2 z-30 grid w-full max-w-[430px] -translate-x-1/2 grid-cols-5 border-t border-white/10 bg-ink/95 px-3 pb-3 pt-2 backdrop-blur-xl">{items.map(([href,Icon,label])=><Link key={href} href={href} className="flex flex-col items-center gap-1 rounded-2xl px-2 py-2 text-[11px] text-slate-400 active:bg-white/10"><Icon size={19}/><span>{label}</span></Link>)}</nav>}
+import { usePathname } from "next/navigation";
+import { BarChart3, Compass, Home, MessageCircle, Plus } from "lucide-react";
+import type { ReactNode } from "react";
+
+export function AppShell({ children, title, subtitle }: { children: ReactNode; title?: string; subtitle?: string }) {
+  return (
+    <main className="mobile-shell">
+      <header className="app-header">
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Collective home">
+            <div className="brand-mark">C</div>
+            <div>
+              <p className="text-sm font-black leading-none tracking-tight">Collective</p>
+              <p className="mt-1 text-[11px] text-[#8f887e]">practice · proof · feedback</p>
+            </div>
+          </Link>
+          <Link href="/setup" className="pill pill-muted">Setup</Link>
+        </div>
+        {title && (
+          <div className="mt-5">
+            <p className="section-eyebrow">Collective</p>
+            <h1 className="text-[28px] font-black leading-tight tracking-tight">{title}</h1>
+            {subtitle && <p className="mt-2 text-sm leading-6 text-[#c8c2b8]">{subtitle}</p>}
+          </div>
+        )}
+      </header>
+      <div className="screen-content">{children}</div>
+      <BottomNav />
+    </main>
+  );
+}
+
+function BottomNav() {
+  const pathname = usePathname();
+  const items = [
+    ["/", Home, "Home"],
+    ["/paths", Compass, "Practice"],
+    ["/proof/new", Plus, "Submit"],
+    ["/contribute", MessageCircle, "Feedback"],
+    ["/dashboard", BarChart3, "Progress"]
+  ] as const;
+
+  return (
+    <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2 px-4 pb-[calc(12px+var(--safe-bottom))]">
+      <div className="grid grid-cols-5 rounded-[28px] border border-white/10 bg-[#171b24]/90 p-1.5 shadow-float backdrop-blur-2xl">
+        {items.map(([href, Icon, label]) => {
+          const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`flex min-h-[54px] flex-col items-center justify-center gap-1 rounded-[22px] px-1 text-[10px] font-bold transition ${active ? "bg-white/[0.08] text-[#f6f3ec]" : "text-[#8f887e] active:bg-white/[0.05]"}`}
+              aria-current={active ? "page" : undefined}
+            >
+              <Icon size={18} strokeWidth={active ? 2.6 : 2} />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}

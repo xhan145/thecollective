@@ -11,11 +11,19 @@ export default function FeedSystemPage() {
         </div>
         <div className="card p-5">
           <h2 className="text-xl font-black">Ranking formula</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-300">Score = relevance + usefulness + actionability + proof strength + trust weight + recency + low-friction boost + mode boost - passive penalty.</p>
+          <p className="mt-3 text-sm leading-6 text-slate-300">Score = relevance + usefulness + actionability + proof strength + trust weight + recency + contribution fit + low-friction boost + mode boost - passive penalty.</p>
         </div>
         <div className="card p-5">
           <h2 className="text-xl font-black">Flow rule</h2>
           <p className="mt-3 text-sm leading-6 text-slate-400">A good scroll session: I relate to someone, see how they practiced, try a small action, submit proof, get feedback, and return tomorrow.</p>
+        </div>
+        <div className="card p-5">
+          <h2 className="text-xl font-black">Engagement model</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-400">V9 engagement records useful intent instead of popularity. The surface points users toward reflection, context, practice, saving a prompt, or giving focused feedback.</p>
+        </div>
+        <div className="card p-5">
+          <h2 className="text-xl font-black">Proof feed MVP</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-400">Proof posts are sorted by recent activity, then boosted when they need feedback and when the user has consistent practice. Popularity does not rank the feed.</p>
         </div>
         {feedOperatingPrinciples().map((p, i) => (
           <div key={p} className="card p-4">

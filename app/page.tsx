@@ -1,59 +1,101 @@
 import Link from "next/link";
-import { ArrowRight, Brain, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { FeedCard } from "@/components/FeedCard";
-import { demoFeedItems } from "@/lib/data";
+import { MediaProofSwipe } from "@/components/MediaProofSwipe";
+import { ProofCard } from "@/components/ProofCard";
+import { EmptyProofState } from "@/components/EmptyProofState";
+import { Pill, ProgressMetric, SectionHeader } from "@/components/ui";
+import { demoFeedItems, demoPhotoProofSpotlights, demoVideoProofSpotlights } from "@/lib/data";
 import { feedOperatingPrinciples, rankHomeFeed } from "@/lib/feedAlgorithm";
+import { demoMediaProofSubmissions, rankProofFeed } from "@/lib/proofData";
 import type { DemoUser } from "@/lib/types";
 
 const demoUser: DemoUser = { goal: "speak-up", stage: "new", completedPromptIds: [] };
 
 export default function HomePage() {
   const feed = rankHomeFeed(demoFeedItems, demoUser);
+  const proofFeed = rankProofFeed(demoMediaProofSubmissions);
   const principles = feedOperatingPrinciples();
+
   return (
     <AppShell>
-      <section className="space-y-5">
-        <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-purple/25 to-transparent p-5 shadow-glow">
-          <p className="mb-3 inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-purple2">Collective v8 demo</p>
-          <h1 className="text-4xl font-black leading-[1.02] tracking-tight">Practice real growth. Prove it. Get feedback. Help others.</h1>
-          <p className="mt-4 text-sm leading-6 text-slate-300">Collective is a progress-and-contribution platform. The homepage feed intentionally turns passive scrolling into meaningful action and multimodal proof.</p>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <Link href="/onboarding" className="btn-primary">Start <ArrowRight size={16} /></Link>
-            <Link href="/setup" className="btn-secondary">Setup</Link>
+      <section className="space-y-7">
+        <div className="glass-panel p-6">
+          <Pill tone="accent">Collective v9 demo</Pill>
+          <h1 className="mt-5 text-[36px] font-black leading-[1.02] tracking-tight">Real progress over appearance.</h1>
+          <p className="mt-4 text-[15px] leading-7 text-[#c8c2b8]">Practice in small steps, prove what happened, ask for useful feedback, and build trust through contribution.</p>
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <Link href="/proof/new" className="btn-primary">Submit proof <ArrowRight size={16} /></Link>
+            <Link href="/paths" className="btn-secondary">Find practice</Link>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
-          <Metric icon={<Sparkles size={17} />} label="Practice" value="Small" />
-          <Metric icon={<Brain size={17} />} label="Feedback" value="Useful" />
-          <Metric icon={<ShieldCheck size={17} />} label="Trust" value="Earned" />
-        </div>
-        <section className="card p-4">
-          <h2 className="text-lg font-black">The passive feed matters</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">People will scroll. The product decision is whether scrolling drains them or moves them. Collective's feed rhythm is: relatable proof, bridge to reflection, then action.</p>
+
+        <section className="soft-card p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="section-eyebrow">Today’s momentum</p>
+              <h2 className="section-title">One proof, one next step</h2>
+            </div>
+            <div className="grid h-12 w-12 place-items-center rounded-3xl bg-green/10 text-green">
+              <CheckCircle2 size={21} />
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <ProgressMetric label="Practiced" value="1x" helper="today" />
+            <ProgressMetric label="Feedback" value="2" helper="useful" />
+            <ProgressMetric label="Trust" value="62" helper="earned" />
+          </div>
+          <p className="mt-4 rounded-[22px] bg-white/[0.04] p-3 text-xs leading-5 text-[#c8c2b8]">The feed is a practice stream. It nudges from passive proof into reflection, then action.</p>
+        </section>
+
+        <section className="space-y-3">
+          <SectionHeader
+            eyebrow="Proof from practice"
+            title="Recent submissions"
+            action={<Link href="/proof/new" className="pill pill-accent">Add proof</Link>}
+          />
+          {proofFeed.length ? proofFeed.map((proof) => <ProofCard key={proof.id} proof={proof} />) : <EmptyProofState />}
+        </section>
+
+        <MediaProofSwipe photos={demoPhotoProofSpotlights} videos={demoVideoProofSpotlights} />
+
+        <section className="soft-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-purple/15 text-purple2"><Sparkles size={18} /></div>
+            <div>
+              <h2 className="font-black">Practice stream logic</h2>
+              <p className="text-xs text-[#8f887e]">Passive → Bridge → Active</p>
+            </div>
+          </div>
           <div className="mt-4 space-y-2">
-            {principles.slice(0, 3).map((p) => <p key={p} className="rounded-2xl bg-white/5 p-3 text-xs leading-5 text-slate-300">{p}</p>)}
+            {principles.slice(0, 3).map((p) => <p key={p} className="surface-row p-3 text-xs leading-5 text-[#c8c2b8]">{p}</p>)}
           </div>
         </section>
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-black">Home feed</h2>
-            <p className="text-xs text-slate-500">Algorithm: passive - bridge - active</p>
+
+        <section className="space-y-3">
+          <SectionHeader
+            eyebrow="Guided feed"
+            title="Next useful actions"
+            action={<Link href="/feed-system" className="text-xs font-black text-purple2">View logic</Link>}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <SmallSignal icon={<MessageCircle size={16} />} label="Feedback needed" value="3 proofs" />
+            <SmallSignal icon={<ShieldCheck size={16} />} label="Contribution ready" value="Kind review" />
           </div>
-          <Link href="/feed-system" className="text-xs font-bold text-purple2">View logic</Link>
-        </div>
-        <section className="space-y-4">{feed.map((item) => <FeedCard key={item.id} item={item} />)}</section>
+          {feed.map((item) => <FeedCard key={item.id} item={item} />)}
+        </section>
       </section>
     </AppShell>
   );
 }
 
-function Metric({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function SmallSignal({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="card p-3 text-center">
-      <div className="mx-auto mb-2 grid h-9 w-9 place-items-center rounded-2xl bg-white/10 text-purple2">{icon}</div>
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="text-sm font-black">{value}</p>
+    <div className="surface-row p-3">
+      <div className="mb-2 grid h-8 w-8 place-items-center rounded-2xl bg-white/[0.06] text-purple2">{icon}</div>
+      <p className="text-[11px] text-[#8f887e]">{label}</p>
+      <p className="mt-1 text-sm font-black">{value}</p>
     </div>
   );
 }

@@ -1,49 +1,73 @@
 import Link from "next/link";
+import { ArrowRight, CheckCircle2, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { DashboardProofs } from "@/components/DashboardProofs";
+import { Pill, ProgressMetric, SectionHeader } from "@/components/ui";
+import { TrustBadge } from "@/components/TrustBadge";
 
 export default function DashboardPage() {
   return (
-    <AppShell title="Your Progress" subtitle="Action, feedback, trust, and proof across media types.">
-      <div className="space-y-4">
-        <div className="card p-5">
-          <div className="flex items-center justify-between">
+    <AppShell title="Progress" subtitle="A private view of practice, proof, feedback, and earned trust.">
+      <div className="space-y-6">
+        <section className="glass-panel p-6">
+          <Pill tone="success">Your practice</Pill>
+          <div className="mt-5 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-black text-purple2">Level 3 - Growing</p>
-              <h2 className="mt-1 text-2xl font-black">Participant</h2>
+              <h2 className="text-3xl font-black leading-none tracking-tight">Practicing</h2>
+              <p className="mt-2 text-sm leading-6 text-[#c8c2b8]">Trust grows from consistency and usefulness, not attention.</p>
             </div>
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-purple/20 text-xl font-black">62</div>
+            <TrustBadge score={62} />
           </div>
-          <div className="mt-4 h-3 rounded-full bg-white/10"><div className="h-3 w-[62%] rounded-full bg-gradient-to-r from-purple to-purple2" /></div>
-        </div>
+          <div className="mt-5 h-2.5 rounded-full bg-white/10">
+            <div className="h-2.5 w-[62%] rounded-full bg-gradient-to-r from-green via-teal to-purple" />
+          </div>
+        </section>
+
         <div className="grid grid-cols-2 gap-3">
-          <Stat label="Practices" value="12" />
-          <Stat label="Proofs" value="7" />
-          <Stat label="Media types" value="7" />
-          <Stat label="Streak" value="3 days" />
+          <ProgressMetric label="Proof submitted" value="7" helper="practice evidence" />
+          <ProgressMetric label="Feedback given" value="5" helper="useful support" />
+          <ProgressMetric label="Feedback received" value="4" helper="next-step help" />
+          <ProgressMetric label="Consistency" value="3 days" helper="current rhythm" />
         </div>
-        <div className="card p-5">
-          <h2 className="font-black">Next recommended action</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">Complete One Clear Preference in the Speak Up path. Try audio or screenshot proof if text does not capture the attempt.</p>
-          <Link href="/practice/speak-up-2" className="btn-primary mt-4 w-full">Start next practice</Link>
-        </div>
-        <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-black">Recent proofs</h2>
-            <Link href="/proof/new" className="text-xs font-bold text-purple2">Add proof</Link>
+
+        <section className="soft-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-purple/15 text-purple2"><Sparkles size={18} /></div>
+            <div>
+              <h2 className="font-black">Next contribution step</h2>
+              <p className="text-xs text-[#8f887e]">Give one specific, kind, useful response.</p>
+            </div>
           </div>
-          <DashboardProofs />
+          <p className="mt-4 text-sm leading-6 text-[#c8c2b8]">You are ready to help someone take the next step when you can stay inside their feedback request.</p>
+          <Link href="/contribute" className="btn-secondary mt-4 w-full">Open feedback circle <ArrowRight size={16} /></Link>
+        </section>
+
+        <section className="space-y-3">
+          <SectionHeader eyebrow="Recent trust events" title="Trust earned" />
+          <TrustEvent icon={<CheckCircle2 size={16} />} title="Submitted proof consistently" points="+8" />
+          <TrustEvent icon={<MessageCircle size={16} />} title="Received helpful feedback" points="+5" />
+          <TrustEvent icon={<ShieldCheck size={16} />} title="Gave specific feedback" points="+6" />
+        </section>
+
+        <section>
+          <SectionHeader eyebrow="Proof journal" title="Recent proof" action={<Link href="/proof/new" className="pill pill-accent">Add proof</Link>} />
+          <div className="mt-3">
+            <DashboardProofs />
+          </div>
         </section>
       </div>
     </AppShell>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function TrustEvent({ icon, title, points }: { icon: React.ReactNode; title: string; points: string }) {
   return (
-    <div className="card p-4">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="mt-1 text-xl font-black">{value}</p>
+    <div className="surface-row flex items-center justify-between gap-3 p-3">
+      <div className="flex items-center gap-3">
+        <div className="grid h-9 w-9 place-items-center rounded-2xl bg-white/[0.06] text-purple2">{icon}</div>
+        <p className="text-sm font-bold text-[#e5ded4]">{title}</p>
+      </div>
+      <span className="pill pill-success">{points}</span>
     </div>
   );
 }

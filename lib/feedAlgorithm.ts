@@ -6,7 +6,8 @@ export type RankedFeedItem = FeedItem & { score: number; reason: string };
 
 export function scoreFeedItem(item: FeedItem, user: DemoUser, index: number): RankedFeedItem {
   const relevance = item.pathSlug === user.goal ? 28 : item.pathSlug ? 12 : 8;
-  const score = Math.round(relevance + item.usefulness * .22 + item.actionability * .24 + item.proofStrength * .14 + item.trustWeight * .12 + item.recency * .1 + modeWeight[item.mode] + Math.max(0, 20 - item.friction) * .75 + (item.mode === "passive" && index > 2 ? -8 : 0));
+  const contributionFit = item.contributionPotential ?? 50;
+  const score = Math.round(relevance + item.usefulness * .22 + item.actionability * .24 + item.proofStrength * .14 + item.trustWeight * .12 + item.recency * .1 + contributionFit * .06 + modeWeight[item.mode] + Math.max(0, 20 - item.friction) * .75 + (item.mode === "passive" && index > 2 ? -8 : 0));
   const reason = item.mode === "active" ? "Shown because it can move you into practice right now." : item.mode === "bridge" ? "Shown because it turns scrolling into a concrete next step." : "Shown as low-pressure inspiration, but still tied to an action.";
   return { ...item, score, reason };
 }
@@ -37,6 +38,7 @@ export function feedOperatingPrinciples() {
     "Passive inspiration is allowed only as an entry point, not as the destination.",
     "The feed should interleave relatable proof, low-pressure reflection, and clear action prompts.",
     "The algorithm should reward usefulness, actionability, proof strength, and trust more than raw engagement.",
+    "Engagement controls should collect intent: reflect, ask context, try the practice, save the prompt, or give useful feedback.",
     "A card wins when it helps someone take a meaningful next step, not when it merely keeps them scrolling."
   ];
 }
@@ -47,6 +49,7 @@ export function mediaProofScoringNotes() {
     "Image and screenshot proof are quick, concrete, and often low-friction, so they can bridge passive scrolling into proof submission.",
     "Text and checklist proof stay important because they are the lowest-friction way to prove a small practice.",
     "Audio proof is especially useful for communication and confidence paths because tone and pacing can matter.",
-    "Contribution potential rises when reviewers can see the media kind and the feedback request before opening the proof."
+    "Photo and video proof are separated into swipe lanes so quick visual context and richer high-friction media can be understood differently.",
+    "Contribution potential rises when reviewers can see the media kind, feedback request, and safety boundary before opening the proof."
   ];
 }

@@ -1,1 +1,10 @@
-export function envStatus(){ return { appUrl:Boolean(process.env.NEXT_PUBLIC_APP_URL), supabaseUrl:Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL), supabaseAnonKey:Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY), supabaseServiceRole:Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY), openAi:Boolean(process.env.OPENAI_API_KEY), resend:Boolean(process.env.RESEND_API_KEY) }; }
+export function envStatus() {
+  return {
+    appUrl: Boolean(process.env.NEXT_PUBLIC_APP_URL),
+    supabaseUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    supabaseAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    supabaseServiceRole: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+    openAi: Boolean(process.env.OPENAI_API_KEY),
+    resend: Boolean(process.env.RESEND_API_KEY)
+  };
+}

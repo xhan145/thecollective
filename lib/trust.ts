@@ -1,2 +1,26 @@
-export function calculateTrustScore(i:{practiceConsistency:number;proofQuality:number;feedbackHelpfulness:number;conduct:number;contextFit:number}){return Math.max(0,Math.min(100,Math.round(i.practiceConsistency*.2+i.proofQuality*.2+i.feedbackHelpfulness*.3+i.conduct*.2+i.contextFit*.1)));}
-export function trustLevel(score:number){ if(score>=90) return "Guide Candidate"; if(score>=75) return "Trusted Contributor"; if(score>=50) return "Contributor"; if(score>=20) return "Participant"; return "Observer"; }
+import type { TrustEventRecord } from "./proofModels";
+
+export type TrustLevel = "New" | "Practicing" | "Reliable" | "Contributor";
+
+export function calculateTrustLevel(score: number): TrustLevel {
+  if (score >= 150) return "Contributor";
+  if (score >= 75) return "Reliable";
+  if (score >= 25) return "Practicing";
+  return "New";
+}
+
+export function calculateTrustScore(events: TrustEventRecord[]) {
+  return events.reduce((total, event) => total + event.points, 0);
+}
+
+export function createProofTrustEvent(userId: string, proofId: string, points = 8): TrustEventRecord {
+  return {
+    id: `trust-${Date.now()}`,
+    user_id: userId,
+    source_type: "proof_submission",
+    source_id: proofId,
+    points,
+    reason: "Submitted practice proof",
+    created_at: new Date().toISOString()
+  };
+}

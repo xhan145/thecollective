@@ -1,6 +1,6 @@
 # Supabase Storage Setup
 
-V8 plans for private proof media uploads without requiring Supabase during demo mode.
+V9 plans for private proof media uploads without requiring Supabase during demo mode.
 
 ## Bucket
 
@@ -34,6 +34,12 @@ create table if not exists public.proof_media (
   created_at timestamptz default now()
 );
 ```
+
+For the image/video proof MVP, also see `supabase/media_proof_mvp.sql`. It adds prototype-ready tables for:
+
+- `proof_submissions`
+- `feedback`
+- `trust_events`
 
 ## Policy Notes
 

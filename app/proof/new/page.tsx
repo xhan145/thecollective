@@ -3,7 +3,7 @@ import { ProofComposer } from "@/components/ProofComposer";
 
 export default function NewProofPage() {
   return (
-    <AppShell title="Add Proof" subtitle="Text, media, links, and reflections. Keep it private if you want.">
+    <AppShell title="Submit proof" subtitle="Show the practice, not perfection. Your proof can stay private.">
       <ProofComposer />
     </AppShell>
   );
