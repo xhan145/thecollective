@@ -1,0 +1,10 @@
+# Keep the Vercel build context to just the Next.js web app.
+# Tracked in git, but not part of the deployed app.
+android-native/
+legacy/
+docs/
+.tools/
+*.log
+PHONE_FIRST_START_HERE.md
+README_ANDROID.md
+replit.nix
