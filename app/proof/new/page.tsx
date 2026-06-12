@@ -1,10 +1,5 @@
-import { AppShell } from "@/components/AppShell";
-import { ProofComposer } from "@/components/ProofComposer";
+import { redirect } from "next/navigation";
 
-export default function NewProofPage() {
-  return (
-    <AppShell title="Submit proof" subtitle="Show the practice, not perfection. Your proof can stay private.">
-      <ProofComposer />
-    </AppShell>
-  );
+export default function NewProofRedirectPage() {
+  redirect("/proof/new/say-clear-thing");
 }

@@ -1,6 +1,13 @@
 node_modules
 .npm-cache
+npm-cache/
+.gitnexus/
+.gitnexus-backups/
+.gitnexus-home/
+.gitnexus-runtime*/
+.gitnexus-tarballs/
 .next
+.next-swc-cache/
 .next-stale-*
 .env
 .env.local
@@ -10,6 +17,7 @@ tsconfig.tsbuildinfo
 
 # Android Studio / Gradle
 android-native/.gradle/
+android-native/.gradle-build-home/
 android-native/.kotlin/
 android-native/build/
 android-native/app/build/

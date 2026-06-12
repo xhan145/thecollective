@@ -6,9 +6,15 @@
     "dev": "next dev -H 0.0.0.0 -p 3000",
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "gitnexus:analyze": "node .tools/gitnexus.mjs analyze . --index-only --name collective-v7-push-ready",
+    "gitnexus:serve": "node .tools/gitnexus.mjs serve",
+    "gitnexus:mcp": "node .tools/gitnexus.mjs mcp",
+    "gitnexus:status": "node .tools/gitnexus.mjs status",
+    "gitnexus:list": "node .tools/gitnexus.mjs list"
   },
   "dependencies": {
+    "@next/swc-win32-x64-msvc": "^16.2.6",
     "@supabase/supabase-js": "2.105.4",
     "lucide-react": "0.468.0",
     "next": "16.2.6",

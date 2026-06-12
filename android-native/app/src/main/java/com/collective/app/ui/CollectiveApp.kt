@@ -34,6 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.collective.app.ai.CollectiveAiCore
+import com.collective.app.data.repository.CollectiveRepositoryFactory
 import com.collective.app.ui.theme.CardBackground
 import com.collective.app.ui.theme.CreamBackground
 import com.collective.app.ui.theme.ForestGreen
@@ -45,6 +47,8 @@ import com.collective.app.ui.theme.TertiaryText
 fun CollectiveApp() {
     var currentRoute by remember { mutableStateOf(Routes.Home) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val repositories = remember { CollectiveRepositoryFactory.create() }
+    val aiAssistRepository = remember { CollectiveAiCore.defaultRepository() }
     val navigate: (String) -> Unit = { route -> currentRoute = route }
 
     CollectiveScaffold(
@@ -56,6 +60,8 @@ fun CollectiveApp() {
         CollectiveNavGraph(
             currentRoute = currentRoute,
             snackbarHostState = snackbarHostState,
+            repositories = repositories,
+            aiAssistRepository = aiAssistRepository,
             modifier = Modifier.padding(innerPadding),
             navigate = navigate,
         )

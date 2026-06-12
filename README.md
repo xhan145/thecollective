@@ -1,6 +1,8 @@
-# Collective v9 Android Agent Prototype
+# Collective Web Beta + Android Prototype
 
-A mobile-first Next.js prototype for Collective: discover, practice, prove, feedback, trust, and contribution.
+A mobile-first Collective prototype for the core loop: discover, practice, prove, feedback, trust, and contribution.
+
+The current web beta is a warm cream/gold PWA shell for iPhone Safari and mobile browsers. It works in demo mode without backend credentials and keeps proof, feedback, trust, and app feedback local until Firebase is connected.
 
 ## Run in Replit
 
@@ -17,11 +19,52 @@ The project has been validated from the repository root with:
 
 ```bash
 npm install
-npm run build
 npm run typecheck
+npm run build
 ```
 
-Demo mode renders without Supabase or OpenAI keys. Connect those services later from `/setup` when you are ready to move beyond the local prototype flow.
+Demo mode renders without Supabase, OpenAI, or Firebase keys. Connect Firebase later when you are ready to move beyond local browser persistence.
+
+If local Windows builds fail with `Failed to load SWC binary for win32/x64`, see `docs/WEB_DEPLOYMENT.md`. In this workspace, TypeScript passes and the remaining blocker is the local Next compiler binary/package environment.
+
+## Web beta routes
+
+`/`, `/auth`, `/home`, `/directions`, `/practice`, `/proof/new/:promptId`, `/proof/:proofId`, `/proof/:proofId/feedback`, `/feed`, `/profile`, `/app-feedback`, `/install`, `/beta-feedback-review`.
+
+## iPhone PWA install
+
+Open `/install` in Safari, tap Share, choose Add to Home Screen, then tap Add.
+
+## Firebase setup
+
+Copy `.env.example` to `.env.local` and fill:
+
+```bash
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+```
+
+Leaving these blank keeps the app in demo mode.
+
+See `docs/WEB_DEPLOYMENT.md` for deployment notes.
+
+## AI support layer
+
+The web beta includes mock-safe AI support for:
+
+- Practice prep
+- Reflection help
+- Peer feedback coaching
+- Feedback summaries
+- AI helpfulness feedback
+
+AI is support, not authority. It does not decide trust, generate proof, submit feedback automatically, or grade users.
+
+See `docs/AI_SUPPORT_LAYER.md`.
 
 ## Important
 

@@ -1,5 +1,7 @@
 package com.collective.app.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,10 +38,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.collective.app.ai.model.AiAssistIntent
+import com.collective.app.ai.model.AiAssistRequest
+import com.collective.app.ai.model.AiAssistSurface
+import com.collective.app.ai.repository.AiAssistRepository
+import com.collective.app.core.result.AppResult
+import com.collective.app.core.result.getOrNull
+import com.collective.app.core.result.messageOrNull
+import com.collective.app.data.FeedbackType
+import com.collective.app.data.MediaType
 import com.collective.app.data.MockData
+import com.collective.app.data.ProofStatus
+import com.collective.app.data.Visibility
+import com.collective.app.data.model.FeedbackDraft
+import com.collective.app.data.model.ProofDraft
+import com.collective.app.data.model.ProofMediaAttachment
+import com.collective.app.data.repository.CollectiveRepositories
+import com.collective.app.media.MediaValidationResult
+import com.collective.app.media.MediaValidator
+import com.collective.app.media.SelectedMedia
 import com.collective.app.ui.components.ActivityRow
+import com.collective.app.ui.components.AiAssistCard
 import com.collective.app.ui.components.Avatar
 import com.collective.app.ui.components.CategoryChip
 import com.collective.app.ui.components.CircleIconButton
@@ -60,6 +82,7 @@ import com.collective.app.ui.components.PlanOptionCard
 import com.collective.app.ui.components.PracticeCard
 import com.collective.app.ui.components.PracticeTypeSelector
 import com.collective.app.ui.components.PrimaryPillButton
+import com.collective.app.ui.components.ProofMediaPickerCard
 import com.collective.app.ui.components.ProfileStatCard
 import com.collective.app.ui.components.ProgressOverviewCard
 import com.collective.app.ui.components.ProofCard
@@ -93,6 +116,8 @@ import kotlinx.coroutines.launch
 fun CollectiveNavGraph(
     currentRoute: String,
     snackbarHostState: SnackbarHostState,
+    repositories: CollectiveRepositories,
+    aiAssistRepository: AiAssistRepository,
     modifier: Modifier = Modifier,
     navigate: (String) -> Unit,
 ) {
@@ -109,17 +134,25 @@ fun CollectiveNavGraph(
             )
             currentRoute.startsWith("practice") -> PracticeScreen(
                 snackbarHostState = snackbarHostState,
+                aiAssistRepository = aiAssistRepository,
                 onBack = { navigate(Routes.pathDetail("communication")) },
                 onFinish = { navigate(Routes.proofSubmission("communication")) },
             )
             currentRoute.startsWith("proofSubmission") -> ProofSubmissionScreen(
                 snackbarHostState = snackbarHostState,
+                repositories = repositories,
+                aiAssistRepository = aiAssistRepository,
                 onBack = { navigate(Routes.practice("communication")) },
                 onShared = { navigate(Routes.feedback("demo-proof")) },
             )
-            currentRoute.startsWith("feedback") -> FeedbackScreen(snackbarHostState = snackbarHostState)
-            currentRoute == Routes.Progress -> ProgressScreen()
+            currentRoute.startsWith("feedback") -> FeedbackScreen(
+                snackbarHostState = snackbarHostState,
+                repositories = repositories,
+                aiAssistRepository = aiAssistRepository,
+            )
+            currentRoute == Routes.Progress -> ProgressScreen(repositories = repositories)
             currentRoute == Routes.Profile -> ProfileScreen(
+                repositories = repositories,
                 onPrototypeMap = { navigate(Routes.PrototypeMap) },
                 onActivity = { navigate(Routes.Activity) },
                 onContribution = { navigate(Routes.ContributionHub) },
@@ -310,10 +343,25 @@ private fun PathDetailScreen(onBack: () -> Unit, onStartPractice: () -> Unit) {
 }
 
 @Composable
-private fun PracticeScreen(snackbarHostState: SnackbarHostState, onBack: () -> Unit, onFinish: () -> Unit) {
+private fun PracticeScreen(
+    snackbarHostState: SnackbarHostState,
+    aiAssistRepository: AiAssistRepository,
+    onBack: () -> Unit,
+    onFinish: () -> Unit
+) {
     val prompt = MockData.practicePrompt
     var practicing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val practiceAssist = remember(prompt.pathId) {
+        aiAssistRepository.assist(
+            AiAssistRequest(
+                surface = AiAssistSurface.PRACTICE,
+                intent = AiAssistIntent.PRACTICE_HELPER,
+                practiceArea = prompt.pathId,
+                userText = prompt.prompt
+            )
+        ).getOrNull()
+    }
     AppList {
         item { CollectiveTopBar() }
         item {
@@ -332,6 +380,13 @@ private fun PracticeScreen(snackbarHostState: SnackbarHostState, onBack: () -> U
                 SectionTitle("Practice instructions")
                 prompt.tips.forEachIndexed { index, tip ->
                     Text("${index + 1}. $tip", style = MaterialTheme.typography.bodyLarge, color = DeepText)
+                }
+            }
+        }
+        practiceAssist?.let { response ->
+            item {
+                AiAssistCard(response = response) { suggestion ->
+                    scope.launch { snackbarHostState.showSnackbar(suggestion) }
                 }
             }
         }
@@ -375,12 +430,47 @@ private fun PracticeScreen(snackbarHostState: SnackbarHostState, onBack: () -> U
 }
 
 @Composable
-private fun ProofSubmissionScreen(snackbarHostState: SnackbarHostState, onBack: () -> Unit, onShared: () -> Unit) {
+private fun ProofSubmissionScreen(
+    snackbarHostState: SnackbarHostState,
+    repositories: CollectiveRepositories,
+    aiAssistRepository: AiAssistRepository,
+    onBack: () -> Unit,
+    onShared: () -> Unit
+) {
     var proofType by remember { mutableStateOf("Video") }
     var visibility by remember { mutableStateOf("Path Only") }
     var reflection by remember { mutableStateOf("") }
     var feedbackRequest by remember { mutableStateOf("") }
+    var selectedMedia by remember { mutableStateOf<SelectedMedia?>(null) }
+    var mediaStatus by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val mediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri == null) return@rememberLauncherForActivityResult
+        when (val result = MediaValidator.inspect(context, uri)) {
+            is MediaValidationResult.Valid -> {
+                selectedMedia = result.media
+                proofType = when (result.media.mediaType) {
+                    MediaType.IMAGE -> "Photo"
+                    MediaType.VIDEO -> "Video"
+                    MediaType.NONE -> proofType
+                }
+                mediaStatus = "Media ready for proof."
+            }
+            is MediaValidationResult.Invalid -> mediaStatus = result.message
+        }
+    }
+    val proofAssist = remember(reflection, feedbackRequest, proofType) {
+        aiAssistRepository.assist(
+            AiAssistRequest(
+                surface = AiAssistSurface.REFLECTION,
+                intent = AiAssistIntent.REFLECTION_HELPER,
+                userText = reflection,
+                practiceArea = "communication",
+                proofTitle = proofType
+            )
+        ).getOrNull()
+    }
     AppList {
         item {
             CollectiveTopBar(title = "Proof", showLogo = false, showBack = true, onBack = onBack)
@@ -393,6 +483,13 @@ private fun ProofSubmissionScreen(snackbarHostState: SnackbarHostState, onBack: 
         }
         item {
             PracticeTypeSelector(selected = proofType, onSelected = { proofType = it })
+        }
+        item {
+            ProofMediaPickerCard(
+                selectedMedia = selectedMedia,
+                statusMessage = mediaStatus,
+                onChooseMedia = { mediaLauncher.launch("*/*") }
+            )
         }
         item {
             Text("Who can see this?", style = MaterialTheme.typography.titleMedium, color = DeepText)
@@ -418,11 +515,54 @@ private fun ProofSubmissionScreen(snackbarHostState: SnackbarHostState, onBack: 
                 )
             }
         }
+        proofAssist?.let { response ->
+            item {
+                AiAssistCard(response = response) { suggestion ->
+                    reflection = appendSuggestion(reflection, suggestion, limit = 280)
+                }
+            }
+        }
         item {
             PrimaryPillButton("Share Proof", modifier = Modifier.fillMaxWidth()) {
                 scope.launch {
-                    snackbarHostState.showSnackbar("Proof shared. Nice work showing up.")
-                    onShared()
+                    val media = selectedMedia?.let {
+                        ProofMediaAttachment(
+                            localUri = it.uri.toString(),
+                            displayName = it.displayName,
+                            mediaType = it.mediaType,
+                            sizeBytes = it.sizeBytes,
+                            mimeType = it.mimeType
+                        )
+                    }
+                    val draft = ProofDraft(
+                        title = "Communication proof",
+                        reflectionText = reflection,
+                        feedbackRequest = feedbackRequest,
+                        media = media,
+                        practiceArea = "communication",
+                        visibility = visibilityFromLabel(visibility),
+                        status = ProofStatus.SUBMITTED
+                    )
+                    val blockingSignal = repositories.moderation
+                        .checkProofDraft(draft)
+                        .getOrNull()
+                        .orEmpty()
+                        .firstOrNull { it.blocksSubmission }
+                    if (blockingSignal != null) {
+                        snackbarHostState.showSnackbar(blockingSignal.reason)
+                        return@launch
+                    }
+                    media?.let {
+                        mediaStatus = repositories.mediaUploads.prepareProofMedia(it).messageOrNull() ?: mediaStatus
+                    }
+                    when (val result = repositories.proofs.createProof(draft)) {
+                        is AppResult.Success -> {
+                            snackbarHostState.showSnackbar("Proof shared. Nice work showing up.")
+                            onShared()
+                        }
+                        is AppResult.Offline -> snackbarHostState.showSnackbar(result.message)
+                        is AppResult.Error -> snackbarHostState.showSnackbar(result.message)
+                    }
                 }
             }
         }
@@ -433,10 +573,25 @@ private fun ProofSubmissionScreen(snackbarHostState: SnackbarHostState, onBack: 
 }
 
 @Composable
-private fun FeedbackScreen(snackbarHostState: SnackbarHostState) {
+private fun FeedbackScreen(
+    snackbarHostState: SnackbarHostState,
+    repositories: CollectiveRepositories,
+    aiAssistRepository: AiAssistRepository
+) {
     var feedbackText by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
     val proof = MockData.proofPosts.first()
+    val proofId = remember { repositories.proofs.listProofs().getOrNull()?.firstOrNull()?.id ?: proof.id }
+    val feedbackAssist = remember(feedbackText) {
+        aiAssistRepository.assist(
+            AiAssistRequest(
+                surface = AiAssistSurface.FEEDBACK,
+                intent = AiAssistIntent.FEEDBACK_DRAFT,
+                userText = feedbackText,
+                desiredFeedbackType = FeedbackType.SUGGESTION.label
+            )
+        ).getOrNull()
+    }
     AppList {
         item { CollectiveTopBar(title = "Feedback") }
         item {
@@ -459,6 +614,13 @@ private fun FeedbackScreen(snackbarHostState: SnackbarHostState) {
                 items(MockData.feedbackExamples) { FeedbackCard(it, modifier = Modifier.width(250.dp)) }
             }
         }
+        feedbackAssist?.let { response ->
+            item {
+                AiAssistCard(response = response) { suggestion ->
+                    feedbackText = appendSuggestion(feedbackText, suggestion, limit = 300)
+                }
+            }
+        }
         item {
             OutlinedTextField(
                 value = feedbackText,
@@ -472,20 +634,73 @@ private fun FeedbackScreen(snackbarHostState: SnackbarHostState) {
         item { TrustPrinciplesRow(listOf("Kind", "Specific", "Actionable", "Beginner-safe")) }
         item {
             PrimaryPillButton("Send Feedback", modifier = Modifier.fillMaxWidth()) {
-                scope.launch { snackbarHostState.showSnackbar("Feedback sent. Thanks for helping someone grow.") }
+                scope.launch {
+                    val draft = FeedbackDraft(
+                        proofId = proofId,
+                        feedbackText = feedbackText,
+                        feedbackType = FeedbackType.SUGGESTION
+                    )
+                    val blockingSignal = repositories.moderation
+                        .checkFeedbackDraft(draft)
+                        .getOrNull()
+                        .orEmpty()
+                        .firstOrNull { it.blocksSubmission }
+                    if (blockingSignal != null) {
+                        snackbarHostState.showSnackbar(blockingSignal.reason)
+                        return@launch
+                    }
+                    when (val result = repositories.feedback.addFeedback(draft)) {
+                        is AppResult.Success -> {
+                            feedbackText = ""
+                            snackbarHostState.showSnackbar("Feedback sent. Thanks for helping someone grow.")
+                        }
+                        is AppResult.Offline -> snackbarHostState.showSnackbar(result.message)
+                        is AppResult.Error -> snackbarHostState.showSnackbar(result.message)
+                    }
+                }
             }
         }
     }
 }
 
+private fun visibilityFromLabel(label: String): Visibility {
+    return when (label) {
+        "Private" -> Visibility.PRIVATE
+        "Public" -> Visibility.PUBLIC
+        else -> Visibility.FEEDBACK_ONLY
+    }
+}
+
+private fun appendSuggestion(current: String, suggestion: String, limit: Int): String {
+    val separator = if (current.isBlank()) "" else "\n"
+    return (current.trimEnd() + separator + suggestion).take(limit)
+}
+
 @Composable
-private fun ProgressScreen() {
+private fun ProgressScreen(repositories: CollectiveRepositories) {
+    val progress = remember { repositories.trust.userProgress().getOrNull() }
     AppList {
         item { CollectiveTopBar() }
         item {
             PageTitle(title = "Your Progress", subtitle = "Visible growth without vanity metrics.")
         }
         item { ProgressOverviewCard(MockData.progressMetrics) }
+        progress?.let { userProgress ->
+            item {
+                SoftCard(color = Sage, radius = 24.dp) {
+                    SectionTitle("Trust signal pipeline")
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
+                        LabelPill("Trust ${userProgress.trustScore}", color = PureWhite)
+                        LabelPill(userProgress.trustLevel.label, color = PureWhite)
+                    }
+                    Text(
+                        "Local events are flowing through the repository layer. Remote persistence can be connected without changing this screen.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SecondaryText
+                    )
+                }
+            }
+        }
         item {
             SoftCard(color = PureWhite, radius = 26.dp) {
                 SectionTitle("Your Paths")
@@ -521,7 +736,13 @@ private fun ProgressScreen() {
 }
 
 @Composable
-private fun ProfileScreen(onPrototypeMap: () -> Unit, onActivity: () -> Unit, onContribution: () -> Unit) {
+private fun ProfileScreen(
+    repositories: CollectiveRepositories,
+    onPrototypeMap: () -> Unit,
+    onActivity: () -> Unit,
+    onContribution: () -> Unit
+) {
+    val session = remember { repositories.auth.currentSession().getOrNull() }
     AppList {
         item { CollectiveTopBar(title = "Profile") }
         item {
@@ -534,6 +755,20 @@ private fun ProfileScreen(onPrototypeMap: () -> Unit, onActivity: () -> Unit, on
                     }
                 }
                 TrustPrinciplesRow(listOf("Top Contributor", "Communication Path", "Supportive Feedback"))
+            }
+        }
+        item {
+            SoftCard(color = PureWhite, radius = 24.dp) {
+                SectionTitle("Access scaffold")
+                Text(
+                    if (session?.user?.isLocalOnly == true) {
+                        "Running in local mode as ${session.user.displayName}. Remote auth is ready to connect later."
+                    } else {
+                        "Remote auth can be connected through the repository layer."
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = SecondaryText
+                )
             }
         }
         item {

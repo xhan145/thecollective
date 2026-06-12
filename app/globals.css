@@ -3,23 +3,23 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --bg: #0e1117;
-  --surface-elevated: #171b24;
-  --surface-soft: #202632;
-  --surface-card: rgba(255, 255, 255, 0.07);
-  --surface-muted: rgba(255, 255, 255, 0.045);
-  --text-primary: #f6f3ec;
-  --text-secondary: #c8c2b8;
-  --text-tertiary: #8f887e;
-  --accent: #8d8afb;
-  --accent-soft: #d8d4ff;
-  --success: #75d1a3;
-  --warning: #e9b66b;
-  --error: #f07b7b;
-  --line: rgba(246, 243, 236, 0.10);
-  --overlay: rgba(9, 11, 15, 0.72);
+  --bg: #fff8ee;
+  --surface-elevated: #fffdf8;
+  --surface-soft: #fff1c7;
+  --surface-card: rgba(255, 253, 248, 0.9);
+  --surface-muted: rgba(255, 241, 199, 0.55);
+  --text-primary: #111111;
+  --text-secondary: #38322a;
+  --text-tertiary: #6e6e6e;
+  --accent: #f2a900;
+  --accent-soft: #fff1c7;
+  --success: #22c55e;
+  --warning: #ffb000;
+  --error: #c2413f;
+  --line: #efe7d8;
+  --overlay: rgba(255, 248, 238, 0.76);
 }
 
 * { box-sizing: border-box; }
@@ -29,10 +29,7 @@ html { background: var(--bg); }
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 20% -10%, rgba(141, 138, 251, .18), transparent 34%),
-    radial-gradient(circle at 92% 10%, rgba(118, 199, 192, .12), transparent 28%),
-    linear-gradient(180deg, #11151d 0%, #0e1117 52%, #0b0d12 100%);
+  background: #fff8ee;
   color: var(--text-primary);
   font-feature-settings: "ss01" on, "cv01" on;
   text-rendering: optimizeLegibility;
