@@ -1,0 +1,23 @@
+# Normalize line endings: Windows checks out CRLF locally, but everything
+# committed and shipped to Vercel's Linux build stays LF. Prevents
+# CRLF-in-repo surprises on the Linux runner.
+* text=auto eol=lf
+
+# Binary assets — never touch.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.gif binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.jar binary
+*.keystore binary
+
+# Windows-only helper scripts keep CRLF so PowerShell stays happy.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
