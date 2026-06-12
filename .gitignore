@@ -1,0 +1,21 @@
+node_modules
+.npm-cache
+npm-cache/
+.claude/
+.next
+.next-stale-*
+.env
+.env.local
+.vercel
+*.log
+tsconfig.tsbuildinfo
+
+# Android Studio / Gradle
+android-native/.gradle/
+android-native/.gradle-build-home/
+android-native/.kotlin/
+android-native/build/
+android-native/app/build/
+android-native/local.properties
+android-native/.idea/
+*.iml

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Collective mini mark">
+  <title>Collective mini mark</title>
+  
+  <g fill="#FFFFFF" stroke="none">
+    <path d="M384 105 A182 182 0 1 0 394 388" fill="none" stroke="#FFFFFF" stroke-width="44" stroke-linecap="butt"/>
+    <circle cx="256" cy="162" r="23"/>
+    <rect x="230" y="202" width="52" height="128" rx="26"/>
+    <circle cx="202" cy="198" r="20"/>
+    <rect x="176" y="235" width="44" height="100" rx="22"/>
+    <circle cx="310" cy="198" r="20"/>
+    <rect x="292" y="235" width="44" height="100" rx="22"/>
+    <path d="M116 318 C180 318 224 360 256 431 C194 421 139 386 116 318 Z"/>
+    <path d="M396 318 C332 318 288 360 256 431 C318 421 373 386 396 318 Z"/>
+  </g>
+</svg>

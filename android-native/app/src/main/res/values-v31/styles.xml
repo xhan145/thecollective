@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ system splash: official Collective mark on warm cream, matching
+  brand/collective-splash.svg. Pre-31 devices fall back to the cream
+  windowBackground from the base theme.
+-->
+<resources>
+    <style name="Theme.Collective" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/collective_background</item>
+        <item name="android:navigationBarColor">@color/collective_background</item>
+        <item name="android:windowBackground">@color/collective_background</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:windowSplashScreenBackground">@color/collective_cream</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@color/collective_card</item>
+    </style>
+</resources>

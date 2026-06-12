@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Collective mini mark — official brand package v2.0 (collective-mark-mini.svg),
+  converted to an Android vector. Simplified C + three people + book wings so it
+  stays legible at small sizes (18px minimum). Single flat gold #F2A900.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Wide open C -->
+    <path
+        android:pathData="M384,105 A182,182 0,1 0,394 388"
+        android:strokeColor="#F2A900"
+        android:strokeWidth="44"
+        android:strokeLineCap="butt"
+        android:fillColor="@android:color/transparent" />
+
+    <!-- Center person -->
+    <path android:fillColor="#F2A900" android:pathData="M256,162 m-23,0 a23,23 0 1,0 46,0 a23,23 0 1,0 -46,0" />
+    <path android:fillColor="#F2A900" android:pathData="M230,228 a26,26 0 0,1 52,0 L282,304 a26,26 0 0,1 -52,0 Z" />
+
+    <!-- Left person -->
+    <path android:fillColor="#F2A900" android:pathData="M202,198 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0" />
+    <path android:fillColor="#F2A900" android:pathData="M176,257 a22,22 0 0,1 44,0 L220,313 a22,22 0 0,1 -44,0 Z" />
+
+    <!-- Right person -->
+    <path android:fillColor="#F2A900" android:pathData="M310,198 m-20,0 a20,20 0 1,0 40,0 a20,20 0 1,0 -40,0" />
+    <path android:fillColor="#F2A900" android:pathData="M292,257 a22,22 0 0,1 44,0 L336,313 a22,22 0 0,1 -44,0 Z" />
+
+    <!-- Open book base -->
+    <path android:fillColor="#F2A900" android:pathData="M116,318 C180,318 224,360 256,431 C194,421 139,386 116,318 Z" />
+    <path android:fillColor="#F2A900" android:pathData="M396,318 C332,318 288,360 256,431 C318,421 373,386 396,318 Z" />
+</vector>

@@ -1,0 +1,26 @@
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { AppShell } from "@/components/AppShell";
+import { paths } from "@/lib/data";
+
+export default function OnboardingPage() {
+  return (
+    <AppShell title="What brings you here?" subtitle="Pick the direction that feels most useful right now.">
+      <div className="space-y-3">
+        {paths.map((path) => (
+          <Link key={path.slug} href={`/paths/${path.slug}`} className="card flex items-center justify-between gap-4 p-4">
+            <div>
+              <p className="font-black">{path.title}</p>
+              <p className="mt-1 text-sm text-slate-400">{path.description}</p>
+            </div>
+            <ArrowRight className="text-slate-500" size={18} />
+          </Link>
+        ))}
+        <div className="card p-4">
+          <p className="font-black">Default privacy</p>
+          <p className="mt-1 text-sm text-slate-400">For the prototype, proof starts private. You choose when to share.</p>
+        </div>
+      </div>
+    </AppShell>
+  );
+}

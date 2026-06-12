@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="collective_gold">#F2A900</color>
+    <color name="collective_gold_bright">#FFB000</color>
+    <color name="collective_gold_soft">#FFF1C7</color>
+    <color name="collective_cream">#FFF8EE</color>
+    <color name="collective_card">#FFFDF8</color>
+    <color name="collective_background">#FFF8EE</color>
+    <color name="collective_surface">#FFFDF8</color>
+    <color name="collective_text">#111111</color>
+    <color name="collective_muted">#6E6E6E</color>
+    <color name="collective_line">#EFE7D8</color>
+    <color name="collective_success">#22C55E</color>
+</resources>

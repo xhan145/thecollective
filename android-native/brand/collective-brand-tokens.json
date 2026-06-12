@@ -1,0 +1,64 @@
+{
+  "brand": "Collective",
+  "version": "2.0-final-logo-redesign",
+  "logo": {
+    "description": "Wide open C, three people, open book base. Single-color gold production mark.",
+    "primaryColor": "#F2A900",
+    "doNotUse": [
+      "old sunrise/rays logo",
+      "progress rising bar logo",
+      "public clout badge treatment",
+      "random gradients in production UI"
+    ]
+  },
+  "colors": {
+    "Collective Gold": "#F2A900",
+    "Collective Gold Bright": "#FFB000",
+    "Collective Soft": "#FFF1C7",
+    "Collective Cream": "#FFF8EE",
+    "Collective Card": "#FFFDF8",
+    "Collective Text": "#111111",
+    "Collective Muted": "#6E6E6E",
+    "Collective Success": "#22C55E",
+    "Collective Line": "#EFE7D8",
+    "Deep Evergreen Optional": "#18382F",
+    "Navy Green Optional": "#063544"
+  },
+  "radii": {
+    "card": 18,
+    "sheetTop": 28,
+    "pill": 999
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "xxl": 32
+  },
+  "typography": {
+    "ui": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+    "wordmark": "Georgia, Cormorant Garamond, Fraunces, serif"
+  },
+  "copy": {
+    "use": [
+      "Small steps. Real progress.",
+      "Choose a direction.",
+      "Practice one small step.",
+      "Show what you practiced.",
+      "Feedback helps you improve.",
+      "Progress you can build on."
+    ],
+    "avoid": [
+      "Go viral",
+      "Followers",
+      "Likes",
+      "Influencer",
+      "Leaderboard",
+      "Crush it",
+      "Dominate",
+      "Elite"
+    ]
+  }
+}

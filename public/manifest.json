@@ -1,0 +1,24 @@
+{
+  "name": "SIGNAL//FLOW",
+  "short_name": "S//F",
+  "description": "Find them before they break.",
+  "start_url": "/discover",
+  "display": "standalone",
+  "background_color": "#07080D",
+  "theme_color": "#07080D",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/brand/signal_flow_icon_dark_bg.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/signal_flow_social_avatar.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

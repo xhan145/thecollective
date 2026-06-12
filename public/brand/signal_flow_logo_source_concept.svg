@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <rect width="1200" height="1200" fill="#08090B"/>
+  <text x="600" y="720" text-anchor="middle" font-family="Inter Display, Arial, sans-serif" font-weight="900" font-size="760" fill="#F2F0E8">S</text>
+  <polyline points="130,620 410,620 450,560 505,690 570,430 645,760 705,505 760,650 815,620 1070,620" fill="none" stroke="#F2F0E8" stroke-width="28" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

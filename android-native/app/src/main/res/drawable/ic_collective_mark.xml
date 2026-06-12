@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Collective primary mark — official brand package v2.0 (android/ic_collective_mark.xml).
+  Wide open capital C, three people in the center, open book base.
+  Single flat gold #F2A900; tinted at render time via Compose (CollectiveMark).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path android:strokeColor="#F2A900" android:strokeWidth="88" android:strokeLineCap="butt" android:fillColor="@android:color/transparent" android:pathData="M762,220 A364,364 0,1 0,792 782"/>
+    <path android:fillColor="#F2A900" android:pathData="M190,635 C317,635 437,724 512,858 C386,842 270,770 190,635 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M834,635 C707,635 587,724 512,858 C638,842 754,770 834,635 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M235,598 C341,612 433,680 512,828 C414,761 326,721 225,708 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M789,598 C683,612 591,680 512,828 C610,761 698,721 799,708 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M512,269 a45,45 0,1 0,0.1 0 M448,429 Q448,380 497,380 L527,380 Q576,380 576,429 L576,665 Q576,686 561,701 L512,750 L463,701 Q448,686 448,665 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M405,334 a40,40 0,1 0,0.1 0 M350,486 Q350,438 398,438 L412,438 Q460,438 460,486 L460,675 Q403,634 350,612 Z"/>
+    <path android:fillColor="#F2A900" android:pathData="M619,334 a40,40 0,1 0,0.1 0 M564,486 Q564,438 612,438 L626,438 Q674,438 674,486 L674,612 Q621,634 564,675 Z"/>
+</vector>
