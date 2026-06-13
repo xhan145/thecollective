@@ -1,73 +1,37 @@
 import type { AppFeedback, BetaAppSnapshot, Cohort, Direction, Feedback, PracticePrompt, Proof, TrustEvent, UserProfile } from "./betaTypes";
 
+// ---------------------------------------------------------------------------
+// DEMO DATA SWITCH
+// ---------------------------------------------------------------------------
+// The big "active community" dataset below only fills DEMO mode (no backend).
+// To go live with empty real data, set NEXT_PUBLIC_DEMO_SEED=false (and/or
+// connect Supabase, which loads real data and ignores this seed's user data).
+const DEMO_SEED_ENABLED = process.env.NEXT_PUBLIC_DEMO_SEED !== "false";
+
 const now = "2026-06-09T13:00:00.000Z";
+const BASE_MS = Date.parse(now);
+const iso = (minutesAgo: number) => new Date(BASE_MS - minutesAgo * 60_000).toISOString();
 
-export const seedUsers: UserProfile[] = [
-  { id: "user-alex", displayName: "Alex", initials: "A", role: "founder", cohortId: "founding-circle", directionIds: ["direction-confidence", "direction-communication"], createdAt: now },
-  { id: "user-jordan", displayName: "Jordan", initials: "J", role: "member", cohortId: "founding-circle", directionIds: ["direction-momentum"], createdAt: now },
-  { id: "user-taylor", displayName: "Taylor", initials: "T", role: "member", cohortId: "founding-circle", directionIds: ["direction-communication"], createdAt: now },
-  { id: "user-morgan", displayName: "Morgan", initials: "M", role: "member", cohortId: "founding-circle", directionIds: ["direction-self-trust"], createdAt: now },
-  { id: "user-casey", displayName: "Casey", initials: "C", role: "member", cohortId: "founding-circle", directionIds: ["direction-contribution"], createdAt: now },
-  { id: "user-riley", displayName: "Riley", initials: "R", role: "member", cohortId: "founding-circle", directionIds: ["direction-confidence"], createdAt: now },
-  { id: "user-sam", displayName: "Sam", initials: "S", role: "member", cohortId: "founding-circle", directionIds: ["direction-momentum"], createdAt: now },
-  { id: "user-jamie", displayName: "Jamie", initials: "J", role: "member", cohortId: "founding-circle", directionIds: ["direction-self-trust"], createdAt: now },
-  { id: "user-drew", displayName: "Drew", initials: "D", role: "member", cohortId: "founding-circle", directionIds: ["direction-contribution"], createdAt: now },
-  { id: "user-quinn", displayName: "Quinn", initials: "Q", role: "member", cohortId: "founding-circle", directionIds: ["direction-communication"], createdAt: now },
-  { id: "user-gregory", displayName: "Gregory", initials: "G", role: "admin", cohortId: "founding-circle", directionIds: ["direction-contribution"], createdAt: now }
-];
+// Deterministic PRNG so server and client render identical seed data (no hydration mismatch).
+function makeRng(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+const pick = <T,>(rng: () => number, arr: T[]) => arr[Math.floor(rng() * arr.length) % arr.length];
 
-export const seedCohorts: Cohort[] = [
-  {
-    id: "founding-circle",
-    name: "Founding Circle",
-    description: "A closed beta cohort practicing confidence, communication, and contribution.",
-    status: "closed",
-    memberIds: seedUsers.map((user) => user.id),
-    createdAt: now
-  }
-];
+// ---------------------------------------------------------------------------
+// Static content (kept in both demo and live modes)
+// ---------------------------------------------------------------------------
 
 export const seedDirections: Direction[] = [
-  {
-    id: "direction-confidence",
-    slug: "confidence",
-    title: "Confidence",
-    subtitle: "Practice one clear step before it feels perfect.",
-    description: "Build calm confidence through small proof-backed attempts.",
-    promptIds: ["say-clear-thing", "name-one-preference"]
-  },
-  {
-    id: "direction-communication",
-    slug: "communication",
-    title: "Communication",
-    subtitle: "Say what matters with clarity and care.",
-    description: "Practice voice notes, useful questions, and simple explanations.",
-    promptIds: ["ask-useful-question", "explain-idea-simply"]
-  },
-  {
-    id: "direction-momentum",
-    slug: "momentum",
-    title: "Momentum",
-    subtitle: "Build consistency without pressure.",
-    description: "Turn effort into a repeatable rhythm that feels safe to keep.",
-    promptIds: ["five-minute-step", "close-one-loop"]
-  },
-  {
-    id: "direction-self-trust",
-    slug: "self-trust",
-    title: "Self-trust",
-    subtitle: "Notice evidence that you follow through.",
-    description: "Capture proof of honest effort and use feedback gently.",
-    promptIds: ["honest-reflection", "practice-boundary"]
-  },
-  {
-    id: "direction-contribution",
-    slug: "contribution",
-    title: "Contribution",
-    subtitle: "Help others safely when you have useful context.",
-    description: "Give specific feedback without chasing attention or status.",
-    promptIds: ["give-specific-feedback", "spot-next-step"]
-  }
+  { id: "direction-confidence", slug: "confidence", title: "Confidence", subtitle: "Practice one clear step before it feels perfect.", description: "Build calm confidence through small proof-backed attempts.", promptIds: ["say-clear-thing", "name-one-preference"] },
+  { id: "direction-communication", slug: "communication", title: "Communication", subtitle: "Say what matters with clarity and care.", description: "Practice voice notes, useful questions, and simple explanations.", promptIds: ["ask-useful-question", "explain-idea-simply"] },
+  { id: "direction-momentum", slug: "momentum", title: "Momentum", subtitle: "Build consistency without pressure.", description: "Turn effort into a repeatable rhythm that feels safe to keep.", promptIds: ["five-minute-step", "close-one-loop"] },
+  { id: "direction-self-trust", slug: "self-trust", title: "Self-trust", subtitle: "Notice evidence that you follow through.", description: "Capture proof of honest effort and use feedback gently.", promptIds: ["honest-reflection", "practice-boundary"] },
+  { id: "direction-contribution", slug: "contribution", title: "Contribution", subtitle: "Help others safely when you have useful context.", description: "Give specific feedback without chasing attention or status.", promptIds: ["give-specific-feedback", "spot-next-step"] }
 ];
 
 export const seedPrompts: PracticePrompt[] = [
@@ -83,69 +47,202 @@ export const seedPrompts: PracticePrompt[] = [
   { id: "spot-next-step", directionId: "direction-contribution", title: "Spot the next step", description: "Help someone choose one safe next action.", prompt: "Read a proof and suggest one small next step inside their request.", type: "conversation", estimatedMinutes: 7, beginnerSafe: true }
 ];
 
-export const seedProofs: Proof[] = [
+// ---------------------------------------------------------------------------
+// Demo community generator
+// ---------------------------------------------------------------------------
+
+const NAMES: [string, string][] = [
+  ["Alex", "A"], ["Jordan", "J"], ["Taylor", "T"], ["Morgan", "M"], ["Casey", "C"],
+  ["Riley", "R"], ["Sam", "S"], ["Jamie", "J"], ["Drew", "D"], ["Quinn", "Q"],
+  ["Avery", "A"], ["Parker", "P"], ["Reese", "R"], ["Skyler", "S"], ["Devon", "D"],
+  ["Harper", "H"], ["Rowan", "R"], ["Emerson", "E"], ["Finley", "F"], ["Sage", "S"],
+  ["Kai", "K"], ["Noor", "N"], ["Luca", "L"], ["Mateo", "M"], ["Priya", "P"],
+  ["Aisha", "A"], ["Diego", "D"], ["Lena", "L"], ["Omar", "O"], ["Gregory", "G"]
+];
+
+const DIRECTION_IDS = seedDirections.map((d) => d.id);
+const PROMPTS_BY_DIRECTION: Record<string, string[]> = seedDirections.reduce((acc, d) => {
+  acc[d.id] = d.promptIds;
+  return acc;
+}, {} as Record<string, string[]>);
+
+const PROOF_LINES: Record<string, { title: string; body: string }[]> = {
+  "direction-confidence": [
+    { title: "Said one clear thing in standup.", body: "I shared a single idea without softening it first. It felt awkward but clean." },
+    { title: "Named a preference out loud.", body: "I said which option I actually preferred instead of 'whatever works'." },
+    { title: "Recorded a 60-second intro.", body: "First take was shaky, second take was calmer. Kept the second one." }
+  ],
+  "direction-communication": [
+    { title: "Asked one useful question in planning.", body: "Instead of proving I understood, I asked what would unblock the team." },
+    { title: "Explained my idea in three sentences.", body: "Point, example, next step. People nodded instead of looking confused." },
+    { title: "Rewrote a rambly message.", body: "Cut it from a paragraph to two clear lines before sending." }
+  ],
+  "direction-momentum": [
+    { title: "Did one five-minute step.", body: "Opened the doc I was avoiding and wrote the first heading. That was enough." },
+    { title: "Closed one open loop.", body: "Replied to the email that had been sitting for a week." },
+    { title: "Kept a tiny streak honest.", body: "Three small steps, three days. No pressure, just showing up." }
+  ],
+  "direction-self-trust": [
+    { title: "Wrote an honest reflection.", body: "What I tried, what changed, what I'll try next. No judgment, just notes." },
+    { title: "Practiced a calm boundary.", body: "Drafted a clear 'not yet' instead of an apology." },
+    { title: "Noticed I followed through.", body: "Logged proof that I did the thing I said I would." }
+  ],
+  "direction-contribution": [
+    { title: "Gave specific feedback to a teammate.", body: "One thing that worked, one useful next step. Responded to the work, not the person." },
+    { title: "Spotted a small next step for someone.", body: "Suggested one safe action inside what they actually asked for." },
+    { title: "Helped without taking over.", body: "Offered context, then let them decide." }
+  ]
+};
+
+const FEEDBACK_BY_TONE: Record<string, string[]> = {
+  kind: ["This took courage — nice work showing up.", "Your example made it click for me.", "Calm and clear. Easy to follow.", "I can tell you practiced this."],
+  specific: ["The second sentence was the clearest part.", "Naming the preference up front made it land.", "The structure (point, example, step) really worked.", "Cutting the intro made it stronger."],
+  "next-step": ["Try slowing down the first line next time.", "One concrete number would make it even clearer.", "Maybe end with the single thing you want remembered.", "Next time, ask the question before explaining."]
+};
+
+const TONES: Feedback["tone"][] = ["kind", "specific", "next-step"];
+const MEDIA: Proof["mediaType"][] = ["text", "audio", "video", "image", "text", "text"];
+
+function buildDemoUsers(): UserProfile[] {
+  return NAMES.map(([displayName, initials], i) => ({
+    id: `user-${displayName.toLowerCase()}`,
+    displayName,
+    initials,
+    role: i === 0 ? "founder" : displayName === "Gregory" ? "admin" : "member",
+    cohortId: "founding-circle",
+    directionIds: [DIRECTION_IDS[i % DIRECTION_IDS.length]],
+    createdAt: iso(60 * 24 * (NAMES.length - i))
+  }));
+}
+
+interface GeneratedCommunity {
+  users: UserProfile[];
+  proofs: Proof[];
+  feedback: Feedback[];
+  trustEvents: TrustEvent[];
+  appFeedback: AppFeedback[];
+}
+
+function generateCommunity(): GeneratedCommunity {
+  const rng = makeRng(20260609);
+  const users = buildDemoUsers();
+  const proofs: Proof[] = [];
+  const feedback: Feedback[] = [];
+  const trustEvents: TrustEvent[] = [];
+
+  let proofIdx = 0;
+  let fbIdx = 0;
+  let teIdx = 0;
+
+  users.forEach((user, ui) => {
+    const directionId = user.directionIds[0];
+    const count = 1 + Math.floor(rng() * 3); // 1..3 proofs each
+    for (let p = 0; p < count; p++) {
+      const promptId = pick(rng, PROMPTS_BY_DIRECTION[directionId]);
+      const line = pick(rng, PROOF_LINES[directionId]);
+      const proofId = `proof-${proofIdx++}`;
+      const createdMin = 30 + proofIdx * 137 + Math.floor(rng() * 90);
+      const proof: Proof = {
+        id: proofId,
+        userId: user.id,
+        promptId,
+        directionId,
+        title: line.title,
+        body: line.body,
+        mediaType: pick(rng, MEDIA),
+        attachments: [],
+        status: "submitted",
+        visibility: "cohort",
+        feedbackIds: [],
+        createdAt: iso(createdMin)
+      };
+
+      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "proof", points: 5, label: "Submitted proof from practice", sourceId: proofId, createdAt: proof.createdAt });
+
+      const fbCount = Math.floor(rng() * 4); // 0..3 feedback notes
+      for (let f = 0; f < fbCount; f++) {
+        const author = users[(ui + 1 + Math.floor(rng() * (users.length - 1))) % users.length];
+        if (author.id === user.id) continue;
+        const tone = TONES[(f + proofIdx) % TONES.length];
+        const helpful = rng() > 0.5;
+        const fbId = `fb-${fbIdx++}`;
+        feedback.push({
+          id: fbId,
+          proofId,
+          authorId: author.id,
+          recipientId: user.id,
+          body: pick(rng, FEEDBACK_BY_TONE[tone]),
+          tone,
+          helpful,
+          createdAt: iso(Math.max(5, createdMin - 20 - f * 7))
+        });
+        proof.feedbackIds.push(fbId);
+        proof.status = "feedback-ready";
+        trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "peer-feedback", points: 3, label: "Gave one useful feedback note", sourceId: fbId, createdAt: iso(Math.max(4, createdMin - 21 - f * 7)) });
+        if (helpful) trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "helpful", points: 7, label: "Feedback marked helpful", sourceId: fbId, createdAt: iso(Math.max(3, createdMin - 25 - f * 7)) });
+      }
+
+      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "practice", points: 5, label: "Completed a practice", sourceId: promptId, createdAt: iso(createdMin + 15) });
+      proofs.push(proof);
+    }
+  });
+
+  proofs.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+
+  const appCats: AppFeedback["category"][] = ["bug", "confusing", "idea", "safety", "other"];
+  const appBodies = [
+    "Loved how calm the home screen feels.",
+    "Wanted proof privacy explained before choosing a file.",
+    "The sliding nav looks great on my phone.",
+    "Could the trust snapshot show a small streak?",
+    "Install guide should mention Safari's Share button.",
+    "Feedback form felt safe and structured.",
+    "Animations make it feel like a real app now.",
+    "Would love a dark mode later.",
+    "Practice prompts are the right size.",
+    "Maybe a way to save a proof as draft."
+  ];
+  const appFeedback: AppFeedback[] = appBodies.map((body, i) => ({
+    id: `app-fb-${i}`,
+    userId: users[(i + 2) % users.length].id,
+    category: appCats[i % appCats.length],
+    body,
+    route: pick(rng, ["/home", "/practice", "/feed", "/proof/new/say-clear-thing", "/install"]),
+    createdAt: iso(120 + i * 95),
+    reviewed: i % 4 === 0
+  }));
+
+  return { users, proofs, feedback, trustEvents, appFeedback };
+}
+
+// ---------------------------------------------------------------------------
+// Minimal seed (DEMO off): static content only, no fake people.
+// ---------------------------------------------------------------------------
+
+const minimalUser: UserProfile = {
+  id: "user-alex", displayName: "Alex", initials: "A", role: "founder",
+  cohortId: "founding-circle", directionIds: ["direction-confidence", "direction-communication"], createdAt: now
+};
+
+const community = DEMO_SEED_ENABLED ? generateCommunity() : null;
+
+export const seedUsers: UserProfile[] = community ? community.users : [minimalUser];
+
+export const seedCohorts: Cohort[] = [
   {
-    id: "proof-team-meeting",
-    userId: "user-alex",
-    promptId: "explain-idea-simply",
-    directionId: "direction-communication",
-    title: "Explained my ideas more clearly in our team meeting.",
-    body: "I practiced explaining one idea with a clear example.",
-    mediaType: "video",
-    attachments: [],
-    status: "feedback-ready",
-    visibility: "cohort",
-    feedbackIds: ["feedback-clearer", "feedback-example", "feedback-slow-first"],
-    createdAt: "2026-06-09T10:00:00.000Z"
-  },
-  {
-    id: "proof-useful-question",
-    userId: "user-jordan",
-    promptId: "ask-useful-question",
-    directionId: "direction-communication",
-    title: "Asked one useful question during planning.",
-    body: "I focused on asking instead of proving.",
-    mediaType: "text",
-    attachments: [],
-    status: "feedback-ready",
-    visibility: "cohort",
-    feedbackIds: ["feedback-question"],
-    createdAt: "2026-06-08T20:00:00.000Z"
-  },
-  {
-    id: "proof-voice-note",
-    userId: "user-taylor",
-    promptId: "say-clear-thing",
-    directionId: "direction-confidence",
-    title: "Recorded a 60-second voice note.",
-    body: "I practiced saying one idea out loud.",
-    mediaType: "audio",
-    attachments: [],
-    status: "submitted",
-    visibility: "cohort",
-    feedbackIds: [],
-    createdAt: "2026-06-07T18:00:00.000Z"
+    id: "founding-circle",
+    name: "Founding Circle",
+    description: "A closed beta cohort practicing confidence, communication, and contribution.",
+    status: "closed",
+    memberIds: seedUsers.map((user) => user.id),
+    createdAt: now
   }
 ];
 
-export const seedFeedback: Feedback[] = [
-  { id: "feedback-clearer", proofId: "proof-team-meeting", authorId: "user-riley", recipientId: "user-alex", body: "Clearer than last time.", tone: "specific", helpful: true, createdAt: "2026-06-09T10:45:00.000Z" },
-  { id: "feedback-example", proofId: "proof-team-meeting", authorId: "user-sam", recipientId: "user-alex", body: "Your example made the idea easier to follow.", tone: "kind", helpful: true, createdAt: "2026-06-09T11:10:00.000Z" },
-  { id: "feedback-slow-first", proofId: "proof-team-meeting", authorId: "user-quinn", recipientId: "user-alex", body: "Try slowing down the first sentence.", tone: "next-step", helpful: false, createdAt: "2026-06-09T11:40:00.000Z" },
-  { id: "feedback-question", proofId: "proof-useful-question", authorId: "user-casey", recipientId: "user-jordan", body: "The question made the planning goal easier to see.", tone: "specific", helpful: true, createdAt: "2026-06-08T21:00:00.000Z" }
-];
-
-export const seedTrustEvents: TrustEvent[] = [
-  { id: "trust-practice-1", userId: "user-alex", type: "practice", points: 5, label: "Completed a communication practice", sourceId: "explain-idea-simply", createdAt: "2026-06-09T09:30:00.000Z" },
-  { id: "trust-proof-1", userId: "user-alex", type: "proof", points: 5, label: "Submitted proof from practice", sourceId: "proof-team-meeting", createdAt: "2026-06-09T10:00:00.000Z" },
-  { id: "trust-helpful-1", userId: "user-alex", type: "helpful", points: 7, label: "Used feedback for the next practice", sourceId: "feedback-clearer", createdAt: "2026-06-09T12:00:00.000Z" },
-  { id: "trust-feedback-1", userId: "user-alex", type: "peer-feedback", points: 3, label: "Gave one useful feedback note", sourceId: "feedback-question", createdAt: "2026-06-08T22:00:00.000Z" }
-];
-
-export const seedAppFeedback: AppFeedback[] = [
-  { id: "app-feedback-1", userId: "user-jamie", category: "confusing", body: "I wanted proof privacy explained before choosing a file.", route: "/proof/new/say-clear-thing", createdAt: "2026-06-08T15:00:00.000Z", reviewed: false },
-  { id: "app-feedback-2", userId: "user-drew", category: "idea", body: "The install guide should mention Safari's Share button more clearly.", route: "/install", createdAt: "2026-06-08T16:15:00.000Z", reviewed: false }
-];
+export const seedProofs: Proof[] = community ? community.proofs : [];
+export const seedFeedback: Feedback[] = community ? community.feedback : [];
+export const seedTrustEvents: TrustEvent[] = community ? community.trustEvents : [];
+export const seedAppFeedback: AppFeedback[] = community ? community.appFeedback : [];
 
 export const seedSnapshot: BetaAppSnapshot = {
   currentUserId: null,
@@ -159,5 +256,8 @@ export const seedSnapshot: BetaAppSnapshot = {
   appFeedback: seedAppFeedback,
   aiInteractions: [],
   aiUserFeedback: [],
-  completedPracticeIds: ["say-clear-thing", "ask-useful-question"]
+  completedPracticeIds: DEMO_SEED_ENABLED ? ["say-clear-thing", "ask-useful-question", "five-minute-step", "honest-reflection"] : []
 };
+
+/** Demo seed status, for badges / debug. */
+export const demoSeedEnabled = DEMO_SEED_ENABLED;
