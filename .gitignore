@@ -24,3 +24,6 @@ android-native/app/build/
 android-native/local.properties
 android-native/.idea/
 *.iml
+
+# Local preview tooling
+.claude/
