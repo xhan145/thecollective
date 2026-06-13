@@ -1,65 +1,98 @@
+"use client";
+
 import Link from "next/link";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { CollectiveMiniMark } from "./Brand";
+import { Reveal, easeOut } from "./motion";
+
+// Material-ish elevation tuned to the warm brand (brown-tinted shadows).
+const ELEVATION =
+  "shadow-[0_1px_2px_rgba(71,52,18,0.06),0_10px_30px_rgba(71,52,18,0.08)]";
+const ELEVATION_HOVER =
+  "0 4px 10px rgba(71,52,18,0.10), 0 18px 44px rgba(71,52,18,0.14)";
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
-    <header className="flex items-start justify-between gap-4">
-      <div>
-        <div className="mb-3 flex items-center gap-2">
-          <CollectiveMiniMark className="h-7 w-11" />
-          <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#6E6E6E]">Collective</span>
+    <Reveal>
+      <header className="flex items-start justify-between gap-4">
+        <div>
+          <div className="mb-3 flex items-center gap-2">
+            <CollectiveMiniMark className="h-7 w-11" />
+            <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#6E6E6E]">Collective</span>
+          </div>
+          <h1 className="text-[31px] font-extrabold leading-tight tracking-tight text-[#111111]">{title}</h1>
+          {subtitle && <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{subtitle}</p>}
         </div>
-        <h1 className="text-[31px] font-extrabold leading-tight tracking-tight text-[#111111]">{title}</h1>
-        {subtitle && <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{subtitle}</p>}
-      </div>
-      {action}
-    </header>
+        {action}
+      </header>
+    </Reveal>
   );
 }
 
-export function Card({ children, className = "", asButton = false, ...props }: ComponentPropsWithoutRef<"div"> & { asButton?: boolean }) {
-  const classes = `rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] shadow-[0_16px_42px_rgba(71,52,18,0.08)] ${className}`;
-  if (asButton) {
-    return (
-      <div role="button" tabIndex={0} className={`${classes} active:scale-[0.99] transition`} {...props}>
-        {children}
-      </div>
-    );
-  }
+export function Card({
+  children,
+  className = "",
+  asButton = false,
+  interactive = false,
+  ...props
+}: HTMLMotionProps<"div"> & { asButton?: boolean; interactive?: boolean }) {
+  const lift = asButton || interactive;
   return (
-    <div className={classes} {...props}>
-      {children}
-    </div>
-  );
-}
-
-export function Button({ children, variant = "primary", className = "", ...props }: ComponentPropsWithoutRef<"button"> & { variant?: "primary" | "secondary" | "quiet" }) {
-  const styles =
-    variant === "primary"
-      ? "bg-[#F2A900] text-white shadow-[0_12px_28px_rgba(242,169,0,0.24)]"
-      : variant === "secondary"
-        ? "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]"
-        : "bg-transparent text-[#6E6E6E]";
-  return (
-    <button
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold transition active:scale-[0.98] disabled:opacity-50 ${styles} ${className}`}
+    <motion.div
+      role={asButton ? "button" : undefined}
+      tabIndex={asButton ? 0 : undefined}
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: easeOut }}
+      whileHover={lift ? { y: -3, boxShadow: ELEVATION_HOVER } : undefined}
+      whileTap={lift ? { scale: 0.99 } : undefined}
+      className={`rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] ${ELEVATION} ${lift ? "cursor-pointer" : ""} ${className}`}
       {...props}
     >
       {children}
-    </button>
+    </motion.div>
   );
 }
 
-export function ButtonLink({ children, variant = "primary", className = "", ...props }: ComponentPropsWithoutRef<typeof Link> & { variant?: "primary" | "secondary" | "quiet" }) {
-  const styles =
-    variant === "primary"
-      ? "bg-[#F2A900] text-white shadow-[0_12px_28px_rgba(242,169,0,0.24)]"
-      : variant === "secondary"
-        ? "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]"
-        : "bg-transparent text-[#6E6E6E]";
+const buttonStyles = {
+  primary: "bg-[#F2A900] text-white shadow-[0_10px_24px_rgba(242,169,0,0.30)]",
+  secondary: "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]",
+  quiet: "bg-transparent text-[#6E6E6E]"
+} as const;
+
+type ButtonVariant = keyof typeof buttonStyles;
+
+export function Button({
+  children,
+  variant = "primary",
+  className = "",
+  ...props
+}: HTMLMotionProps<"button"> & { variant?: ButtonVariant }) {
   return (
-    <Link className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold transition active:scale-[0.98] ${styles} ${className}`} {...props}>
+    <motion.button
+      whileTap={{ scale: 0.96 }}
+      whileHover={variant === "primary" ? { y: -1, boxShadow: "0 14px 30px rgba(242,169,0,0.38)" } : { y: -1 }}
+      transition={{ duration: 0.2, ease: easeOut }}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold disabled:opacity-50 ${buttonStyles[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+export function ButtonLink({
+  children,
+  variant = "primary",
+  className = "",
+  ...props
+}: ComponentPropsWithoutRef<typeof Link> & { variant?: ButtonVariant }) {
+  return (
+    <Link
+      className={`group inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold transition-all duration-200 active:scale-[0.96] hover:-translate-y-[1px] ${buttonStyles[variant]} ${className}`}
+      {...props}
+    >
       {children}
     </Link>
   );
@@ -91,7 +124,13 @@ export function TrustPill({ label }: { label: string }) {
 export function EmptyState({ title, body, cta }: { title: string; body: string; cta?: ReactNode }) {
   return (
     <Card className="p-7 text-center">
-      <CollectiveMiniMark className="mx-auto h-12 w-20" />
+      <motion.div
+        initial={{ scale: 0.85, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: easeOut }}
+      >
+        <CollectiveMiniMark className="mx-auto h-12 w-20" />
+      </motion.div>
       <h3 className="mt-4 text-xl font-extrabold text-[#111111]">{title}</h3>
       <p className="mx-auto mt-2 max-w-[270px] text-sm leading-6 text-[#6E6E6E]">{body}</p>
       {cta && <div className="mt-5">{cta}</div>}
@@ -102,7 +141,14 @@ export function EmptyState({ title, body, cta }: { title: string; body: string; 
 export function SuccessState({ title, body, cta }: { title: string; body: string; cta?: ReactNode }) {
   return (
     <Card className="p-7 text-center">
-      <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#FFF1C7] text-4xl font-black text-[#F2A900]">✓</div>
+      <motion.div
+        className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#FFF1C7] text-4xl font-black text-[#F2A900]"
+        initial={{ scale: 0, rotate: -25 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 220, damping: 14, delay: 0.05 }}
+      >
+        ✓
+      </motion.div>
       <h3 className="mt-4 text-xl font-extrabold text-[#111111]">{title}</h3>
       <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{body}</p>
       {cta && <div className="mt-5">{cta}</div>}
@@ -113,7 +159,7 @@ export function SuccessState({ title, body, cta }: { title: string; body: string
 export function TextArea({ className = "", ...props }: ComponentPropsWithoutRef<"textarea">) {
   return (
     <textarea
-      className={`min-h-32 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 py-3 text-sm leading-6 text-[#111111] outline-none placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7] ${className}`}
+      className={`min-h-32 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 py-3 text-sm leading-6 text-[#111111] outline-none transition placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7] ${className}`}
       {...props}
     />
   );
@@ -122,7 +168,7 @@ export function TextArea({ className = "", ...props }: ComponentPropsWithoutRef<
 export function TextInput({ className = "", ...props }: ComponentPropsWithoutRef<"input">) {
   return (
     <input
-      className={`min-h-12 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 text-sm text-[#111111] outline-none placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7] ${className}`}
+      className={`min-h-12 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 text-sm text-[#111111] outline-none transition placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7] ${className}`}
       {...props}
     />
   );

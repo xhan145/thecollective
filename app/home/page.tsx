@@ -8,6 +8,7 @@ import { DirectionCard, LoopSignalRow, PracticePromptCard, TrustSnapshotCard } f
 import { ProofCard } from "@/components/beta/ProofComponents";
 import { Badge, ButtonLink, Card, EmptyState, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { InstallPwaCard } from "@/components/beta/InstallPwaCard";
+import { AnimatedBar } from "@/components/beta/motion";
 
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
@@ -29,7 +30,7 @@ export default function HomePage() {
           }
         />
 
-        <Card className="p-5">
+        <Card interactive className="p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-bold text-[#111111]">Today's Focus</p>
@@ -39,9 +40,7 @@ export default function HomePage() {
               <ArrowRight size={19} />
             </ButtonLink>
           </div>
-          <div className="mt-4 h-2 rounded-full bg-[#EFE7D8]">
-            <div className="h-2 w-[72%] rounded-full bg-[#F2A900]" />
-          </div>
+          <AnimatedBar value={72} className="mt-4" />
           <p className="mt-3 text-xs font-bold text-[#6E6E6E]">2 of 3 practices completed</p>
         </Card>
 
