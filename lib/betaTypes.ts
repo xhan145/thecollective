@@ -133,7 +133,7 @@ export type ProofDraftInput = {
   promptId: string;
   body: string;
   mediaType: ProofMediaType;
-  attachment?: Omit<ProofAttachment, "id" | "storagePath">;
+  attachment?: Omit<ProofAttachment, "id" | "storagePath"> & { file?: File };
 };
 
 export type FeedbackDraftInput = {

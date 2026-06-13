@@ -8,7 +8,7 @@ import { ButtonLink, Card } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 
 export default function LandingPage() {
-  const { currentUser, enterDemoBeta, firebaseMode } = useBetaApp();
+  const { currentUser, enterDemoBeta, firebaseMode, supabaseEnabled } = useBetaApp();
 
   return (
     <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(26px+env(safe-area-inset-top,0px))] text-[#111111]">
@@ -30,6 +30,10 @@ export default function LandingPage() {
             <ButtonLink href="/home" className="w-full">
               Open Collective <ArrowRight size={17} />
             </ButtonLink>
+          ) : supabaseEnabled ? (
+            <ButtonLink href="/auth" className="w-full">
+              Start closed beta <ArrowRight size={17} />
+            </ButtonLink>
           ) : (
             <button
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#F2A900] px-5 text-sm font-extrabold text-white shadow-[0_12px_28px_rgba(242,169,0,0.24)]"
@@ -38,7 +42,9 @@ export default function LandingPage() {
               Enter demo beta <ArrowRight size={17} />
             </button>
           )}
-          <ButtonLink href="/auth" variant="secondary" className="w-full">Beta sign in</ButtonLink>
+          <ButtonLink href="/auth" variant="secondary" className="w-full">
+            {supabaseEnabled ? "Beta sign in" : "Beta sign in"}
+          </ButtonLink>
         </div>
       </section>
 

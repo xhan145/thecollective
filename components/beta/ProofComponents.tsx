@@ -6,7 +6,7 @@ import type { ChangeEvent } from "react";
 import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/betaTypes";
 import { Button, ButtonLink, Card, TextArea } from "./ui";
 
-export type AttachmentDraft = Omit<ProofAttachment, "id" | "storagePath">;
+export type AttachmentDraft = Omit<ProofAttachment, "id" | "storagePath"> & { file?: File };
 
 const mediaLabels: Record<ProofMediaType, string> = {
   text: "Text reflection",
@@ -51,7 +51,8 @@ export function AttachmentPicker({
       fileName: file.name,
       mimeType: file.type || `${mediaType}/*`,
       sizeBytes: file.size,
-      localUrl
+      localUrl,
+      file
     });
   }
 
