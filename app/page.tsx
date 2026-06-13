@@ -20,7 +20,7 @@ export default function LandingPage() {
       </div>
 
       <section className="pt-14 text-center">
-        <CollectiveMark className="mx-auto h-[92px] w-[190px]" />
+        <CollectiveMark className="mx-auto h-28 w-28" />
         <h1 className="mt-5 text-[38px] font-extrabold leading-[1.02] tracking-tight">Small steps. Real progress.</h1>
         <p className="mx-auto mt-4 max-w-[330px] text-[15px] leading-7 text-[#6E6E6E]">
           Collective helps beta members practice, submit proof, receive useful feedback, and build trust through contribution.

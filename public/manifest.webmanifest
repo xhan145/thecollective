@@ -1,7 +1,7 @@
 {
   "name": "Collective Beta",
   "short_name": "Collective",
-  "description": "Practice, proof, feedback, trust, and contribution.",
+  "description": "Small steps. Real progress. Practice, prove, get feedback, build trust.",
   "id": "/",
   "start_url": "/home",
   "scope": "/",
@@ -10,17 +10,8 @@
   "theme_color": "#FFF8EE",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "/icons/collective-icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/apple-touch-icon.svg",
-      "sizes": "180x180",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

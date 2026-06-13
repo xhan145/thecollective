@@ -10,6 +10,7 @@ import { CollectiveWordmark } from "./Brand";
 import { Badge } from "./ui";
 import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
+import { demoSeedEnabled } from "@/lib/betaData";
 
 const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review"];
 
@@ -19,6 +20,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady } = useBetaApp();
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
   const loading = supabaseEnabled && !authReady && isProtected;
+  // Show the demo-data badge whenever seed data is what's on screen
+  // (no real account loaded). Disappears for real Supabase accounts.
+  const showDemoBadge = demoSeedEnabled && (!currentUser || currentUser.id.startsWith("user-"));
 
   useEffect(() => {
     // Wait until the Supabase session has been checked before redirecting,
@@ -35,7 +39,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/home" aria-label="Collective home">
             <CollectiveWordmark />
           </Link>
-          {isMockMode && <Badge tone="muted">{firebaseMode}</Badge>}
+          {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
         </div>
       </header>
       <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5">

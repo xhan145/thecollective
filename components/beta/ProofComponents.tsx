@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FileAudio, FileText, Image, PlaySquare, Upload, X } from "lucide-react";
-import type { ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/betaTypes";
 import { Button, ButtonLink, Card, TextArea } from "./ui";
 
@@ -139,10 +139,39 @@ export function ProofTypeSelector({ value, onChange }: { value: ProofMediaType; 
   );
 }
 
-export function ProofCard({ proof, feedbackCount }: { proof: Proof; feedbackCount: number }) {
+function timeAgo(iso: string): string {
+  const diff = Math.max(1, Math.floor((Date.now() - Date.parse(iso)) / 1000));
+  const m = Math.floor(diff / 60);
+  const h = Math.floor(m / 60);
+  const d = Math.floor(h / 24);
+  if (d > 0) return `${d}d ago`;
+  if (h > 0) return `${h}h ago`;
+  if (m > 0) return `${m}m ago`;
+  return "just now";
+}
+
+// Render only after mount so SSR/client markup matches (no hydration warning).
+function TimeAgo({ iso }: { iso: string }) {
+  const [label, setLabel] = useState("");
+  useEffect(() => {
+    setLabel(timeAgo(iso));
+  }, [iso]);
+  return <>{label}</>;
+}
+
+export function ProofCard({ proof, feedbackCount, authorName }: { proof: Proof; feedbackCount: number; authorName?: string }) {
+  const name = authorName || "A member";
   return (
     <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`}>
-      <Card className="p-3">
+      <Card interactive className="p-3">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#FFF1C7] text-[11px] font-extrabold text-[#8A5D00]">
+            {name.slice(0, 1).toUpperCase()}
+          </span>
+          <span className="truncate text-xs font-extrabold text-[#111111]">{name}</span>
+          <span className="text-[#D9CDB8]">•</span>
+          <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
+        </div>
         <div className="flex gap-3">
           <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-[#FFF1C7] to-[#FFD986] text-[#8A5D00]">
             {proof.attachments[0]?.mediaType === "image" && proof.attachments[0].localUrl ? (

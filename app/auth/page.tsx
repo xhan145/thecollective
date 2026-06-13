@@ -43,7 +43,7 @@ export default function AuthPage() {
   return (
     <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
       <div className="text-center">
-        <CollectiveMark className="mx-auto h-[92px] w-[190px]" />
+        <CollectiveMark className="mx-auto h-24 w-24" />
         <h1 className="mt-5 text-[32px] font-extrabold leading-tight">
           {supabaseEnabled ? "Welcome to Collective." : "Welcome to Collective beta."}
         </h1>
