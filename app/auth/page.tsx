@@ -93,6 +93,21 @@ export default function AuthPage() {
           >
             {mode === "signup" ? "I already have an account" : "I need an account"}
           </button>
+          <div className="flex items-center gap-3 py-1">
+            <span className="h-px flex-1 bg-[#EFE7D8]" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#9B958B]">or</span>
+            <span className="h-px flex-1 bg-[#EFE7D8]" />
+          </div>
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => {
+              enterDemoBeta("user-alex");
+              router.push("/home");
+            }}
+          >
+            Explore the demo (no account)
+          </Button>
         </Card>
       ) : (
         <Card className="mt-8 space-y-4 p-5">

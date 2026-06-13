@@ -65,6 +65,37 @@ export function CountUp({ value, className }: { value: number; className?: strin
   return <motion.span className={className}>{rounded}</motion.span>;
 }
 
+/** Shimmering skeleton placeholder for loading states. */
+export function Skeleton({ className = "" }: { className?: string }) {
+  return (
+    <div className={`relative overflow-hidden rounded-[18px] bg-[#F2E9D8] ${className}`}>
+      <motion.div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)" }}
+        animate={{ x: ["-110%", "110%"] }}
+        transition={{ repeat: Infinity, duration: 1.3, ease: "linear" }}
+      />
+    </div>
+  );
+}
+
+/** Generic loading screen for authed routes while data loads. */
+export function ScreenSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-8 w-2/3" />
+      <Skeleton className="h-28 w-full" />
+      <div className="grid grid-cols-3 gap-2">
+        <Skeleton className="h-20" />
+        <Skeleton className="h-20" />
+        <Skeleton className="h-20" />
+      </div>
+      <Skeleton className="h-24 w-full" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
 /** Progress bar that animates its fill on mount / when value changes. */
 export function AnimatedBar({ value, className = "" }: { value: number; className?: string }) {
   const pct = Math.max(0, Math.min(100, value));

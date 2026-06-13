@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { CollectiveWordmark } from "./Brand";
 import { Badge } from "./ui";
+import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
 
 const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review"];
@@ -15,13 +16,17 @@ const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, isMockMode, firebaseMode } = useBetaApp();
+  const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady } = useBetaApp();
+  const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+  const loading = supabaseEnabled && !authReady && isProtected;
 
   useEffect(() => {
-    if (!currentUser && protectedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+    // Wait until the Supabase session has been checked before redirecting,
+    // otherwise a hard refresh on an authed route bounces to /auth.
+    if (authReady && !currentUser && isProtected) {
       router.replace("/auth");
     }
-  }, [currentUser, pathname, router]);
+  }, [authReady, currentUser, isProtected, router]);
 
   return (
     <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)]">
@@ -34,9 +39,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5">
-        <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          {children}
-        </motion.div>
+        {loading ? (
+          <ScreenSkeleton />
+        ) : (
+          <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            {children}
+          </motion.div>
+        )}
       </div>
       <BottomNav />
     </main>
