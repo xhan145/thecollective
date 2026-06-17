@@ -26,8 +26,11 @@ import {
   persistMarkHelpful,
   persistProof,
   recordPracticeCompletion,
+  updateOnboarding,
+  updateProfile as updateProfileRow,
   type BetaUserBundle
 } from "@/lib/supabase/betaRepository";
+import { loadContent, type CollectiveContent } from "@/lib/supabase/contentRepository";
 
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
@@ -43,9 +46,11 @@ type BetaAppContextValue = {
   trustSummary: TrustSummary;
   enterDemoBeta: (userId?: string) => void;
   signOutDemo: () => void;
-  signUpWithEmail: (email: string, password: string) => Promise<AuthResult>;
+  signUpWithEmail: (email: string, password: string, meta?: { displayName?: string; username?: string }) => Promise<AuthResult>;
   signInWithEmail: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
+  completeOnboarding: (directionId: string) => Promise<void>;
+  updateProfile: (fields: { displayName?: string; username?: string; bio?: string }) => Promise<void>;
   completePractice: (promptId: string) => void;
   submitProof: (input: ProofDraftInput) => Proof | null;
   addFeedback: (input: FeedbackDraftInput) => Feedback | null;
@@ -103,13 +108,15 @@ function titleFromBody(body: string, fallback: string) {
 }
 
 /** Merge seeded static content with Supabase-loaded user data for the authed member. */
-function applyBundle(bundle: BetaUserBundle, uid: string): BetaAppSnapshot {
+function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveContent | null): BetaAppSnapshot {
   const usersById = new Map<string, UserProfile>();
   for (const u of seedSnapshot.users) usersById.set(u.id, u);
   for (const p of bundle.profiles) usersById.set(p.id, p);
   if (bundle.profile) usersById.set(bundle.profile.id, bundle.profile);
   return {
     ...seedSnapshot,
+    directions: content?.directions ?? seedSnapshot.directions,
+    prompts: content?.prompts ?? seedSnapshot.prompts,
     currentUserId: uid,
     users: Array.from(usersById.values()),
     proofs: bundle.proofs,
@@ -129,6 +136,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [authReady, setAuthReady] = useState(!supabaseEnabled);
   const authUserIdRef = useRef<string | null>(null);
+  const contentRef = useRef<CollectiveContent | null>(null);
 
   // Demo mode: hydrate from localStorage.
   useEffect(() => {
@@ -150,16 +158,27 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
 
     async function loadFor(uid: string, email: string | null) {
       try {
-        const bundle = await loadUserBundle(supabase!, uid, email);
+        const [bundle, content] = await Promise.all([
+          loadUserBundle(supabase!, uid, email),
+          contentRef.current ? Promise.resolve(contentRef.current) : loadContent(supabase!)
+        ]);
         if (!active) return;
+        contentRef.current = content;
         authUserIdRef.current = uid;
-        setSnapshot(applyBundle(bundle, uid));
+        setSnapshot(applyBundle(bundle, uid, content));
       } catch {
         if (active) setSnapshot({ ...seedSnapshot, currentUserId: uid });
       } finally {
         if (active) setAuthReady(true);
       }
     }
+
+    // Load DB content once (directions + practices) so signed-out screens show real data too.
+    loadContent(supabase).then((content) => {
+      if (!active) return;
+      contentRef.current = content;
+      setSnapshot((current) => ({ ...current, directions: content.directions, prompts: content.prompts }));
+    });
 
     supabase.auth.getSession().then(({ data }) => {
       const user = data.session?.user;
@@ -229,15 +248,26 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       signOutDemo() {
         setSnapshot((current) => ({ ...current, currentUserId: null }));
       },
-      async signUpWithEmail(email, password) {
+      async signUpWithEmail(email, password, meta) {
         if (!writesEnabled) return { error: "Supabase is not configured." };
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
         const { data, error } = await supabase!.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${appUrl}/auth` }
+          options: {
+            emailRedirectTo: `${appUrl}/auth`,
+            data: meta ? { display_name: meta.displayName, username: meta.username } : undefined
+          }
         });
         if (error) return { error: error.message };
+        // If a session exists immediately (email confirmation off), save the chosen
+        // display name + username. Otherwise the trigger's email-derived values stand.
+        if (data.session && meta) {
+          await updateProfileRow(supabase!, data.session.user.id, {
+            displayName: meta.displayName,
+            username: meta.username
+          }).catch(() => {});
+        }
         return { error: null, needsConfirmation: !data.session };
       },
       async signInWithEmail(email, password) {
@@ -248,6 +278,43 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       async signOut() {
         if (writesEnabled) await supabase!.auth.signOut();
         setSnapshot(seedSnapshot);
+      },
+      async completeOnboarding(directionId) {
+        setSnapshot((current) => {
+          if (!current.currentUserId) return current;
+          return {
+            ...current,
+            users: current.users.map((u) =>
+              u.id === current.currentUserId
+                ? { ...u, currentDirectionId: directionId, onboardingCompleted: true, directionIds: [directionId] }
+                : u
+            )
+          };
+        });
+        const uid = authUid();
+        if (writesEnabled && uid) await updateOnboarding(supabase!, uid, directionId).catch(() => {});
+      },
+      async updateProfile(fields) {
+        setSnapshot((current) => {
+          if (!current.currentUserId) return current;
+          return {
+            ...current,
+            users: current.users.map((u) =>
+              u.id === current.currentUserId
+                ? {
+                    ...u,
+                    ...(fields.displayName !== undefined
+                      ? { displayName: fields.displayName, initials: fields.displayName.slice(0, 2).toUpperCase() }
+                      : {}),
+                    ...(fields.username !== undefined ? { username: fields.username } : {}),
+                    ...(fields.bio !== undefined ? { bio: fields.bio } : {})
+                  }
+                : u
+            )
+          };
+        });
+        const uid = authUid();
+        if (writesEnabled && uid) await updateProfileRow(supabase!, uid, fields).catch(() => {});
       },
       completePractice(promptId) {
         let label = "a practice";
@@ -324,19 +391,34 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       addFeedback(input) {
         let created: Feedback | null = null;
         const uid = authUid();
+        const clarity = input.clarityNote?.trim() || "";
+        const useful = input.usefulNote?.trim() || "";
+        const next = input.nextStepNote?.trim() || "";
+        const body =
+          input.body?.trim() ||
+          [
+            clarity && `What was clear: ${clarity}`,
+            useful && `What could be improved: ${useful}`,
+            next && `One useful next step: ${next}`
+          ]
+            .filter(Boolean)
+            .join("\n");
         setSnapshot((current) => {
           const ownerId = uid || current.currentUserId || "user-alex";
           const proof = current.proofs.find((item) => item.id === input.proofId);
-          if (!proof || !input.body.trim()) return current;
+          if (!proof || !body.trim()) return current;
           const feedbackId = makeId("feedback");
           created = {
             id: feedbackId,
             proofId: proof.id,
             authorId: ownerId,
             recipientId: proof.userId,
-            body: input.body.trim(),
-            tone: input.tone,
+            body,
+            tone: input.tone ?? "specific",
             helpful: false,
+            clarityNote: clarity || undefined,
+            usefulNote: useful || undefined,
+            nextStepNote: next || undefined,
             createdAt: new Date().toISOString()
           };
           return {

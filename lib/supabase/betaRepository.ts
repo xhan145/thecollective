@@ -42,6 +42,17 @@ function mapProfile(row: any): UserProfile {
     cohortId: row.cohort_id ?? "founding-circle",
     directionIds: row.direction_ids ?? [],
     createdAt: row.created_at ?? new Date().toISOString(),
+    username: row.username ?? undefined,
+    bio: row.bio ?? undefined,
+    avatarUrl: row.avatar_url ?? undefined,
+    currentDirectionId: row.current_direction_id ?? null,
+    onboardingCompleted: row.onboarding_completed ?? false,
+    trustScore: row.trust_score ?? 0,
+    practiceCount: row.practice_count ?? 0,
+    proofCount: row.proof_count ?? 0,
+    feedbackGivenCount: row.feedback_given_count ?? 0,
+    feedbackReceivedCount: row.feedback_received_count ?? 0,
+    contributionCount: row.contribution_count ?? 0,
   };
 }
 
@@ -67,6 +78,9 @@ function mapFeedback(row: any): Feedback {
     tone: row.tone,
     helpful: row.helpful ?? false,
     createdAt: row.created_at,
+    clarityNote: row.clarity_note ?? undefined,
+    usefulNote: row.useful_note ?? undefined,
+    nextStepNote: row.next_step_note ?? undefined,
   };
 }
 
@@ -180,6 +194,8 @@ export async function loadUserBundle(
       category: row.category,
       body: row.body,
       route: row.route ?? undefined,
+      rating: row.rating ?? undefined,
+      status: row.status ?? undefined,
       createdAt: row.created_at,
       reviewed: row.reviewed ?? false,
     })),
@@ -199,6 +215,66 @@ async function insertTrust(client: SupabaseClient, event: TrustEvent) {
   });
 }
 
+/**
+ * Recompute the acting user's profile counters + trust_score from source tables.
+ * Idempotent and drift-free. RLS only lets a user update their own profile row,
+ * so always call this with the user who performed the action; other users'
+ * counters refresh the next time they load.
+ */
+export async function refreshProfileStats(client: SupabaseClient, userId: string): Promise<void> {
+  const [pc, pr, fg, fr, te] = await Promise.all([
+    client.from("practice_completions").select("id", { count: "exact", head: true }).eq("user_id", userId),
+    client.from("proofs").select("id", { count: "exact", head: true }).eq("user_id", userId),
+    client.from("feedback").select("id", { count: "exact", head: true }).eq("author_id", userId),
+    client.from("feedback").select("id", { count: "exact", head: true }).eq("recipient_id", userId),
+    client.from("trust_events").select("points").eq("user_id", userId),
+  ]);
+  const trustScore = (te.data ?? []).reduce((sum, row: any) => sum + (row.points ?? 0), 0);
+  await client
+    .from("profiles")
+    .update({
+      practice_count: pc.count ?? 0,
+      proof_count: pr.count ?? 0,
+      feedback_given_count: fg.count ?? 0,
+      feedback_received_count: fr.count ?? 0,
+      trust_score: trustScore,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", userId);
+}
+
+/** Persist onboarding completion + chosen direction. */
+export async function updateOnboarding(
+  client: SupabaseClient,
+  userId: string,
+  directionId: string | null,
+): Promise<void> {
+  await client
+    .from("profiles")
+    .update({
+      current_direction_id: directionId,
+      onboarding_completed: true,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", userId);
+}
+
+/** Update editable profile fields (display name / username / bio). */
+export async function updateProfile(
+  client: SupabaseClient,
+  userId: string,
+  fields: { displayName?: string; username?: string; bio?: string },
+): Promise<void> {
+  const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (fields.displayName !== undefined) {
+    patch.display_name = fields.displayName;
+    patch.initials = fields.displayName.slice(0, 2).toUpperCase();
+  }
+  if (fields.username !== undefined) patch.username = fields.username;
+  if (fields.bio !== undefined) patch.bio = fields.bio;
+  await client.from("profiles").update(patch).eq("id", userId);
+}
+
 export async function recordPracticeCompletion(
   client: SupabaseClient,
   userId: string,
@@ -209,6 +285,7 @@ export async function recordPracticeCompletion(
     .from("practice_completions")
     .upsert({ user_id: userId, prompt_id: promptId }, { onConflict: "user_id,prompt_id" });
   await insertTrust(client, makeTrustEvent(userId, "practice", label, promptId));
+  await refreshProfileStats(client, userId);
 }
 
 export async function uploadProofFile(
@@ -257,6 +334,7 @@ export async function persistProof(
   }
 
   await insertTrust(client, makeTrustEvent(proof.userId, "proof", "Submitted proof from practice", proof.id));
+  await refreshProfileStats(client, proof.userId);
 }
 
 export async function persistFeedback(client: SupabaseClient, feedback: Feedback): Promise<void> {
@@ -268,9 +346,13 @@ export async function persistFeedback(client: SupabaseClient, feedback: Feedback
     body: feedback.body,
     tone: feedback.tone,
     helpful: false,
+    clarity_note: feedback.clarityNote ?? null,
+    useful_note: feedback.usefulNote ?? null,
+    next_step_note: feedback.nextStepNote ?? null,
   });
   await client.from("proofs").update({ status: "feedback-ready" }).eq("id", feedback.proofId);
   await insertTrust(client, makeTrustEvent(feedback.authorId, "peer-feedback", "Gave useful feedback", feedback.id));
+  await refreshProfileStats(client, feedback.authorId);
 }
 
 export async function persistMarkHelpful(
@@ -292,6 +374,7 @@ export async function persistAppFeedback(
     category: input.category,
     body: input.body.trim(),
     route: input.route ?? null,
+    rating: input.rating ?? null,
   });
 }
 

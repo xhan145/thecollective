@@ -2,6 +2,6 @@
 
 import { AuthForm } from "@/components/beta/AuthForm";
 
-export default function AuthPage() {
+export default function LoginPage() {
   return <AuthForm initialMode="login" />;
 }

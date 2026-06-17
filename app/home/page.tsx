@@ -13,8 +13,13 @@ import { AnimatedBar } from "@/components/beta/motion";
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
   const latestProof = snapshot.proofs.find((proof) => proof.userId === (currentUser?.id || "user-alex")) || snapshot.proofs[0];
-  const featuredDirection = snapshot.directions.find((direction) => direction.id === "direction-communication") || snapshot.directions[0];
-  const nextPrompt = snapshot.prompts.find((prompt) => !snapshot.completedPracticeIds.includes(prompt.id)) || snapshot.prompts[0];
+  const featuredDirection =
+    snapshot.directions.find((direction) => direction.id === currentUser?.currentDirectionId) ||
+    snapshot.directions.find((direction) => direction.slug === "confident-communication" || direction.slug === "communication") ||
+    snapshot.directions[0];
+  const directionPrompts = snapshot.prompts.filter((prompt) => prompt.directionId === featuredDirection?.id);
+  const promptPool = directionPrompts.length ? directionPrompts : snapshot.prompts;
+  const nextPrompt = promptPool.find((prompt) => !snapshot.completedPracticeIds.includes(prompt.id)) || promptPool[0];
 
   return (
     <AppShell>
@@ -34,7 +39,7 @@ export default function HomePage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-bold text-[#111111]">Today's Focus</p>
-              <h2 className="mt-2 text-xl font-extrabold text-[#111111]">Confident Communication</h2>
+              <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{featuredDirection?.title ?? "Choose a direction"}</h2>
             </div>
             <ButtonLink href="/practice" className="h-11 min-h-11 w-11 px-0" aria-label="Continue today's focus">
               <ArrowRight size={19} />

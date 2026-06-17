@@ -5,8 +5,9 @@ env vars and run the SQL below to switch it to a **live backend**: real
 email/password accounts, and proofs / feedback / trust / practice completions /
 app feedback / proof media that persist per user and sync across devices.
 
-Static content (directions, prompts, cohorts) stays seeded in the app, so no
-content tables are required.
+Directions & practices now live in Supabase tables (migration 013), seeded with
+the launch content; the app falls back to the in-app seed if those tables are
+empty/unreachable.
 
 ## 1. Environment variables
 
@@ -23,20 +24,36 @@ app automatically uses Supabase; otherwise it stays in demo mode.
 
 ## 2. Run the SQL (Dashboard → SQL Editor, in order)
 
-1. `supabase/migrations/010_collective_beta_schema.sql` — tables
+1. `supabase/migrations/010_collective_beta_schema.sql` — core tables
 2. `supabase/migrations/011_collective_beta_rls.sql` — RLS + a trigger that
    auto-creates a `profiles` row for every new auth user
 3. `supabase/migrations/012_collective_beta_storage.sql` — `collective-proof-media`
    bucket + policies
+4. `supabase/migrations/013_directions_practices.sql` — directions + practices tables, RLS, seed
+5. `supabase/migrations/014_profile_extras.sql` — profile fields (username, onboarding_completed, counters) + updated new-user trigger
+6. `supabase/migrations/015_feedback_and_appfeedback.sql` — structured feedback notes + app_feedback rating/status
 
 (The older `supabase/*.sql` files are from the legacy prototype — ignore them.)
+
+## Closed-beta QA checklist (run on the preview or production)
+
+1. Create a new account at `/signup` (display name, username, email, password).
+2. Confirm a `profiles` row exists (username set, `onboarding_completed = false`).
+3. Complete onboarding → row updates `current_direction_id` + `onboarding_completed = true`.
+4. Directions on Home/Directions load from the `directions` table.
+5. Start a practice → `practice_completions` + `trust_events` rows; `profiles.practice_count` ++.
+6. Submit proof → `proofs` row; `proof_count` ++; `trust_score` rises (+proof points).
+7. Give feedback on another member's proof → `feedback` row with clarity/useful/next_step notes; `feedback_given_count` ++.
+8. Submit app feedback at `/app-feedback` → `app_feedback` row (category, rating, message, screen).
+9. Log out, log back in → all data persists.
+10. Second account cannot read the first account's private proofs/trust events (RLS).
 
 ## 3. Auth settings (Dashboard → Authentication → URL Configuration)
 
 - **Site URL:** your `NEXT_PUBLIC_APP_URL`
-- **Redirect URLs:** add
-  - `http://localhost:3000/auth`
-  - `https://<your-domain>/auth`
+- **Redirect URLs:** add (local + production)
+  - `http://localhost:3000/auth`, `/login`, `/signup`
+  - `https://<your-domain>/auth`, `/login`, `/signup`
 
 Email + password is used. If "Confirm email" is on (default), new users confirm
 via the email link before signing in.

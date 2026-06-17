@@ -14,26 +14,31 @@ export default function ProofFeedbackPage() {
   const router = useRouter();
   const { currentUser, trustSummary, getProofById, getFeedbackForProof, addFeedback } = useBetaApp();
   const [sent, setSent] = useState(false);
-  const [draftFeedback, setDraftFeedback] = useState("");
+  const [clarity, setClarity] = useState("");
+  const [useful, setUseful] = useState("");
+  const [nextStep, setNextStep] = useState("");
   const proof = getProofById(params.id);
   const feedback = proof ? getFeedbackForProof(proof.id) : [];
   const aiService = getCollectiveAiService();
 
+  const canSend = Boolean(clarity.trim() || useful.trim() || nextStep.trim());
+
   return (
     <AppShell>
       <div className="space-y-5">
-        <PageHeader title="Get feedback" subtitle="Respond to the practice, not the person." />
+        <PageHeader title="Give feedback" subtitle="Respond to the practice, not the person." />
         {!proof ? (
-          <EmptyState title="Proof not found" body="This local proof is not available in the current beta session." />
+          <EmptyState title="Proof not found" body="This proof is not available in the current session." />
         ) : sent ? (
           <SuccessState
             title="Feedback saved."
-            body="Feedback saved for the next practice."
+            body="Useful feedback helps someone take their next small step."
             cta={<Button className="w-full" onClick={() => router.push(`/proof/${proof.id}`)}>Back to proof</Button>}
           />
         ) : (
           <>
             <ProofDetail proof={proof} feedback={feedback} />
+
             <AiSupportCard
               title="Make my feedback more useful"
               description="AI can suggest clearer wording. You review it and choose what to use."
@@ -42,9 +47,9 @@ export default function ProofFeedbackPage() {
               sourceType="PEER_FEEDBACK"
               sourceId={proof.id}
               proofId={proof.id}
-              inputSummary={draftFeedback || `Feedback draft for ${proof.title}`}
+              inputSummary={[clarity, useful, nextStep].filter(Boolean).join(" / ") || `Feedback for ${proof.title}`}
               onGenerate={() =>
-                aiService.generateFeedbackSuggestion(proof, draftFeedback, {
+                aiService.generateFeedbackSuggestion(proof, [clarity, useful, nextStep].filter(Boolean).join("\n"), {
                   userId: currentUser?.id || "user-alex",
                   displayName: currentUser?.displayName || "Alex",
                   cohortId: currentUser?.cohortId || "founding-circle",
@@ -53,36 +58,58 @@ export default function ProofFeedbackPage() {
               }
               onApply={(response) => {
                 if (response.structured.kind !== "feedbackCoach") return;
-                const suggestion = response.structured.data;
-                setDraftFeedback(
-                  [
-                    `What worked: ${suggestion.whatWorked}`,
-                    `One useful suggestion: ${suggestion.suggestion}`,
-                    `Encouragement: ${suggestion.encouragement}`
-                  ].join("\n")
-                );
+                const s = response.structured.data;
+                if (s.whatWorked) setClarity(s.whatWorked);
+                if (s.suggestion) setUseful(s.suggestion);
+                if (s.encouragement) setNextStep(s.encouragement);
               }}
-              applyLabel="Apply to draft"
+              applyLabel="Apply to my notes"
             />
+
             <form
-              className="space-y-3"
+              className="space-y-4"
               onSubmit={(event) => {
                 event.preventDefault();
-                if (!draftFeedback.trim()) return;
-                addFeedback({ proofId: proof.id, body: draftFeedback, tone: "specific" });
+                if (!canSend) return;
+                addFeedback({
+                  proofId: proof.id,
+                  clarityNote: clarity,
+                  usefulNote: useful,
+                  nextStepNote: nextStep
+                });
                 setSent(true);
               }}
             >
-              <TextArea
-                value={draftFeedback}
-                onChange={(event) => setDraftFeedback(event.target.value)}
-                placeholder="Write one specific thing that worked and one useful next step..."
-              />
-              <Button type="submit" className="w-full">Send feedback</Button>
+              <FeedbackField label="What was clear?" value={clarity} onChange={setClarity} placeholder="Name one thing that landed." />
+              <FeedbackField label="What could be improved?" value={useful} onChange={setUseful} placeholder="One specific, kind suggestion." />
+              <FeedbackField label="One useful next step" value={nextStep} onChange={setNextStep} placeholder="A small step they could try next." />
+              <p className="text-center text-xs leading-5 text-[#9B958B]">
+                Be specific, useful, and kind. Feedback helps someone improve. It does not define them.
+              </p>
+              <Button type="submit" className="w-full" disabled={!canSend}>Send feedback</Button>
             </form>
           </>
         )}
       </div>
     </AppShell>
+  );
+}
+
+function FeedbackField({
+  label,
+  value,
+  onChange,
+  placeholder
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-extrabold text-[#111111]">{label}</span>
+      <TextArea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="min-h-20" />
+    </label>
   );
 }

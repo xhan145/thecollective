@@ -25,12 +25,24 @@ export function AppShell({ children }: { children: ReactNode }) {
   const showDemoBadge = demoSeedEnabled && (!currentUser || currentUser.id.startsWith("user-"));
 
   useEffect(() => {
+    if (!authReady) return;
     // Wait until the Supabase session has been checked before redirecting,
     // otherwise a hard refresh on an authed route bounces to /auth.
-    if (authReady && !currentUser && isProtected) {
+    if (!currentUser && isProtected) {
       router.replace("/auth");
+      return;
     }
-  }, [authReady, currentUser, isProtected, router]);
+    // Real (Supabase) users who haven't onboarded go to onboarding first.
+    if (
+      supabaseEnabled &&
+      currentUser &&
+      currentUser.onboardingCompleted === false &&
+      isProtected &&
+      !pathname.startsWith("/onboarding")
+    ) {
+      router.replace("/onboarding");
+    }
+  }, [authReady, currentUser, isProtected, supabaseEnabled, pathname, router]);
 
   return (
     <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)]">

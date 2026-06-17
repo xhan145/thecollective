@@ -214,16 +214,36 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
         <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">Feedback helps you improve. It does not define you.</p>
         <div className="mt-4 space-y-2">
           {feedback.length ? (
-            feedback.map((item) => (
-              <div key={item.id} className="rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#38322A]">
-                {item.body}
-              </div>
-            ))
+            feedback.map((item) => {
+              const hasNotes = item.clarityNote || item.usefulNote || item.nextStepNote;
+              return (
+                <div key={item.id} className="space-y-2 rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#38322A]">
+                  {hasNotes ? (
+                    <>
+                      {item.clarityNote && <FeedbackNote label="What was clear" value={item.clarityNote} />}
+                      {item.usefulNote && <FeedbackNote label="What could be improved" value={item.usefulNote} />}
+                      {item.nextStepNote && <FeedbackNote label="One useful next step" value={item.nextStepNote} />}
+                    </>
+                  ) : (
+                    item.body
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p className="rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#6E6E6E]">No feedback yet. Feedback can come next.</p>
           )}
         </div>
       </Card>
+    </div>
+  );
+}
+
+function FeedbackNote({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[11px] font-extrabold uppercase tracking-wide text-[#9B958B]">{label}</p>
+      <p className="text-sm leading-6 text-[#38322A]">{value}</p>
     </div>
   );
 }

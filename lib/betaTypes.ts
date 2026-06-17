@@ -16,6 +16,18 @@ export type UserProfile = {
   cohortId: string;
   directionIds: string[];
   createdAt: string;
+  // Closed-beta profile fields (optional so demo seed literals stay valid).
+  username?: string;
+  bio?: string;
+  avatarUrl?: string;
+  currentDirectionId?: string | null;
+  onboardingCompleted?: boolean;
+  trustScore?: number;
+  practiceCount?: number;
+  proofCount?: number;
+  feedbackGivenCount?: number;
+  feedbackReceivedCount?: number;
+  contributionCount?: number;
 };
 
 export type Cohort = {
@@ -29,11 +41,12 @@ export type Cohort = {
 
 export type Direction = {
   id: string;
-  slug: DirectionCategory;
+  slug: DirectionCategory | string;
   title: string;
   subtitle: string;
   description: string;
   promptIds: string[];
+  beginnerSafePrompt?: string;
 };
 
 export type PracticePrompt = {
@@ -45,6 +58,8 @@ export type PracticePrompt = {
   type: PromptType;
   estimatedMinutes: number;
   beginnerSafe: boolean;
+  instructions?: string;
+  proofPrompt?: string;
 };
 
 export type ProofAttachment = {
@@ -81,6 +96,10 @@ export type Feedback = {
   tone: FeedbackTone;
   helpful: boolean;
   createdAt: string;
+  // Structured beginner-safe feedback (optional; body stays as a joined summary).
+  clarityNote?: string;
+  usefulNote?: string;
+  nextStepNote?: string;
 };
 
 export type TrustEvent = {
@@ -110,6 +129,8 @@ export type AppFeedback = {
   category: AppFeedbackCategory;
   body: string;
   route?: string;
+  rating?: number;
+  status?: string;
   createdAt: string;
   reviewed: boolean;
 };
@@ -138,13 +159,18 @@ export type ProofDraftInput = {
 
 export type FeedbackDraftInput = {
   proofId: string;
-  body: string;
-  tone: FeedbackTone;
+  tone?: FeedbackTone;
+  // Either pass a single body, or the three structured notes (preferred).
+  body?: string;
+  clarityNote?: string;
+  usefulNote?: string;
+  nextStepNote?: string;
 };
 
 export type AppFeedbackDraftInput = {
   category: AppFeedbackCategory;
   body: string;
   route?: string;
+  rating?: number;
 };
 import type { AiInteraction, AiUserFeedback } from "./aiTypes";
