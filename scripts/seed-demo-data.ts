@@ -19,8 +19,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { config as loadEnv } from "dotenv";
 import {
-  buildPersonas, DEMO_COHORT, DIRECTIONS, FEEDBACK_NOTES, mulberry32,
-  pickProofKind, PROOF_TEMPLATES, SIZES, type Persona, type SizeName
+  buildPersonas, DEMO_COHORT, DIRECTIONS, FEEDBACK_NOTES, FEEDBACK_REQUEST_OPENERS,
+  mulberry32, PEER_NOTE_OPENERS, PEER_REPLIES, pickProofKind, PROOF_TEMPLATES, SIZES,
+  USEFUL_REASONS, type Persona, type SizeName
 } from "./demo/shared";
 
 loadEnv({ path: ".env.local" });
@@ -105,6 +106,12 @@ async function reset(sb: SupabaseClient) {
   if (proofIds.length) {
     await sb.from("proof_attachments").delete().in("proof_id", proofIds);
   }
+  // Engagement children first (FK-safe; all demo-scoped).
+  await sb.from("messages").delete().eq("is_demo", true);
+  await sb.from("conversations").delete().eq("is_demo", true);
+  await sb.from("useful_marks").delete().eq("is_demo", true);
+  await sb.from("saved_items").delete().eq("is_demo", true);
+  await sb.from("member_connections").delete().eq("is_demo", true);
   await sb.from("feedback").delete().eq("is_demo", true);
   await sb.from("trust_events").delete().eq("is_demo", true);
   await sb.from("proofs").delete().eq("is_demo", true);
@@ -223,7 +230,7 @@ async function seed(sb: SupabaseClient) {
     const practiceId = practiceList.length ? practiceList[Math.floor(rng() * practiceList.length)] : null;
     const createdAt = new Date(now - Math.floor(rng() * 45) * DAY - Math.floor(rng() * DAY)).toISOString();
     const seedId = `demo-proof-${i}`;
-    const { data, error } = await sb.from("proofs").insert({
+    const { data, error } = await sb.from("proofs").upsert({
       user_id: owner.id,
       prompt_id: practiceId,
       direction_id: owner.directionId,
@@ -239,7 +246,7 @@ async function seed(sb: SupabaseClient) {
       demo_seed_id: seedId,
       demo_quality: "good",
       created_at: createdAt
-    }).select("id").single();
+    }, { onConflict: "demo_seed_id" }).select("id").single();
     if (!error && data) proofs.push({ id: data.id, ownerId: owner.id, directionId: owner.directionId });
   }
 
@@ -266,7 +273,7 @@ async function seed(sb: SupabaseClient) {
     const clarity = FEEDBACK_NOTES.clarity[Math.floor(rng() * FEEDBACK_NOTES.clarity.length)];
     const useful = FEEDBACK_NOTES.useful[Math.floor(rng() * FEEDBACK_NOTES.useful.length)];
     const next = FEEDBACK_NOTES.nextStep[Math.floor(rng() * FEEDBACK_NOTES.nextStep.length)];
-    await sb.from("feedback").insert({
+    await sb.from("feedback").upsert({
       proof_id: proof.id,
       author_id: author.id,
       recipient_id: proof.ownerId,
@@ -278,8 +285,95 @@ async function seed(sb: SupabaseClient) {
       next_step_note: next,
       is_demo: true,
       demo_seed_id: `demo-fb-${i}`
-    });
+    }, { onConflict: "demo_seed_id" });
     feedbackReceived.set(proof.ownerId, (feedbackReceived.get(proof.ownerId) ?? 0) + 1);
+  }
+
+  // 4b) Useful marks (ranking signal; never own proof; one per user/target)
+  log(`Creating ~${counts.usefulPerProof * proofs.length} demo useful marks...`);
+  for (const proof of proofs) {
+    const markers = new Set<string>();
+    for (let k = 0; k < counts.usefulPerProof; k++) {
+      const u = userIds[Math.floor(rng() * userIds.length)];
+      if (!u || u.id === proof.ownerId || markers.has(u.id)) continue;
+      markers.add(u.id);
+      const reason = USEFUL_REASONS[Math.floor(rng() * USEFUL_REASONS.length)];
+      await sb.from("useful_marks").upsert(
+        { user_id: u.id, target_type: "proof", target_id: proof.id, reason, is_demo: true, demo_cohort: DEMO_COHORT, demo_seed_id: `demo-um-${proof.id}-${u.id}` },
+        { onConflict: "user_id,target_id" }
+      );
+    }
+  }
+
+  // 4c) Saved items ("Save for practice")
+  log(`Creating ~${counts.savedPerUser * userIds.length} demo saved items...`);
+  for (const u of userIds) {
+    const saved = new Set<string>();
+    for (let k = 0; k < counts.savedPerUser; k++) {
+      const proof = proofs[Math.floor(rng() * proofs.length)];
+      if (!proof || proof.ownerId === u.id || saved.has(proof.id)) continue;
+      saved.add(proof.id);
+      await sb.from("saved_items").upsert(
+        { user_id: u.id, target_type: "proof", target_id: proof.id, is_demo: true, demo_cohort: DEMO_COHORT, demo_seed_id: `demo-si-${u.id}-${proof.id}` },
+        { onConflict: "user_id,target_type,target_id" }
+      );
+    }
+  }
+
+  // 4d) Learn-from connections (one-directional, same-direction biased, no self)
+  log(`Creating ~${counts.learnFromPerUser * userIds.length} demo learn-from connections...`);
+  for (const learner of userIds) {
+    const sameDir = userIds.filter((t) => t.id !== learner.id && t.directionId === learner.directionId);
+    const pool = sameDir.length >= counts.learnFromPerUser ? sameDir : userIds.filter((t) => t.id !== learner.id);
+    const chosen = new Set<string>();
+    for (let k = 0; k < counts.learnFromPerUser; k++) {
+      const t = pool[Math.floor(rng() * pool.length)];
+      if (!t || chosen.has(t.id)) continue;
+      chosen.add(t.id);
+      await sb.from("member_connections").upsert(
+        { learner_id: learner.id, teacher_id: t.id, connection_type: "learn_from", status: "active", is_demo: true, demo_cohort: DEMO_COHORT, demo_seed_id: `demo-mc-${learner.id}-${t.id}` },
+        { onConflict: "learner_id,teacher_id,connection_type" }
+      );
+    }
+  }
+
+  // 4e) Conversations + messages (peer notes / feedback requests; idempotent by demo_seed_id)
+  log(`Creating ~${counts.conversations} demo peer-note / feedback-request threads...`);
+  for (let i = 0; i < counts.conversations && proofs.length > 0; i++) {
+    const proof = proofs[Math.floor(rng() * proofs.length)];
+    const other = userIds[Math.floor(rng() * userIds.length)];
+    if (!proof || !other || other.id === proof.ownerId) continue;
+    const kind = i % 2 === 0 ? "feedback_request" : "peer_note";
+    // feedback_request: owner asks `other`; peer_note: `other` notes the owner.
+    const initiatorId = kind === "feedback_request" ? proof.ownerId : other.id;
+    const recipientId = kind === "feedback_request" ? other.id : proof.ownerId;
+    const convCreated = new Date(now - Math.floor(rng() * 45) * DAY).toISOString();
+    const convSeed = `demo-conv-${i}`;
+    const { data: conv } = await sb.from("conversations").upsert({
+      kind,
+      initiator_id: initiatorId,
+      recipient_id: recipientId,
+      proof_id: proof.id,
+      subject: kind === "feedback_request" ? "Feedback request" : "Peer note",
+      last_message_at: convCreated,
+      is_demo: true,
+      demo_cohort: DEMO_COHORT,
+      demo_seed_id: convSeed,
+      created_at: convCreated
+    }, { onConflict: "demo_seed_id" }).select("id").single();
+    if (!conv) continue;
+    const opener = kind === "feedback_request"
+      ? FEEDBACK_REQUEST_OPENERS[Math.floor(rng() * FEEDBACK_REQUEST_OPENERS.length)]
+      : PEER_NOTE_OPENERS[Math.floor(rng() * PEER_NOTE_OPENERS.length)];
+    const reply = PEER_REPLIES[Math.floor(rng() * PEER_REPLIES.length)];
+    await sb.from("messages").upsert(
+      { conversation_id: conv.id, sender_id: initiatorId, body: opener, is_demo: true, demo_seed_id: `${convSeed}-m1`, created_at: convCreated },
+      { onConflict: "demo_seed_id" }
+    );
+    await sb.from("messages").upsert(
+      { conversation_id: conv.id, sender_id: recipientId, body: reply, is_demo: true, demo_seed_id: `${convSeed}-m2`, created_at: new Date(now - Math.floor(rng() * 44) * DAY).toISOString() },
+      { onConflict: "demo_seed_id" }
+    );
   }
 
   // 5) Trust events + 6) counter refresh (modest scores)
@@ -294,14 +388,16 @@ async function seed(sb: SupabaseClient) {
     for (let k = 0; k < (practiceCount ?? 0); k++) events.push({ user_id: u.id, type: "practice", points: 1, label: "Completed a practice", is_demo: true, demo_seed_id: `demo-te-${u.id}-p${k}` });
     for (let k = 0; k < (proofCount ?? 0); k++) events.push({ user_id: u.id, type: "proof", points: 2, label: "Submitted proof", is_demo: true, demo_seed_id: `demo-te-${u.id}-pr${k}` });
     for (let k = 0; k < (givenCount ?? 0); k++) events.push({ user_id: u.id, type: "peer-feedback", points: 2, label: "Gave useful feedback", is_demo: true, demo_seed_id: `demo-te-${u.id}-f${k}` });
-    if (events.length) await sb.from("trust_events").insert(events);
+    if (events.length) await sb.from("trust_events").upsert(events, { onConflict: "demo_seed_id" });
 
+    const { count: usefulGiven } = await sb.from("useful_marks").select("id", { count: "exact", head: true }).eq("user_id", u.id);
     const trustScore = Math.min(90, events.reduce((s, e) => s + e.points, 0));
     await sb.from("profiles").update({
       practice_count: practiceCount ?? 0,
       proof_count: proofCount ?? 0,
       feedback_given_count: givenCount ?? 0,
       feedback_received_count: recvCount,
+      contribution_count: usefulGiven ?? 0,
       trust_score: trustScore,
       updated_at: new Date().toISOString()
     }).eq("id", u.id);

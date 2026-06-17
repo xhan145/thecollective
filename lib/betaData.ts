@@ -260,7 +260,9 @@ export const seedSnapshot: BetaAppSnapshot = {
   usefulMarks: [],
   usefulCountByProof: {},
   savedItems: [],
-  connections: []
+  connections: [],
+  conversations: [],
+  messagesByConversation: {}
 };
 
 /** Demo seed status, for badges / debug. */

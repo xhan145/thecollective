@@ -6,8 +6,10 @@ import type { AiFeature, AiHelpfulness, AiInteraction, AiIssueType, AiResponse, 
 import type {
   AppFeedbackDraftInput,
   BetaAppSnapshot,
+  Conversation,
   Feedback,
   FeedbackDraftInput,
+  Message,
   PracticePrompt,
   Proof,
   ProofDraftInput,
@@ -34,6 +36,8 @@ import {
   removeConnection,
   removeSavedItem,
   removeUsefulMark,
+  sendMessage,
+  startConversation,
   updateOnboarding,
   updateProfile as updateProfileRow,
   type BetaUserBundle
@@ -73,6 +77,11 @@ type BetaAppContextValue = {
   getSavedProofs: () => Proof[];
   getSavedPractices: () => PracticePrompt[];
   getTeachers: () => UserProfile[];
+  requestFeedback: (proofId: string, body: string) => Promise<string | null>;
+  sendPeerNote: (recipientId: string, body: string, proofId?: string | null) => Promise<string | null>;
+  replyToConversation: (conversationId: string, body: string) => Promise<void>;
+  getConversations: () => Conversation[];
+  getMessages: (conversationId: string) => Message[];
   recordAiInteraction: (input: {
     feature: AiFeature;
     sourceType: AiSourceType;
@@ -145,6 +154,8 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     usefulCountByProof: bundle.usefulCountByProof,
     savedItems: bundle.savedItems,
     connections: bundle.connections,
+    conversations: bundle.conversations,
+    messagesByConversation: bundle.messagesByConversation,
     aiInteractions: [],
     aiUserFeedback: []
   };
@@ -253,6 +264,37 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
     }
     function getTrustSummaryForUser(userId: string) {
       return summarizeTrust(userId, snapshot.trustEvents);
+    }
+
+    async function startThread(
+      kind: Conversation["kind"],
+      initiatorId: string,
+      recipientId: string,
+      proofId: string | null,
+      body: string
+    ): Promise<string | null> {
+      const uid = authUid();
+      let convId = makeId("conv");
+      let msgId = makeId("msg");
+      if (writesEnabled && uid) {
+        const res = await startConversation(supabase!, { kind, initiatorId: uid, recipientId, proofId, body });
+        if (!res) return null;
+        convId = res.conversationId;
+        if (res.messageId) msgId = res.messageId;
+      }
+      const nowIso = new Date().toISOString();
+      const conversation: Conversation = {
+        id: convId, kind, initiatorId, recipientId, proofId: proofId ?? null,
+        subject: kind === "feedback_request" ? "Feedback request" : "Peer note",
+        lastMessageAt: nowIso, createdAt: nowIso
+      };
+      const message: Message = { id: msgId, conversationId: convId, senderId: initiatorId, body, createdAt: nowIso };
+      setSnapshot((current) => ({
+        ...current,
+        conversations: [conversation, ...current.conversations],
+        messagesByConversation: { ...current.messagesByConversation, [convId]: [message] }
+      }));
+      return convId;
     }
 
     return {
@@ -634,6 +676,46 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       getTeachers() {
         const ids = new Set(snapshot.connections.filter((c) => c.status === "active").map((c) => c.teacherId));
         return snapshot.users.filter((u) => ids.has(u.id));
+      },
+      async requestFeedback(proofId, body) {
+        const me = authUid() || snapshot.currentUserId;
+        const proof = snapshot.proofs.find((p) => p.id === proofId);
+        if (!me || !proof || proof.userId === me || !body.trim()) return null;
+        return startThread("feedback_request", me, proof.userId, proofId, body.trim());
+      },
+      async sendPeerNote(recipientId, body, proofId = null) {
+        const me = authUid() || snapshot.currentUserId;
+        if (!me || me === recipientId || !body.trim()) return null;
+        return startThread("peer_note", me, recipientId, proofId, body.trim());
+      },
+      async replyToConversation(conversationId, body) {
+        const me = authUid() || snapshot.currentUserId;
+        if (!me || !body.trim()) return;
+        const message: Message = {
+          id: makeId("msg"),
+          conversationId,
+          senderId: me,
+          body: body.trim(),
+          createdAt: new Date().toISOString()
+        };
+        setSnapshot((current) => ({
+          ...current,
+          conversations: current.conversations
+            .map((c) => (c.id === conversationId ? { ...c, lastMessageAt: message.createdAt } : c))
+            .sort((a, b) => (a.lastMessageAt < b.lastMessageAt ? 1 : -1)),
+          messagesByConversation: {
+            ...current.messagesByConversation,
+            [conversationId]: [...(current.messagesByConversation[conversationId] ?? []), message]
+          }
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) await sendMessage(supabase!, conversationId, uid, body.trim()).catch(() => {});
+      },
+      getConversations() {
+        return [...snapshot.conversations].sort((a, b) => (a.lastMessageAt < b.lastMessageAt ? 1 : -1));
+      },
+      getMessages(conversationId) {
+        return snapshot.messagesByConversation[conversationId] ?? [];
       },
       getPromptById,
       getProofById,

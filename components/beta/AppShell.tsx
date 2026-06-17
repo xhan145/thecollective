@@ -12,7 +12,7 @@ import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes"];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();

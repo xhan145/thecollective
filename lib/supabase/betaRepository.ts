@@ -4,9 +4,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   AppFeedback,
   AppFeedbackDraftInput,
+  Conversation,
+  ConversationKind,
   Feedback,
   FeedbackDraftInput,
   MemberConnection,
+  Message,
   Proof,
   ProofAttachment,
   ProofDraftInput,
@@ -34,6 +37,8 @@ export interface BetaUserBundle {
   usefulCountByProof: Record<string, number>;
   savedItems: SavedItem[];
   connections: MemberConnection[];
+  conversations: Conversation[];
+  messagesByConversation: Record<string, Message[]>;
 }
 
 function safeName(name: string): string {
@@ -138,6 +143,31 @@ function mapConnection(row: any): MemberConnection {
   };
 }
 
+function mapConversation(row: any): Conversation {
+  return {
+    id: row.id,
+    kind: row.kind,
+    initiatorId: row.initiator_id,
+    recipientId: row.recipient_id,
+    proofId: row.proof_id ?? null,
+    subject: row.subject ?? undefined,
+    lastMessageAt: row.last_message_at,
+    createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
+function mapMessage(row: any): Message {
+  return {
+    id: row.id,
+    conversationId: row.conversation_id,
+    senderId: row.sender_id,
+    body: row.body,
+    createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
 function publicUrl(client: SupabaseClient, path: string | null | undefined): string | undefined {
   if (!path) return undefined;
   return client.storage.from(PROOF_BUCKET).getPublicUrl(path).data.publicUrl;
@@ -182,7 +212,7 @@ export async function loadUserBundle(
 ): Promise<BetaUserBundle> {
   const profile = await ensureProfile(client, userId, email);
 
-  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes] =
+  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes] =
     await Promise.all([
       client.from("proofs").select("*").order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
@@ -195,7 +225,15 @@ export async function loadUserBundle(
       client.from("useful_marks").select("target_id"),
       client.from("saved_items").select("*").eq("user_id", userId),
       client.from("member_connections").select("*").eq("learner_id", userId).eq("status", "active"),
+      client.from("conversations").select("*").or(`initiator_id.eq.${userId},recipient_id.eq.${userId}`).order("last_message_at", { ascending: false }),
+      client.from("messages").select("*").order("created_at"),
     ]);
+
+  const messagesByConversation: Record<string, Message[]> = {};
+  for (const row of (messagesRes?.data ?? [])) {
+    const m = mapMessage(row);
+    (messagesByConversation[m.conversationId] ??= []).push(m);
+  }
 
   // Cohort-visible useful counts per proof (RLS scopes to readable rows) — ranking signal, never shown as a count.
   const usefulCountByProof: Record<string, number> = {};
@@ -280,6 +318,8 @@ export async function loadUserBundle(
     usefulCountByProof,
     savedItems: (savedRes.data ?? []).map(mapSavedItem),
     connections,
+    conversations: (convRes?.data ?? []).map(mapConversation),
+    messagesByConversation,
   };
 }
 
@@ -519,6 +559,52 @@ export async function removeConnection(
     .update({ status: "removed" })
     .eq("learner_id", learnerId)
     .eq("teacher_id", teacherId);
+}
+
+// ---------- peer notes / feedback requests ----------
+
+/** Create a conversation + its first message. Returns the new ids (or null). */
+export async function startConversation(
+  client: SupabaseClient,
+  input: { kind: ConversationKind; initiatorId: string; recipientId: string; proofId?: string | null; subject?: string; body: string },
+): Promise<{ conversationId: string; messageId: string } | null> {
+  const nowIso = new Date().toISOString();
+  const { data: conv, error } = await client
+    .from("conversations")
+    .insert({
+      kind: input.kind,
+      initiator_id: input.initiatorId,
+      recipient_id: input.recipientId,
+      proof_id: input.proofId ?? null,
+      subject: input.subject ?? (input.kind === "feedback_request" ? "Feedback request" : "Peer note"),
+      last_message_at: nowIso,
+    })
+    .select("id")
+    .single();
+  if (error || !conv) return null;
+  const { data: msg } = await client
+    .from("messages")
+    .insert({ conversation_id: conv.id, sender_id: input.initiatorId, body: input.body })
+    .select("id")
+    .single();
+  return { conversationId: conv.id, messageId: msg?.id ?? "" };
+}
+
+/** Append a message and bump the conversation's last_message_at. */
+export async function sendMessage(
+  client: SupabaseClient,
+  conversationId: string,
+  senderId: string,
+  body: string,
+): Promise<string | null> {
+  const { data, error } = await client
+    .from("messages")
+    .insert({ conversation_id: conversationId, sender_id: senderId, body })
+    .select("id")
+    .single();
+  if (error) return null;
+  await client.from("conversations").update({ last_message_at: new Date().toISOString() }).eq("id", conversationId);
+  return data?.id ?? null;
 }
 
 export async function persistAppFeedback(

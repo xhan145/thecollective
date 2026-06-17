@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FileAudio, FileText, Image, PlaySquare, Upload, X } from "lucide-react";
 import { useEffect, useState, type ChangeEvent } from "react";
 import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/betaTypes";
@@ -233,6 +234,45 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }:
   );
 }
 
+/** Collapsible composer to send a focused peer note to a proof's author. */
+function PeerNoteComposer({ proof, authorName }: { proof: Proof; authorName: string }) {
+  const { sendPeerNote } = useBetaApp();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [body, setBody] = useState("");
+  const [sending, setSending] = useState(false);
+
+  async function send() {
+    if (!body.trim()) return;
+    setSending(true);
+    try {
+      const id = await sendPeerNote(proof.userId, body, proof.id);
+      if (id) router.push(`/notes/${id}`);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (!open) {
+    return (
+      <Button variant="secondary" className="w-full" onClick={() => setOpen(true)}>
+        Send {authorName} a peer note
+      </Button>
+    );
+  }
+  return (
+    <Card className="space-y-3 p-4">
+      <p className="text-sm font-extrabold text-[#111111]">Peer note to {authorName}</p>
+      <p className="text-xs leading-5 text-[#6E6E6E]">Be specific and useful — one clear observation and a kind next step.</p>
+      <TextArea value={body} onChange={(e) => setBody(e.target.value)} placeholder="What was clear, and one useful next step…" rows={3} />
+      <div className="flex gap-2">
+        <Button className="flex-1" onClick={send} disabled={sending || !body.trim()}>{sending ? "Sending…" : "Send note"}</Button>
+        <Button variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
+      </div>
+    </Card>
+  );
+}
+
 export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedback[] }) {
   const { currentUser, snapshot, isLearningFrom, toggleLearnFrom } = useBetaApp();
   const author = snapshot.users.find((u) => u.id === proof.userId);
@@ -274,6 +314,8 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
           )}
         </Card>
       )}
+
+      {author && !own && <PeerNoteComposer proof={proof} authorName={author.displayName} />}
 
       <Card className="p-5">
         <h2 className="text-lg font-extrabold text-[#111111]">Feedback</h2>

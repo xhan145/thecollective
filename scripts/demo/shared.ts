@@ -25,11 +25,31 @@ export type SizeName = "small" | "standard" | "large";
 
 export const SIZES: Record<SizeName, {
   profiles: number; proofs: number; practiceLogs: number; feedback: number; trustPerUser: number;
+  usefulPerProof: number; savedPerUser: number; learnFromPerUser: number; conversations: number;
 }> = {
-  small: { profiles: 24, proofs: 80, practiceLogs: 80, feedback: 60, trustPerUser: 4 },
-  standard: { profiles: 60, proofs: 250, practiceLogs: 250, feedback: 180, trustPerUser: 6 },
-  large: { profiles: 90, proofs: 400, practiceLogs: 500, feedback: 350, trustPerUser: 8 }
+  small: { profiles: 24, proofs: 80, practiceLogs: 80, feedback: 60, trustPerUser: 4, usefulPerProof: 2, savedPerUser: 3, learnFromPerUser: 2, conversations: 18 },
+  standard: { profiles: 60, proofs: 250, practiceLogs: 250, feedback: 180, trustPerUser: 6, usefulPerProof: 2, savedPerUser: 3, learnFromPerUser: 3, conversations: 36 },
+  large: { profiles: 90, proofs: 400, practiceLogs: 500, feedback: 350, trustPerUser: 8, usefulPerProof: 3, savedPerUser: 4, learnFromPerUser: 3, conversations: 60 }
 };
+
+// Engagement content (approved vocabulary only).
+export const USEFUL_REASONS = ["clear", "actionable", "encouraging", "worth_practicing", "helped_me_reflect", "other"] as const;
+
+export const FEEDBACK_REQUEST_OPENERS = [
+  "Could you give me feedback on whether this explanation is clear enough?",
+  "Would you tell me if my main point lands in the first sentence?",
+  "Is there one part of this I could make simpler?"
+];
+export const PEER_NOTE_OPENERS = [
+  "Quick peer note — the way you opened with the main point really worked.",
+  "This was clear and calm. The example helped me picture it.",
+  "Nice rep. Your first line did the heavy lifting."
+];
+export const PEER_REPLIES = [
+  "Yes — the main idea is clear. I'd shorten the second sentence and add one concrete example.",
+  "It reads well. One small thing: name the outcome first, then the example.",
+  "Clear to me. Maybe end with the single thing you want remembered."
+];
 
 // Persona labels per direction (from spec §7).
 const PERSONAS: Record<string, string[]> = {

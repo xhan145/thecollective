@@ -155,6 +155,28 @@ export type MemberConnection = {
   isDemo?: boolean;
 };
 
+export type ConversationKind = "peer_note" | "feedback_request";
+export type Conversation = {
+  id: string;
+  kind: ConversationKind;
+  initiatorId: string;
+  recipientId: string;
+  proofId?: string | null;
+  subject?: string;
+  lastMessageAt: string;
+  createdAt: string;
+  isDemo?: boolean;
+};
+
+export type Message = {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  body: string;
+  createdAt: string;
+  isDemo?: boolean;
+};
+
 export type AppFeedback = {
   id: string;
   userId: string;
@@ -185,6 +207,8 @@ export type BetaAppSnapshot = {
   usefulCountByProof: Record<string, number>;
   savedItems: SavedItem[];
   connections: MemberConnection[];
+  conversations: Conversation[];
+  messagesByConversation: Record<string, Message[]>;
 };
 
 export type ProofDraftInput = {
