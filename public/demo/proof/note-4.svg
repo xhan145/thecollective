@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Sample proof">
-  <rect width="320" height="200" rx="22" fill="#FFFDF8"/>
-  <rect x="1" y="1" width="318" height="198" rx="21" fill="none" stroke="#EFE7D8" stroke-width="2"/>
-  <rect x="28" y="34" width="248" height="13" rx="6.5" fill="#FFF1C7"/><rect x="28" y="64" width="199" height="13" rx="6.5" fill="#FFF1C7"/><rect x="28" y="94" width="167" height="13" rx="6.5" fill="#FFF1C7"/><rect x="28" y="124" width="100" height="13" rx="6.5" fill="#FFF1C7"/><circle cx="288" cy="40" r="10" fill="#F2A900"/>
-</svg>

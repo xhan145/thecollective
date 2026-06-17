@@ -27,3 +27,6 @@ android-native/.idea/
 
 # Local preview tooling
 .claude/
+
+# demo seed credentials (never commit)
+demo-seed-password.txt

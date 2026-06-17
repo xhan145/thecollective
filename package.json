@@ -8,6 +8,7 @@
     "start": "next start -H 0.0.0.0 -p 3000",
     "typecheck": "tsc --noEmit",
     "demo:assets": "tsx scripts/generate-demo-assets.ts",
+    "demo:all": "npm run demo:assets && npm run seed:demo",
     "seed:demo": "tsx scripts/seed-demo-data.ts --yes",
     "seed:demo:dry": "tsx scripts/seed-demo-data.ts --dry-run",
     "seed:demo:reset": "tsx scripts/seed-demo-data.ts --reset --yes",

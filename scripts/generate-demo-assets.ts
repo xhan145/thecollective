@@ -1,84 +1,175 @@
 /**
- * Generates lightweight, brand-safe demo SVG assets:
- *   /public/demo/avatars/{username}.svg   (one per persona, initials)
- *   /public/demo/proof/{kind}-{n}.svg     (a small reusable pool per proof kind)
+ * Generates demo media for the second-tier demo layer:
+ *   /public/demo/avatars/{username}.jpg   (real royalty-free face photos, one per persona)
+ *   /public/demo/proof/{kind}-{n}.jpg     (real themed photos, a reusable pool per proof kind)
  *
- * No photos, no proprietary fonts, no real people. Collective colours only.
+ * How it works:
+ *   - Branded JPG baselines are committed to the repo, so the demo always has
+ *     valid thumbnails even with no network and even if you never run this.
+ *   - When you run it on a machine with internet, it downloads real photos
+ *     (faces for avatars, themed stock for proofs) and overwrites the baselines.
+ *   - Every download is validated; if a fetch fails or returns junk, the
+ *     committed baseline is kept. The script never leaves a broken image.
+ *
+ * Sources (no API key required):
+ *   - Avatars: randomuser.me portrait set (royalty-free).
+ *   - Proofs:  loremflickr.com (keyword-themed) -> picsum.photos (seeded) fallback.
+ *
  * Run: npm run demo:assets   (or tsx scripts/generate-demo-assets.ts)
+ * Flags: --force-baseline  -> skip all downloads, keep committed baselines.
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { ASSET_POOL_PER_KIND, buildPersonas, COLORS, mulberry32, PROOF_KINDS, SIZES, type ProofKind } from "./demo/shared";
+import {
+  ASSET_POOL_PER_KIND,
+  buildPersonas,
+  mulberry32,
+  PROOF_KINDS,
+  SIZES,
+  type ProofKind
+} from "./demo/shared";
 
 const ROOT = process.cwd();
 const AVATAR_DIR = join(ROOT, "public", "demo", "avatars");
 const PROOF_DIR = join(ROOT, "public", "demo", "proof");
 
-const GOLD_ACCENTS = ["#F2A900", "#FFB000", "#E59400", "#FFC23D"];
+const FORCE_BASELINE = process.argv.includes("--force-baseline");
+const TIMEOUT_MS = 15_000;
+const CONCURRENCY = 6;
+const MIN_BYTES = 2_048; // anything smaller is almost certainly an error page
 
-function avatarSvg(initials: string, accent: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" role="img" aria-label="Sample member avatar">
-  <rect width="200" height="200" rx="40" fill="${COLORS.card}"/>
-  <circle cx="100" cy="100" r="74" fill="${COLORS.soft}"/>
-  <circle cx="100" cy="100" r="74" fill="none" stroke="${accent}" stroke-width="6"/>
-  <text x="100" y="100" dy="0.35em" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="800" fill="${COLORS.ink}">${initials}</text>
-</svg>`;
+// Themed search keywords per proof kind (loremflickr tags).
+const PROOF_KEYWORDS: Record<ProofKind, string> = {
+  text: "journal,notebook,writing,desk",
+  image: "lifestyle,minimal,nature,workspace",
+  audio: "microphone,podcast,studio,headphones",
+  video: "speaking,presentation,stage,camera",
+  question: "books,library,study,thinking",
+  note: "notebook,handwriting,planner,journal"
+};
+
+type Job = { url: string; fallbackUrl?: string; dest: string; label: string };
+
+function looksLikeImage(buf: Buffer): boolean {
+  if (buf.length < MIN_BYTES) return false;
+  const jpg = buf[0] === 0xff && buf[1] === 0xd8;
+  const png = buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
+  const webp = buf.slice(0, 4).toString("ascii") === "RIFF" && buf.slice(8, 12).toString("ascii") === "WEBP";
+  return jpg || png || webp;
 }
 
-function card(inner: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Sample proof">
-  <rect width="320" height="200" rx="22" fill="${COLORS.card}"/>
-  <rect x="1" y="1" width="318" height="198" rx="21" fill="none" stroke="${COLORS.line}" stroke-width="2"/>
-  ${inner}
-</svg>`;
+async function fetchImage(url: string): Promise<Buffer | null> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { redirect: "follow", signal: ctrl.signal });
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    return looksLikeImage(buf) ? buf : null;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-function proofSvg(kind: ProofKind, n: number): string {
-  const rng = mulberry32(kind.length * 1000 + n);
-  switch (kind) {
-    case "audio": {
-      const bars = Array.from({ length: 28 }, (_, i) => {
-        const h = 14 + Math.floor(rng() * 90);
-        return `<rect x="${20 + i * 10}" y="${100 - h / 2}" width="5" height="${h}" rx="2.5" fill="${COLORS.gold}"/>`;
-      }).join("");
-      return card(`<rect width="320" height="200" rx="22" fill="${COLORS.soft}"/>${bars}<text x="20" y="180" font-family="system-ui" font-size="14" font-weight="700" fill="${COLORS.muted}">Voice note</text>`);
+/** Download a job; write only on success. Returns "downloaded" | "kept" | "missing". */
+async function runJob(job: Job): Promise<"downloaded" | "kept" | "missing"> {
+  const buf = (await fetchImage(job.url)) ?? (job.fallbackUrl ? await fetchImage(job.fallbackUrl) : null);
+  if (buf) {
+    writeFileSync(job.dest, buf);
+    return "downloaded";
+  }
+  if (existsSync(job.dest) && statSync(job.dest).size >= MIN_BYTES) return "kept";
+  return "missing";
+}
+
+async function runPool(jobs: Job[]) {
+  let downloaded = 0, kept = 0, missing = 0, i = 0;
+  async function worker() {
+    while (i < jobs.length) {
+      const job = jobs[i++];
+      const r = await runJob(job);
+      if (r === "downloaded") downloaded++;
+      else if (r === "kept") kept++;
+      else { missing++; console.warn(`  ! no image and no baseline for ${job.label} (${job.dest})`); }
     }
-    case "video":
-      return card(`<rect width="320" height="200" rx="22" fill="${COLORS.soft}"/><circle cx="160" cy="92" r="40" fill="${COLORS.card}"/><path d="M150 72 L150 112 L184 92 Z" fill="${COLORS.gold}"/><text x="20" y="180" font-family="system-ui" font-size="14" font-weight="700" fill="${COLORS.muted}">Short clip</text>`);
-    case "image":
-      return card(`<defs><linearGradient id="g${n}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${COLORS.soft}"/><stop offset="1" stop-color="${COLORS.goldBright}"/></linearGradient></defs><rect width="320" height="200" rx="22" fill="url(#g${n})"/><circle cx="${90 + Math.floor(rng() * 140)}" cy="80" r="34" fill="${COLORS.card}" opacity="0.85"/><rect x="40" y="140" width="${120 + Math.floor(rng() * 120)}" height="14" rx="7" fill="${COLORS.card}" opacity="0.8"/>`);
-    case "question":
-      return card(`<text x="40" y="86" font-family="system-ui" font-size="40" font-weight="800" fill="${COLORS.line}">?</text><path d="M70 96 L120 96" stroke="${COLORS.gold}" stroke-width="6" stroke-linecap="round"/><path d="M112 86 L124 96 L112 106" fill="none" stroke="${COLORS.gold}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><text x="140" y="100" dy="0.35em" font-family="system-ui" font-size="34" font-weight="800" fill="${COLORS.gold}">!</text><text x="40" y="170" font-family="system-ui" font-size="14" font-weight="700" fill="${COLORS.muted}">Better question</text>`);
-    case "note":
-      return card(`<rect x="28" y="34" width="${180 + Math.floor(rng() * 80)}" height="13" rx="6.5" fill="${COLORS.soft}"/><rect x="28" y="64" width="${120 + Math.floor(rng() * 140)}" height="13" rx="6.5" fill="${COLORS.soft}"/><rect x="28" y="94" width="${150 + Math.floor(rng() * 110)}" height="13" rx="6.5" fill="${COLORS.soft}"/><rect x="28" y="124" width="${90 + Math.floor(rng() * 120)}" height="13" rx="6.5" fill="${COLORS.soft}"/><circle cx="288" cy="40" r="10" fill="${COLORS.gold}"/>`);
-    default: // text
-      return card(`<rect x="28" y="40" width="240" height="16" rx="8" fill="${COLORS.ink}" opacity="0.82"/><rect x="28" y="74" width="${160 + Math.floor(rng() * 100)}" height="13" rx="6.5" fill="${COLORS.soft}"/><rect x="28" y="102" width="${180 + Math.floor(rng() * 80)}" height="13" rx="6.5" fill="${COLORS.soft}"/><rect x="28" y="130" width="${120 + Math.floor(rng() * 120)}" height="13" rx="6.5" fill="${COLORS.soft}"/>`);
   }
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, jobs.length) }, worker));
+  return { downloaded, kept, missing };
 }
 
-function main() {
-  mkdirSync(AVATAR_DIR, { recursive: true });
-  mkdirSync(PROOF_DIR, { recursive: true });
-
-  // Avatars for the largest persona set so every size is covered.
-  const personas = buildPersonas(SIZES.large.profiles);
-  for (const p of personas) {
-    const accent = GOLD_ACCENTS[p.index % GOLD_ACCENTS.length];
-    writeFileSync(join(AVATAR_DIR, `${p.username}.svg`), avatarSvg(p.initials, accent));
+/** Deterministic pool of real-face portrait URLs (randomuser.me). */
+function avatarUrlPool(): string[] {
+  const pool: string[] = [];
+  for (const gender of ["men", "women"]) {
+    for (let n = 0; n < 100; n++) pool.push(`https://randomuser.me/api/portraits/${gender}/${n}.jpg`);
   }
+  const rng = mulberry32(987654);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+}
 
-  // Proof thumbnail pool per kind.
-  let proofCount = 0;
-  for (const kind of PROOF_KINDS) {
+function buildAvatarJobs(): Job[] {
+  const personas = buildPersonas(SIZES.large.profiles); // 90 covers every size
+  const pool = avatarUrlPool();
+  return personas.map((p) => ({
+    url: pool[p.index % pool.length],
+    dest: join(AVATAR_DIR, `${p.username}.jpg`),
+    label: `avatar ${p.username}`
+  }));
+}
+
+function buildProofJobs(): Job[] {
+  const jobs: Job[] = [];
+  PROOF_KINDS.forEach((kind, ki) => {
+    const kw = encodeURIComponent(PROOF_KEYWORDS[kind]);
     for (let n = 0; n < ASSET_POOL_PER_KIND; n++) {
-      writeFileSync(join(PROOF_DIR, `${kind}-${n}.svg`), proofSvg(kind, n));
-      proofCount++;
+      const lock = ki * 100 + n;
+      jobs.push({
+        url: `https://loremflickr.com/640/400/${kw}?lock=${lock}`,
+        fallbackUrl: `https://picsum.photos/seed/${kind}-${n}/640/400`,
+        dest: join(PROOF_DIR, `${kind}-${n}.jpg`),
+        label: `proof ${kind}-${n}`
+      });
     }
-  }
-
-  console.log(`Demo assets generated: ${personas.length} avatars, ${proofCount} proof thumbnails.`);
-  console.log(`  ${AVATAR_DIR}`);
-  console.log(`  ${PROOF_DIR}`);
+  });
+  return jobs;
 }
 
-main();
+async function main() {
+  const avatarJobs = buildAvatarJobs();
+  const proofJobs = buildProofJobs();
+
+  if (FORCE_BASELINE) {
+    console.log("--force-baseline: skipping downloads, keeping committed JPG baselines.");
+    const a = avatarJobs.filter((j) => existsSync(j.dest)).length;
+    const p = proofJobs.filter((j) => existsSync(j.dest)).length;
+    console.log(`Baselines present: ${a}/${avatarJobs.length} avatars, ${p}/${proofJobs.length} proofs.`);
+    return;
+  }
+
+  console.log(`Fetching real photos (timeout ${TIMEOUT_MS / 1000}s, concurrency ${CONCURRENCY})...`);
+  console.log(`Avatars: ${avatarJobs.length} faces  ·  Proofs: ${proofJobs.length} themed photos`);
+
+  const av = await runPool(avatarJobs);
+  console.log(`Avatars  -> downloaded ${av.downloaded}, kept baseline ${av.kept}, missing ${av.missing}`);
+  const pr = await runPool(proofJobs);
+  console.log(`Proofs   -> downloaded ${pr.downloaded}, kept baseline ${pr.kept}, missing ${pr.missing}`);
+
+  if (av.missing + pr.missing > 0) {
+    console.log("\nSome assets had no network image and no baseline. Re-run with internet, or commit baselines first.");
+  } else if (av.downloaded + pr.downloaded === 0) {
+    console.log("\nNo downloads succeeded (offline?). Committed baselines are in place, so the demo still has valid thumbnails.");
+  } else {
+    console.log("\nDone. Real photos written to public/demo/. Commit them so they deploy with the app.");
+  }
+}
+
+main().catch((e) => {
+  console.error("Asset generation error:", e);
+  process.exit(1);
+});

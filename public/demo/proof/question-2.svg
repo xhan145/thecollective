@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Sample proof">
-  <rect width="320" height="200" rx="22" fill="#FFFDF8"/>
-  <rect x="1" y="1" width="318" height="198" rx="21" fill="none" stroke="#EFE7D8" stroke-width="2"/>
-  <text x="40" y="86" font-family="system-ui" font-size="40" font-weight="800" fill="#EFE7D8">?</text><path d="M70 96 L120 96" stroke="#F2A900" stroke-width="6" stroke-linecap="round"/><path d="M112 86 L124 96 L112 106" fill="none" stroke="#F2A900" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><text x="140" y="100" dy="0.35em" font-family="system-ui" font-size="34" font-weight="800" fill="#F2A900">!</text><text x="40" y="170" font-family="system-ui" font-size="14" font-weight="700" fill="#6E6E6E">Better question</text>
-</svg>
