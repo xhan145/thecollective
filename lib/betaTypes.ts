@@ -85,6 +85,9 @@ export type Proof = {
   visibility: "private" | "cohort";
   feedbackIds: string[];
   createdAt: string;
+  isDemo?: boolean;
+  thumbnailUrl?: string;
+  mediaUrl?: string;
 };
 
 export type Feedback = {

@@ -167,7 +167,20 @@ export async function loadUserBundle(
     feedbackByProof.set(f.proofId, list);
   }
 
-  const proofs: Proof[] = (proofsRes.data ?? []).map((row: any) => ({
+  // Real content first, demo content after — and drop demo entirely when the
+  // feature flag is off. Done in-memory so it works whether or not migration
+  // 016 (is_demo column) has been applied yet.
+  const includeDemo = process.env.NEXT_PUBLIC_INCLUDE_DEMO_CONTENT !== "false";
+  const proofRows = (proofsRes.data ?? [])
+    .filter((row: any) => includeDemo || !row.is_demo)
+    .sort((a: any, b: any) => {
+      const ad = a.is_demo ? 1 : 0;
+      const bd = b.is_demo ? 1 : 0;
+      if (ad !== bd) return ad - bd; // real (0) before demo (1)
+      return a.created_at < b.created_at ? 1 : -1; // newest first within group
+    });
+
+  const proofs: Proof[] = proofRows.map((row: any) => ({
     id: row.id,
     userId: row.user_id,
     promptId: row.prompt_id,
@@ -180,6 +193,9 @@ export async function loadUserBundle(
     visibility: row.visibility,
     feedbackIds: feedbackByProof.get(row.id) ?? [],
     createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+    thumbnailUrl: row.thumbnail_url ?? undefined,
+    mediaUrl: row.media_url ?? undefined,
   }));
 
   return {

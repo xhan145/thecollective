@@ -7,6 +7,11 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 3000",
     "typecheck": "tsc --noEmit",
+    "demo:assets": "tsx scripts/generate-demo-assets.ts",
+    "seed:demo": "tsx scripts/seed-demo-data.ts --yes",
+    "seed:demo:dry": "tsx scripts/seed-demo-data.ts --dry-run",
+    "seed:demo:reset": "tsx scripts/seed-demo-data.ts --reset --yes",
+    "seed:demo:media": "tsx scripts/seed-demo-data.ts --media-only --yes",
     "gitnexus:analyze": "node .tools/gitnexus.mjs analyze . --index-only --name collective-v7-push-ready",
     "gitnexus:serve": "node .tools/gitnexus.mjs serve",
     "gitnexus:mcp": "node .tools/gitnexus.mjs mcp",
@@ -27,8 +32,10 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "autoprefixer": "10.4.20",
+    "dotenv": "^17.4.2",
     "postcss": "8.5.14",
     "tailwindcss": "3.4.17",
+    "tsx": "^4.22.4",
     "typescript": "5.6.3"
   },
   "engines": {

@@ -161,6 +161,8 @@ function TimeAgo({ iso }: { iso: string }) {
 
 export function ProofCard({ proof, feedbackCount, authorName }: { proof: Proof; feedbackCount: number; authorName?: string }) {
   const name = authorName || "A member";
+  const showDemoBadge = proof.isDemo && process.env.NEXT_PUBLIC_SHOW_DEMO_BADGES === "true";
+  const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
   return (
     <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`}>
       <Card interactive className="p-3">
@@ -171,12 +173,15 @@ export function ProofCard({ proof, feedbackCount, authorName }: { proof: Proof; 
           <span className="truncate text-xs font-extrabold text-[#111111]">{name}</span>
           <span className="text-[#D9CDB8]">•</span>
           <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
+          {showDemoBadge && (
+            <span className="ml-auto shrink-0 rounded-full bg-[#FFF8EE] px-2 py-0.5 text-[10px] font-bold text-[#9B958B]">Sample</span>
+          )}
         </div>
         <div className="flex gap-3">
           <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-[#FFF1C7] to-[#FFD986] text-[#8A5D00]">
-            {proof.attachments[0]?.mediaType === "image" && proof.attachments[0].localUrl ? (
+            {thumb ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={proof.attachments[0].localUrl} alt="Proof thumbnail" className="h-full w-full object-cover" />
+              <img src={thumb} alt="Proof thumbnail" className="h-full w-full object-cover" />
             ) : (
               <ProofMediaIcon type={proof.mediaType} className="text-[#8A5D00]" />
             )}

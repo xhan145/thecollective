@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Sample proof">
+  <rect width="320" height="200" rx="22" fill="#FFFDF8"/>
+  <rect x="1" y="1" width="318" height="198" rx="21" fill="none" stroke="#EFE7D8" stroke-width="2"/>
+  <rect x="28" y="40" width="240" height="16" rx="8" fill="#111111" opacity="0.82"/><rect x="28" y="74" width="182" height="13" rx="6.5" fill="#FFF1C7"/><rect x="28" y="102" width="191" height="13" rx="6.5" fill="#FFF1C7"/><rect x="28" y="130" width="146" height="13" rx="6.5" fill="#FFF1C7"/>
+</svg>

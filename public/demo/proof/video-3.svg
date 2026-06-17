@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200" viewBox="0 0 320 200" role="img" aria-label="Sample proof">
+  <rect width="320" height="200" rx="22" fill="#FFFDF8"/>
+  <rect x="1" y="1" width="318" height="198" rx="21" fill="none" stroke="#EFE7D8" stroke-width="2"/>
+  <rect width="320" height="200" rx="22" fill="#FFF1C7"/><circle cx="160" cy="92" r="40" fill="#FFFDF8"/><path d="M150 72 L150 112 L184 92 Z" fill="#F2A900"/><text x="20" y="180" font-family="system-ui" font-size="14" font-weight="700" fill="#6E6E6E">Short clip</text>
+</svg>

@@ -67,6 +67,46 @@ via the email link before signing in.
    `trust_events`, `practice_completions`. Media lands in Storage →
    `collective-proof-media/{user_id}/{proof_id}/`.
 
+## Demo Population Seed Layer (second-tier)
+
+Fills your Supabase project with a realistic, beginner-safe demo ecosystem so
+closed-beta demos and screenshots feel alive — **without** faking traction.
+Every demo row is tagged `is_demo = true` and `demo_cohort = 'second-tier-demo-v1'`
+and is cleanly removable.
+
+**What it creates (standard size):** ~60 demo members (`demo+{username}@collective.local`),
+~250 proofs, ~250 practice completions, ~180 structured feedback notes, modest
+trust events + counters. Sizes: `small` (24/80) · `standard` (60/250) · `large`
+(90/400). Default `standard`; `large` is never generated unless you set it.
+
+**Media:** lightweight SVG thumbnails in `/public/demo/` (avatars + proof cards),
+referenced by `media_url` — deploys with Vercel, zero Storage cost. Uploading
+real placeholder media to Storage is opt-in via `DEMO_UPLOAD_TO_STORAGE=true`.
+
+**Prerequisites:** run migration `016_demo_metadata.sql` (after 010–015), and set
+in `.env.local`: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+(server-only — never `NEXT_PUBLIC`), `DEMO_USER_PASSWORD`, `ALLOW_DEMO_SEED=true`.
+
+```bash
+npm run demo:assets        # (re)generate /public/demo SVG assets
+npm run seed:demo:dry      # plan only — no writes, no key required
+npm run seed:demo          # create demo users + content
+npm run seed:demo:reset    # delete ONLY demo data (real users/content untouched)
+npm run seed:demo:media    # media-only pass
+```
+
+**Safety:** the seed refuses to run without the service-role key and
+`ALLOW_DEMO_SEED=true` (or `--yes`); production requires both. `--reset` deletes
+only `is_demo` rows and `demo+*@collective.local` auth users — never real
+profiles, proofs, feedback, auth users, or non-demo storage files.
+
+**Feed behavior:** real proof is always prioritized over demo (sorted real-first);
+set `NEXT_PUBLIC_INCLUDE_DEMO_CONTENT=false` to hide demo content entirely, or
+`NEXT_PUBLIC_SHOW_DEMO_BADGES=true` to show a subtle "Sample" label.
+
+> Do not represent demo data as real traction. It exists to make the product
+> legible during closed beta, not to imply adoption.
+
 ## Security notes (closed beta)
 
 - Any authenticated member can read cohort proofs and member display names — the
