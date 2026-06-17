@@ -6,6 +6,42 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/betaTypes";
 import { Button, ButtonLink, Card, TextArea } from "./ui";
 import { Avatar } from "./Avatar";
+import { useBetaApp } from "./AppStateProvider";
+
+/** Calm Useful + Save toggles. No counts shown (usefulness over attention). */
+export function ProofActions({ proof, compact = false }: { proof: Proof; compact?: boolean }) {
+  const { currentUser, isUseful, isSaved, toggleUseful, toggleSaved } = useBetaApp();
+  const own = currentUser?.id === proof.userId;
+  const useful = isUseful(proof.id);
+  const saved = isSaved("proof", proof.id);
+  const stop = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold transition";
+  return (
+    <div className={`flex flex-wrap gap-2 ${compact ? "mt-2.5" : "mt-4"}`}>
+      {!own && (
+        <button
+          type="button"
+          onClick={(e) => { stop(e); toggleUseful(proof.id); }}
+          aria-pressed={useful}
+          className={`${base} ${useful ? "bg-[#F2A900] text-white" : "bg-[#FFF1C7] text-[#7A5300]"}`}
+        >
+          {useful ? "Marked useful" : "Useful"}
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={(e) => { stop(e); toggleSaved("proof", proof.id); }}
+        aria-pressed={saved}
+        className={`${base} ${saved ? "bg-[#111111] text-white" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}
+      >
+        {saved ? "Saved for practice" : "Save for practice"}
+      </button>
+    </div>
+  );
+}
 
 export type AttachmentDraft = Omit<ProofAttachment, "id" | "storagePath"> & { file?: File };
 
@@ -191,12 +227,17 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }:
             <p className="mt-2 text-xs font-bold text-[#F2A900]">{feedbackCount ? `${feedbackCount} feedback note${feedbackCount === 1 ? "" : "s"}` : "No feedback yet"}</p>
           </div>
         </div>
+        <ProofActions proof={proof} compact />
       </Card>
     </Link>
   );
 }
 
 export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedback[] }) {
+  const { currentUser, snapshot, isLearningFrom, toggleLearnFrom } = useBetaApp();
+  const author = snapshot.users.find((u) => u.id === proof.userId);
+  const own = currentUser?.id === proof.userId;
+  const learning = isLearningFrom(proof.userId);
   return (
     <div className="space-y-4">
       <Card className="p-5">
@@ -211,7 +252,28 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
         </div>
         {proof.body && <p className="mt-4 rounded-[18px] bg-[#FFF8EE] p-4 text-sm leading-6 text-[#38322A]">{proof.body}</p>}
         {proof.attachments[0] && <div className="mt-4"><AttachmentPreview attachment={proof.attachments[0]} /></div>}
+        <ProofActions proof={proof} />
       </Card>
+
+      {author && (
+        <Card className="flex items-center gap-3 p-4">
+          <Avatar name={author.displayName} avatarUrl={author.avatarUrl} size={40} />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
+            {author.bio && <p className="truncate text-xs text-[#6E6E6E]">{author.bio}</p>}
+          </div>
+          {!own && (
+            <button
+              type="button"
+              onClick={() => toggleLearnFrom(proof.userId)}
+              aria-pressed={learning}
+              className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-extrabold transition ${learning ? "bg-[#F2A900] text-white" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#7A5300]"}`}
+            >
+              {learning ? "Learning from" : "Learn from"}
+            </button>
+          )}
+        </Card>
+      )}
 
       <Card className="p-5">
         <h2 className="text-lg font-extrabold text-[#111111]">Feedback</h2>

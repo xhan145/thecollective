@@ -6,10 +6,15 @@ import type {
   AppFeedbackDraftInput,
   Feedback,
   FeedbackDraftInput,
+  MemberConnection,
   Proof,
   ProofAttachment,
   ProofDraftInput,
+  SavedItem,
+  SavedTargetType,
   TrustEvent,
+  UsefulMark,
+  UsefulReason,
   UserProfile,
 } from "@/lib/betaTypes";
 import type { AiInteraction, AiUserFeedback } from "@/lib/aiTypes";
@@ -25,6 +30,10 @@ export interface BetaUserBundle {
   trustEvents: TrustEvent[];
   appFeedback: AppFeedback[];
   completedPracticeIds: string[];
+  usefulMarks: UsefulMark[];
+  usefulCountByProof: Record<string, number>;
+  savedItems: SavedItem[];
+  connections: MemberConnection[];
 }
 
 function safeName(name: string): string {
@@ -96,6 +105,39 @@ function mapTrust(row: any): TrustEvent {
   };
 }
 
+function mapUsefulMark(row: any): UsefulMark {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    targetId: row.target_id,
+    reason: row.reason,
+    createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
+function mapSavedItem(row: any): SavedItem {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    targetType: row.target_type,
+    targetId: row.target_id,
+    createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
+function mapConnection(row: any): MemberConnection {
+  return {
+    id: row.id,
+    learnerId: row.learner_id,
+    teacherId: row.teacher_id,
+    status: row.status,
+    createdAt: row.created_at,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
 function publicUrl(client: SupabaseClient, path: string | null | undefined): string | undefined {
   if (!path) return undefined;
   return client.storage.from(PROOF_BUCKET).getPublicUrl(path).data.publicUrl;
@@ -140,7 +182,7 @@ export async function loadUserBundle(
 ): Promise<BetaUserBundle> {
   const profile = await ensureProfile(client, userId, email);
 
-  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes] =
+  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes] =
     await Promise.all([
       client.from("proofs").select("*").order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
@@ -149,7 +191,19 @@ export async function loadUserBundle(
       client.from("app_feedback").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       client.from("practice_completions").select("prompt_id").eq("user_id", userId),
       client.from("profiles").select("*"),
+      client.from("useful_marks").select("*").eq("user_id", userId),
+      client.from("useful_marks").select("target_id"),
+      client.from("saved_items").select("*").eq("user_id", userId),
+      client.from("member_connections").select("*").eq("learner_id", userId).eq("status", "active"),
     ]);
+
+  // Cohort-visible useful counts per proof (RLS scopes to readable rows) — ranking signal, never shown as a count.
+  const usefulCountByProof: Record<string, number> = {};
+  for (const row of usefulAllRes.data ?? []) {
+    usefulCountByProof[row.target_id] = (usefulCountByProof[row.target_id] ?? 0) + 1;
+  }
+  const connections = (connRes.data ?? []).map(mapConnection);
+  const teacherIds = new Set(connections.map((c) => c.teacherId));
 
   const attachmentsByProof = new Map<string, ProofAttachment[]>();
   for (const row of attachmentsRes.data ?? []) {
@@ -171,13 +225,19 @@ export async function loadUserBundle(
   // feature flag is off. Done in-memory so it works whether or not migration
   // 016 (is_demo column) has been applied yet.
   const includeDemo = process.env.NEXT_PUBLIC_INCLUDE_DEMO_CONTENT !== "false";
+  // Score within each tier: proofs by people you learn from rank up, then useful
+  // marks, then recency. The real-above-demo invariant is never crossed.
+  const score = (row: any) =>
+    (teacherIds.has(row.user_id) ? 3 : 0) + (usefulCountByProof[row.id] ?? 0);
   const proofRows = (proofsRes.data ?? [])
     .filter((row: any) => includeDemo || !row.is_demo)
     .sort((a: any, b: any) => {
       const ad = a.is_demo ? 1 : 0;
       const bd = b.is_demo ? 1 : 0;
-      if (ad !== bd) return ad - bd; // real (0) before demo (1)
-      return a.created_at < b.created_at ? 1 : -1; // newest first within group
+      if (ad !== bd) return ad - bd; // real (0) before demo (1) — invariant
+      const sd = score(b) - score(a);
+      if (sd !== 0) return sd; // learn-from + useful within tier
+      return a.created_at < b.created_at ? 1 : -1; // newest first
     });
 
   const proofs: Proof[] = proofRows.map((row: any) => ({
@@ -216,6 +276,10 @@ export async function loadUserBundle(
       reviewed: row.reviewed ?? false,
     })),
     completedPracticeIds: (compRes.data ?? []).map((row: any) => row.prompt_id),
+    usefulMarks: (myUsefulRes.data ?? []).map(mapUsefulMark),
+    usefulCountByProof,
+    savedItems: (savedRes.data ?? []).map(mapSavedItem),
+    connections,
   };
 }
 
@@ -378,6 +442,83 @@ export async function persistMarkHelpful(
 ): Promise<void> {
   await client.from("feedback").update({ helpful: true }).eq("id", feedbackId);
   await insertTrust(client, makeTrustEvent(authorId, "helpful", "Feedback marked helpful", feedbackId));
+}
+
+// ---------- engagement: useful marks / saved items / learn-from ----------
+
+export async function persistUsefulMark(
+  client: SupabaseClient,
+  userId: string,
+  proofId: string,
+  reason: UsefulReason = "clear",
+): Promise<void> {
+  await client
+    .from("useful_marks")
+    .upsert(
+      { user_id: userId, target_type: "proof", target_id: proofId, reason },
+      { onConflict: "user_id,target_id" },
+    );
+}
+
+export async function removeUsefulMark(
+  client: SupabaseClient,
+  userId: string,
+  proofId: string,
+): Promise<void> {
+  await client.from("useful_marks").delete().eq("user_id", userId).eq("target_id", proofId);
+}
+
+export async function persistSavedItem(
+  client: SupabaseClient,
+  userId: string,
+  targetType: SavedTargetType,
+  targetId: string,
+): Promise<void> {
+  await client
+    .from("saved_items")
+    .upsert(
+      { user_id: userId, target_type: targetType, target_id: targetId },
+      { onConflict: "user_id,target_type,target_id" },
+    );
+}
+
+export async function removeSavedItem(
+  client: SupabaseClient,
+  userId: string,
+  targetType: SavedTargetType,
+  targetId: string,
+): Promise<void> {
+  await client
+    .from("saved_items")
+    .delete()
+    .eq("user_id", userId)
+    .eq("target_type", targetType)
+    .eq("target_id", targetId);
+}
+
+export async function persistConnection(
+  client: SupabaseClient,
+  learnerId: string,
+  teacherId: string,
+): Promise<void> {
+  await client
+    .from("member_connections")
+    .upsert(
+      { learner_id: learnerId, teacher_id: teacherId, connection_type: "learn_from", status: "active" },
+      { onConflict: "learner_id,teacher_id,connection_type" },
+    );
+}
+
+export async function removeConnection(
+  client: SupabaseClient,
+  learnerId: string,
+  teacherId: string,
+): Promise<void> {
+  await client
+    .from("member_connections")
+    .update({ status: "removed" })
+    .eq("learner_id", learnerId)
+    .eq("teacher_id", teacherId);
 }
 
 export async function persistAppFeedback(

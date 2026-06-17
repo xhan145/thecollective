@@ -256,7 +256,11 @@ export const seedSnapshot: BetaAppSnapshot = {
   appFeedback: seedAppFeedback,
   aiInteractions: [],
   aiUserFeedback: [],
-  completedPracticeIds: DEMO_SEED_ENABLED ? ["say-clear-thing", "ask-useful-question", "five-minute-step", "honest-reflection"] : []
+  completedPracticeIds: DEMO_SEED_ENABLED ? ["say-clear-thing", "ask-useful-question", "five-minute-step", "honest-reflection"] : [],
+  usefulMarks: [],
+  usefulCountByProof: {},
+  savedItems: [],
+  connections: []
 };
 
 /** Demo seed status, for badges / debug. */

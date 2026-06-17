@@ -126,6 +126,35 @@ export type TrustSummary = {
   acceptedContributions: number;
 };
 
+export type UsefulReason = "clear" | "actionable" | "encouraging" | "worth_practicing" | "helped_me_reflect" | "other";
+export type UsefulMark = {
+  id: string;
+  userId: string;
+  targetId: string; // proof id
+  reason: UsefulReason;
+  createdAt: string;
+  isDemo?: boolean;
+};
+
+export type SavedTargetType = "proof" | "practice" | "direction";
+export type SavedItem = {
+  id: string;
+  userId: string;
+  targetType: SavedTargetType;
+  targetId: string;
+  createdAt: string;
+  isDemo?: boolean;
+};
+
+export type MemberConnection = {
+  id: string;
+  learnerId: string;
+  teacherId: string;
+  status: "active" | "removed";
+  createdAt: string;
+  isDemo?: boolean;
+};
+
 export type AppFeedback = {
   id: string;
   userId: string;
@@ -151,6 +180,11 @@ export type BetaAppSnapshot = {
   aiInteractions: AiInteraction[];
   aiUserFeedback: AiUserFeedback[];
   completedPracticeIds: string[];
+  // Engagement layer (current user's own state + cohort useful counts for ranking).
+  usefulMarks: UsefulMark[];
+  usefulCountByProof: Record<string, number>;
+  savedItems: SavedItem[];
+  connections: MemberConnection[];
 };
 
 export type ProofDraftInput = {

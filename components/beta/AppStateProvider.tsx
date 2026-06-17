@@ -11,7 +11,9 @@ import type {
   PracticePrompt,
   Proof,
   ProofDraftInput,
+  SavedTargetType,
   TrustSummary,
+  UsefulReason,
   UserProfile
 } from "@/lib/betaTypes";
 import { firebaseModeLabel, isFirebaseConfigured, proofStoragePath } from "@/lib/firebase";
@@ -25,7 +27,13 @@ import {
   persistFeedback,
   persistMarkHelpful,
   persistProof,
+  persistConnection,
+  persistSavedItem,
+  persistUsefulMark,
   recordPracticeCompletion,
+  removeConnection,
+  removeSavedItem,
+  removeUsefulMark,
   updateOnboarding,
   updateProfile as updateProfileRow,
   type BetaUserBundle
@@ -56,6 +64,15 @@ type BetaAppContextValue = {
   addFeedback: (input: FeedbackDraftInput) => Feedback | null;
   markFeedbackHelpful: (feedbackId: string) => void;
   submitAppFeedback: (input: AppFeedbackDraftInput) => void;
+  toggleUseful: (proofId: string, reason?: UsefulReason) => void;
+  toggleSaved: (targetType: SavedTargetType, targetId: string) => void;
+  toggleLearnFrom: (teacherId: string) => void;
+  isUseful: (proofId: string) => boolean;
+  isSaved: (targetType: SavedTargetType, targetId: string) => boolean;
+  isLearningFrom: (teacherId: string) => boolean;
+  getSavedProofs: () => Proof[];
+  getSavedPractices: () => PracticePrompt[];
+  getTeachers: () => UserProfile[];
   recordAiInteraction: (input: {
     feature: AiFeature;
     sourceType: AiSourceType;
@@ -124,6 +141,10 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     trustEvents: bundle.trustEvents,
     appFeedback: bundle.appFeedback,
     completedPracticeIds: bundle.completedPracticeIds,
+    usefulMarks: bundle.usefulMarks,
+    usefulCountByProof: bundle.usefulCountByProof,
+    savedItems: bundle.savedItems,
+    connections: bundle.connections,
     aiInteractions: [],
     aiUserFeedback: []
   };
@@ -542,6 +563,77 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           void persistAiUserFeedback(supabase!, created).catch(() => {});
         }
         return created;
+      },
+      toggleUseful(proofId, reason = "clear") {
+        const me = authUid() || snapshot.currentUserId;
+        if (!me) return;
+        const has = snapshot.usefulMarks.some((m) => m.targetId === proofId && m.userId === me);
+        setSnapshot((current) => {
+          const marks = has
+            ? current.usefulMarks.filter((m) => !(m.targetId === proofId && m.userId === me))
+            : [{ id: makeId("um"), userId: me, targetId: proofId, reason, createdAt: new Date().toISOString() }, ...current.usefulMarks];
+          const counts = { ...current.usefulCountByProof };
+          counts[proofId] = Math.max(0, (counts[proofId] ?? 0) + (has ? -1 : 1));
+          return { ...current, usefulMarks: marks, usefulCountByProof: counts };
+        });
+        const uid = authUid();
+        if (writesEnabled && uid) {
+          void (has ? removeUsefulMark(supabase!, uid, proofId) : persistUsefulMark(supabase!, uid, proofId, reason)).catch(() => {});
+        }
+      },
+      toggleSaved(targetType, targetId) {
+        const me = authUid() || snapshot.currentUserId;
+        if (!me) return;
+        const has = snapshot.savedItems.some((s) => s.targetType === targetType && s.targetId === targetId && s.userId === me);
+        setSnapshot((current) => ({
+          ...current,
+          savedItems: has
+            ? current.savedItems.filter((s) => !(s.targetType === targetType && s.targetId === targetId && s.userId === me))
+            : [{ id: makeId("si"), userId: me, targetType, targetId, createdAt: new Date().toISOString() }, ...current.savedItems]
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) {
+          void (has ? removeSavedItem(supabase!, uid, targetType, targetId) : persistSavedItem(supabase!, uid, targetType, targetId)).catch(() => {});
+        }
+      },
+      toggleLearnFrom(teacherId) {
+        const me = authUid() || snapshot.currentUserId;
+        if (!me || me === teacherId) return;
+        const has = snapshot.connections.some((c) => c.teacherId === teacherId && c.learnerId === me && c.status === "active");
+        setSnapshot((current) => ({
+          ...current,
+          connections: has
+            ? current.connections.filter((c) => !(c.teacherId === teacherId && c.learnerId === me))
+            : [{ id: makeId("mc"), learnerId: me, teacherId, status: "active", createdAt: new Date().toISOString() }, ...current.connections]
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) {
+          void (has ? removeConnection(supabase!, uid, teacherId) : persistConnection(supabase!, uid, teacherId)).catch(() => {});
+        }
+      },
+      isUseful(proofId) {
+        const me = snapshot.currentUserId;
+        return !!me && snapshot.usefulMarks.some((m) => m.targetId === proofId && m.userId === me);
+      },
+      isSaved(targetType, targetId) {
+        const me = snapshot.currentUserId;
+        return !!me && snapshot.savedItems.some((s) => s.targetType === targetType && s.targetId === targetId && s.userId === me);
+      },
+      isLearningFrom(teacherId) {
+        const me = snapshot.currentUserId;
+        return !!me && snapshot.connections.some((c) => c.teacherId === teacherId && c.learnerId === me && c.status === "active");
+      },
+      getSavedProofs() {
+        const ids = new Set(snapshot.savedItems.filter((s) => s.targetType === "proof").map((s) => s.targetId));
+        return snapshot.proofs.filter((p) => ids.has(p.id));
+      },
+      getSavedPractices() {
+        const ids = new Set(snapshot.savedItems.filter((s) => s.targetType === "practice").map((s) => s.targetId));
+        return snapshot.prompts.filter((p) => ids.has(p.id));
+      },
+      getTeachers() {
+        const ids = new Set(snapshot.connections.filter((c) => c.status === "active").map((c) => c.teacherId));
+        return snapshot.users.filter((u) => ids.has(u.id));
       },
       getPromptById,
       getProofById,
