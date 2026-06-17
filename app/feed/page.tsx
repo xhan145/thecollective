@@ -8,7 +8,8 @@ import { MotionItem, MotionList } from "@/components/beta/motion";
 
 export default function FeedPage() {
   const { snapshot, getFeedbackForProof } = useBetaApp();
-  const nameFor = (userId: string) => snapshot.users.find((u) => u.id === userId)?.displayName;
+  const userFor = (userId: string) => snapshot.users.find((u) => u.id === userId);
+  const nameFor = (userId: string) => userFor(userId)?.displayName;
   const activeMembers = new Set(snapshot.proofs.map((p) => p.userId)).size;
 
   return (
@@ -27,7 +28,7 @@ export default function FeedPage() {
             <MotionList className="space-y-3">
               {snapshot.proofs.map((proof) => (
                 <MotionItem key={proof.id}>
-                  <ProofCard proof={proof} feedbackCount={getFeedbackForProof(proof.id).length} authorName={nameFor(proof.userId)} />
+                  <ProofCard proof={proof} feedbackCount={getFeedbackForProof(proof.id).length} authorName={nameFor(proof.userId)} authorAvatarUrl={userFor(proof.userId)?.avatarUrl} />
                 </MotionItem>
               ))}
             </MotionList>

@@ -5,6 +5,7 @@ import { FileAudio, FileText, Image, PlaySquare, Upload, X } from "lucide-react"
 import { useEffect, useState, type ChangeEvent } from "react";
 import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/betaTypes";
 import { Button, ButtonLink, Card, TextArea } from "./ui";
+import { Avatar } from "./Avatar";
 
 export type AttachmentDraft = Omit<ProofAttachment, "id" | "storagePath"> & { file?: File };
 
@@ -159,7 +160,7 @@ function TimeAgo({ iso }: { iso: string }) {
   return <>{label}</>;
 }
 
-export function ProofCard({ proof, feedbackCount, authorName }: { proof: Proof; feedbackCount: number; authorName?: string }) {
+export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string }) {
   const name = authorName || "A member";
   const showDemoBadge = proof.isDemo && process.env.NEXT_PUBLIC_SHOW_DEMO_BADGES === "true";
   const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
@@ -167,9 +168,7 @@ export function ProofCard({ proof, feedbackCount, authorName }: { proof: Proof; 
     <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`}>
       <Card interactive className="p-3">
         <div className="mb-2.5 flex items-center gap-2">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#FFF1C7] text-[11px] font-extrabold text-[#8A5D00]">
-            {name.slice(0, 1).toUpperCase()}
-          </span>
+          <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
           <span className="truncate text-xs font-extrabold text-[#111111]">{name}</span>
           <span className="text-[#D9CDB8]">•</span>
           <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
