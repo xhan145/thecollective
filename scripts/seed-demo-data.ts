@@ -202,7 +202,7 @@ async function seed(sb: SupabaseClient) {
       username: persona.username,
       initials: persona.initials,
       bio: persona.bio,
-      avatar_url: `/demo/avatars/${persona.username}.jpg`,
+      avatar_url: `/demo/avatars/${persona.username}.svg`,
       current_direction_id: directionId,
       onboarding_completed: true,
       is_demo: true,
@@ -225,7 +225,7 @@ async function seed(sb: SupabaseClient) {
     const tmplPool = PROOF_TEMPLATES.filter((t) => t.directionSlug === owner.persona.directionSlug);
     const tmpl = tmplPool[Math.floor(rng() * tmplPool.length)] ?? PROOF_TEMPLATES[0];
     const assetN = Math.floor(rng() * 8);
-    const mediaUrl = `/demo/proof/${kind}-${assetN}.jpg`;
+    const mediaUrl = `/demo/proof/${kind}-${assetN}.svg`;
     const practiceList = practicesByDir.get(owner.directionId) ?? [];
     const practiceId = practiceList.length ? practiceList[Math.floor(rng() * practiceList.length)] : null;
     const createdAt = new Date(now - Math.floor(rng() * 45) * DAY - Math.floor(rng() * DAY)).toISOString();
@@ -417,7 +417,7 @@ async function main() {
 
   if (DRY) {
     log("\n--dry-run: no writes performed. (Service key not required for dry-run.)");
-    log("Media: photo thumbnails (.jpg) under /public/demo (real photos via: npm run demo:assets).");
+    log("Media: brand-safe SVG thumbnails/avatars under /public/demo (generate via: npm run demo:assets).");
     if (UPLOAD_STORAGE) log("Storage upload would target bucket '" + BUCKET + "' under demo/" + DEMO_COHORT + "/.");
     return;
   }

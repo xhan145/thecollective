@@ -1,7 +1,7 @@
 "use client";
 
-import { UserRound } from "lucide-react";
 import { AppShell } from "@/components/beta/AppShell";
+import { Avatar } from "@/components/beta/Avatar";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { TrustSnapshotCard } from "@/components/beta/LoopCards";
 import { Badge, ButtonLink, Card, PageHeader, TrustPill } from "@/components/beta/ui";
@@ -15,9 +15,7 @@ export default function ProfilePage() {
         <PageHeader title="Profile" subtitle="Progress you can build on." />
         <Card className="p-5">
           <div className="flex items-center gap-4">
-            <div className="grid h-16 w-16 place-items-center rounded-full bg-[#F2A900] text-2xl font-extrabold text-white">
-              {currentUser?.initials || <UserRound size={24} />}
-            </div>
+            <Avatar name={currentUser?.displayName} avatarUrl={currentUser?.avatarUrl} size={64} />
             <div>
               <h2 className="text-xl font-extrabold text-[#111111]">{currentUser?.displayName || "Alex"}</h2>
               <p className="mt-1 text-sm text-[#6E6E6E]">Building confident communication</p>

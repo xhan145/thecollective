@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="question proof thumbnail">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFF1C7"/>
+      <stop offset="100%" stop-color="#FFD986"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="100" height="100" fill="url(#bg)"/>
+  <text x="50" y="52" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="52" font-weight="800" fill="#7A5300" text-anchor="middle" dominant-baseline="central">?</text>
+</svg>

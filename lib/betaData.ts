@@ -103,6 +103,26 @@ const FEEDBACK_BY_TONE: Record<string, string[]> = {
 const TONES: Feedback["tone"][] = ["kind", "specific", "next-step"];
 const MEDIA: Proof["mediaType"][] = ["text", "audio", "video", "image", "text", "text"];
 
+// Brand-safe, dark-mode-safe SVG demo assets live in /public/demo (see
+// scripts/generate-demo-assets.ts). Wiring them into the local seed makes the
+// no-account demo path show real thumbnails + avatars, not text-only cards.
+const DEMO_BIOS = [
+  "Practicing clearer explanations and calmer conversations.",
+  "Building small actions into visible progress.",
+  "Working on better questions and better notes.",
+  "Practicing speaking up without overthinking.",
+  "Small steps, steady proof.",
+  "Learning to give feedback that is specific and useful."
+];
+const TEXT_THUMB_KINDS = ["text", "note", "question"];
+const ASSET_POOL = 8;
+
+/** Deterministic /demo/proof SVG path for a proof's media type. */
+function thumbForMedia(mediaType: Proof["mediaType"], idx: number, rng: () => number): string {
+  const kind = mediaType === "text" ? pick(rng, TEXT_THUMB_KINDS) : mediaType; // image|audio|video map 1:1
+  return `/demo/proof/${kind}-${idx % ASSET_POOL}.svg`;
+}
+
 function buildDemoUsers(): UserProfile[] {
   return NAMES.map(([displayName, initials], i) => ({
     id: `user-${displayName.toLowerCase()}`,
@@ -111,6 +131,8 @@ function buildDemoUsers(): UserProfile[] {
     role: i === 0 ? "founder" : displayName === "Gregory" ? "admin" : "member",
     cohortId: "founding-circle",
     directionIds: [DIRECTION_IDS[i % DIRECTION_IDS.length]],
+    bio: DEMO_BIOS[i % DEMO_BIOS.length],
+    avatarUrl: `/demo/avatars/${displayName.toLowerCase()}.svg`,
     createdAt: iso(60 * 24 * (NAMES.length - i))
   }));
 }
@@ -142,6 +164,7 @@ function generateCommunity(): GeneratedCommunity {
       const line = pick(rng, PROOF_LINES[directionId]);
       const proofId = `proof-${proofIdx++}`;
       const createdMin = 30 + proofIdx * 137 + Math.floor(rng() * 90);
+      const mediaType = pick(rng, MEDIA);
       const proof: Proof = {
         id: proofId,
         userId: user.id,
@@ -149,7 +172,8 @@ function generateCommunity(): GeneratedCommunity {
         directionId,
         title: line.title,
         body: line.body,
-        mediaType: pick(rng, MEDIA),
+        mediaType,
+        thumbnailUrl: thumbForMedia(mediaType, proofIdx, rng),
         attachments: [],
         status: "submitted",
         visibility: "cohort",

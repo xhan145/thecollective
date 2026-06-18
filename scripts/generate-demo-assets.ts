@@ -1,29 +1,26 @@
 /**
- * Generates demo media for the second-tier demo layer:
- *   /public/demo/avatars/{username}.jpg   (real royalty-free face photos, one per persona)
- *   /public/demo/proof/{kind}-{n}.jpg     (real themed photos, a reusable pool per proof kind)
+ * Generates demo media for the second-tier demo layer as BRAND-SAFE, DARK-MODE-SAFE SVGs:
+ *   /public/demo/avatars/{username}.svg   (warm gold/cream disc + initials — no real people)
+ *   /public/demo/proof/{kind}-{n}.svg     (gold-family tile + white/ink type glyph)
  *
- * How it works:
- *   - Branded JPG baselines are committed to the repo, so the demo always has
- *     valid thumbnails even with no network and even if you never run this.
- *   - When you run it on a machine with internet, it downloads real photos
- *     (faces for avatars, themed stock for proofs) and overwrites the baselines.
- *   - Every download is validated; if a fetch fails or returns junk, the
- *     committed baseline is kept. The script never leaves a broken image.
+ * Why SVG (not scraped photos):
+ *   - No network, no API keys, fully reproducible, tiny, version-control friendly.
+ *   - Brand-safe: no real-person faces (earlier guardrail) and on-brand cream/gold.
+ *   - Dark-mode-safe: every asset carries its own warm fill, so it reads as an
+ *     intentional card on the warm-dark background (rgb(21,17,10)) — never a white box.
+ *   - Served as a static file -> <img src> returns 200 with content-type image/svg+xml.
  *
- * Sources (no API key required):
- *   - Avatars: randomuser.me portrait set (royalty-free).
- *   - Proofs:  loremflickr.com (keyword-themed) -> picsum.photos (seeded) fallback.
+ * It writes one .svg per username/kind, and ALSO mirrors any existing .jpg basenames in
+ * the two folders so every previously-referenced asset gets an .svg twin (the DB just
+ * swaps the extension). Idempotent: re-running overwrites with identical bytes.
  *
  * Run: npm run demo:assets   (or tsx scripts/generate-demo-assets.ts)
- * Flags: --force-baseline  -> skip all downloads, keep committed baselines.
  */
-import { existsSync, statSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { join, parse } from "node:path";
 import {
   ASSET_POOL_PER_KIND,
   buildPersonas,
-  mulberry32,
   PROOF_KINDS,
   SIZES,
   type ProofKind
@@ -33,143 +30,189 @@ const ROOT = process.cwd();
 const AVATAR_DIR = join(ROOT, "public", "demo", "avatars");
 const PROOF_DIR = join(ROOT, "public", "demo", "proof");
 
-const FORCE_BASELINE = process.argv.includes("--force-baseline");
-const TIMEOUT_MS = 15_000;
-const CONCURRENCY = 6;
-const MIN_BYTES = 2_048; // anything smaller is almost certainly an error page
+// System font stack so SVG text renders identically without bundling a font.
+const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
 
-// Themed search keywords per proof kind (loremflickr tags).
-const PROOF_KEYWORDS: Record<ProofKind, string> = {
-  text: "journal,notebook,writing,desk",
-  image: "lifestyle,minimal,nature,workspace",
-  audio: "microphone,podcast,studio,headphones",
-  video: "speaking,presentation,stage,camera",
-  question: "books,library,study,thinking",
-  note: "notebook,handwriting,planner,journal"
-};
+// ---------------------------------------------------------------------------
+// Avatar SVG — warm disc with a gold ring and initials. Deterministic variant.
+// ---------------------------------------------------------------------------
 
-type Job = { url: string; fallbackUrl?: string; dest: string; label: string };
+const AVATAR_VARIANTS: [string, string, string][] = [
+  // [innerLight, innerDeep, initialsInk]
+  ["#FFF6DF", "#FFD986", "#7A5300"],
+  ["#FFEFC4", "#FFC04D", "#7A5300"],
+  ["#FFF1C7", "#F2A900", "#5E3F00"],
+  ["#FFE7AE", "#FFB000", "#6B4900"]
+];
 
-function looksLikeImage(buf: Buffer): boolean {
-  if (buf.length < MIN_BYTES) return false;
-  const jpg = buf[0] === 0xff && buf[1] === 0xd8;
-  const png = buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47;
-  const webp = buf.slice(0, 4).toString("ascii") === "RIFF" && buf.slice(8, 12).toString("ascii") === "WEBP";
-  return jpg || png || webp;
+function hashStr(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
 }
 
-async function fetchImage(url: string): Promise<Buffer | null> {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  try {
-    const res = await fetch(url, { redirect: "follow", signal: ctrl.signal });
-    if (!res.ok) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    return looksLikeImage(buf) ? buf : null;
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timer);
+function initialsFor(name: string): string {
+  const clean = name.replace(/[^a-zA-Z]/g, "");
+  if (!clean) return "M";
+  return clean.slice(0, 2).toUpperCase();
+}
+
+function avatarSvg(name: string): string {
+  const initials = initialsFor(name);
+  const [c1, c2, ink] = AVATAR_VARIANTS[hashStr(name) % AVATAR_VARIANTS.length];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="${initials} avatar">
+  <defs>
+    <radialGradient id="bg" cx="34%" cy="28%" r="85%">
+      <stop offset="0%" stop-color="${c1}"/>
+      <stop offset="100%" stop-color="${c2}"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#bg)" stroke="#F2A900" stroke-width="3"/>
+  <text x="50" y="50" font-family="${FONT}" font-size="38" font-weight="800" fill="${ink}" text-anchor="middle" dominant-baseline="central">${initials}</text>
+</svg>
+`;
+}
+
+// ---------------------------------------------------------------------------
+// Proof thumbnail SVG — gold-family tile with a white/ink glyph per type.
+// Media kinds (image/audio/video) -> deep gold + white glyph.
+// Text kinds (text/note/question) -> cream->gold + dark-gold glyph.
+// ---------------------------------------------------------------------------
+
+type Palette = { from: string; to: string; ink: string };
+const MEDIA_PAL: Palette = { from: "#FFB000", to: "#F2A900", ink: "#FFFFFF" };
+const TEXT_PAL: Palette = { from: "#FFF1C7", to: "#FFD986", ink: "#7A5300" };
+
+function paletteFor(kind: ProofKind): Palette {
+  return kind === "image" || kind === "audio" || kind === "video" ? MEDIA_PAL : TEXT_PAL;
+}
+
+function glyph(kind: ProofKind, ink: string): string {
+  const s = `stroke="${ink}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
+  switch (kind) {
+    case "text":
+      return `<g ${s}>
+        <line x1="32" y1="36" x2="68" y2="36"/>
+        <line x1="32" y1="50" x2="68" y2="50"/>
+        <line x1="32" y1="64" x2="56" y2="64"/>
+      </g>`;
+    case "note":
+      return `<g ${s}>
+        <path d="M34 28 h26 l8 8 v36 h-34 z"/>
+        <path d="M60 28 v8 h8"/>
+        <line x1="40" y1="48" x2="62" y2="48"/>
+        <line x1="40" y1="58" x2="56" y2="58"/>
+      </g>`;
+    case "question":
+      return `<text x="50" y="52" font-family="${FONT}" font-size="52" font-weight="800" fill="${ink}" text-anchor="middle" dominant-baseline="central">?</text>`;
+    case "image":
+      return `<g ${s}>
+        <rect x="28" y="32" width="44" height="36" rx="5"/>
+        <circle cx="40" cy="44" r="4" fill="${ink}" stroke="none"/>
+        <path d="M30 64 l14 -14 l10 10 l8 -8 l10 12"/>
+      </g>`;
+    case "audio":
+      return `<g stroke="${ink}" stroke-width="5" stroke-linecap="round">
+        <line x1="34" y1="44" x2="34" y2="56"/>
+        <line x1="42" y1="38" x2="42" y2="62"/>
+        <line x1="50" y1="30" x2="50" y2="70"/>
+        <line x1="58" y1="38" x2="58" y2="62"/>
+        <line x1="66" y1="44" x2="66" y2="56"/>
+      </g>`;
+    case "video":
+      return `<g>
+        <circle cx="50" cy="50" r="20" fill="none" stroke="${ink}" stroke-width="5"/>
+        <path d="M45 41 l14 9 l-14 9 z" fill="${ink}"/>
+      </g>`;
   }
 }
 
-/** Download a job; write only on success. Returns "downloaded" | "kept" | "missing". */
-async function runJob(job: Job): Promise<"downloaded" | "kept" | "missing"> {
-  const buf = (await fetchImage(job.url)) ?? (job.fallbackUrl ? await fetchImage(job.fallbackUrl) : null);
-  if (buf) {
-    writeFileSync(job.dest, buf);
-    return "downloaded";
-  }
-  if (existsSync(job.dest) && statSync(job.dest).size >= MIN_BYTES) return "kept";
-  return "missing";
+function proofKindFromName(base: string): ProofKind {
+  const k = base.split("-")[0] as ProofKind;
+  return (PROOF_KINDS as string[]).includes(k) ? k : "text";
 }
 
-async function runPool(jobs: Job[]) {
-  let downloaded = 0, kept = 0, missing = 0, i = 0;
-  async function worker() {
-    while (i < jobs.length) {
-      const job = jobs[i++];
-      const r = await runJob(job);
-      if (r === "downloaded") downloaded++;
-      else if (r === "kept") kept++;
-      else { missing++; console.warn(`  ! no image and no baseline for ${job.label} (${job.dest})`); }
-    }
-  }
-  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, jobs.length) }, worker));
-  return { downloaded, kept, missing };
+function proofSvg(kind: ProofKind, variant: number): string {
+  const pal = paletteFor(kind);
+  // Subtle per-variant gradient angle so the pool doesn't look identical.
+  const angles = [
+    { x1: "0", y1: "0", x2: "100", y2: "100" },
+    { x1: "0", y1: "100", x2: "100", y2: "0" },
+    { x1: "0", y1: "0", x2: "100", y2: "0" },
+    { x1: "0", y1: "0", x2: "0", y2: "100" }
+  ];
+  const a = angles[variant % angles.length];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="${kind} proof thumbnail">
+  <defs>
+    <linearGradient id="bg" x1="${a.x1}" y1="${a.y1}" x2="${a.x2}" y2="${a.y2}" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="${pal.from}"/>
+      <stop offset="100%" stop-color="${pal.to}"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="100" height="100" fill="url(#bg)"/>
+  ${glyph(kind, pal.ink)}
+</svg>
+`;
 }
 
-/** Deterministic pool of real-face portrait URLs (randomuser.me). */
-function avatarUrlPool(): string[] {
-  const pool: string[] = [];
-  for (const gender of ["men", "women"]) {
-    for (let n = 0; n < 100; n++) pool.push(`https://randomuser.me/api/portraits/${gender}/${n}.jpg`);
-  }
-  const rng = mulberry32(987654);
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return pool;
+// ---------------------------------------------------------------------------
+// Write everything (idempotent).
+// ---------------------------------------------------------------------------
+
+function ensureDir(dir: string) {
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
-function buildAvatarJobs(): Job[] {
-  const personas = buildPersonas(SIZES.large.profiles); // 90 covers every size
-  const pool = avatarUrlPool();
-  return personas.map((p) => ({
-    url: pool[p.index % pool.length],
-    dest: join(AVATAR_DIR, `${p.username}.jpg`),
-    label: `avatar ${p.username}`
-  }));
+function existingBasenames(dir: string, ext: string): string[] {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.toLowerCase().endsWith(ext))
+    .map((f) => parse(f).name);
 }
 
-function buildProofJobs(): Job[] {
-  const jobs: Job[] = [];
-  PROOF_KINDS.forEach((kind, ki) => {
-    const kw = encodeURIComponent(PROOF_KEYWORDS[kind]);
-    for (let n = 0; n < ASSET_POOL_PER_KIND; n++) {
-      const lock = ki * 100 + n;
-      jobs.push({
-        url: `https://loremflickr.com/640/400/${kw}?lock=${lock}`,
-        fallbackUrl: `https://picsum.photos/seed/${kind}-${n}/640/400`,
-        dest: join(PROOF_DIR, `${kind}-${n}.jpg`),
-        label: `proof ${kind}-${n}`
-      });
-    }
-  });
-  return jobs;
-}
+function main() {
+  ensureDir(AVATAR_DIR);
+  ensureDir(PROOF_DIR);
 
-async function main() {
-  const avatarJobs = buildAvatarJobs();
-  const proofJobs = buildProofJobs();
+  // --- Avatars: canonical persona usernames (covers the live 90) + any existing basenames.
+  const avatarNames = new Set<string>();
+  buildPersonas(SIZES.large.profiles).forEach((p) => avatarNames.add(p.username));
+  existingBasenames(AVATAR_DIR, ".jpg").forEach((b) => avatarNames.add(b));
+  existingBasenames(AVATAR_DIR, ".svg").forEach((b) => avatarNames.add(b));
+  // Local-demo (betaData) ids, just in case any are not in the persona set.
+  ["alex", "jordan", "taylor", "morgan", "casey", "riley", "sam", "jamie", "drew", "quinn",
+   "avery", "parker", "reese", "skyler", "devon", "harper", "rowan", "emerson", "finley", "sage",
+   "kai", "noor", "luca", "mateo", "priya", "aisha", "diego", "lena", "omar", "gregory"]
+    .forEach((n) => avatarNames.add(n));
 
-  if (FORCE_BASELINE) {
-    console.log("--force-baseline: skipping downloads, keeping committed JPG baselines.");
-    const a = avatarJobs.filter((j) => existsSync(j.dest)).length;
-    const p = proofJobs.filter((j) => existsSync(j.dest)).length;
-    console.log(`Baselines present: ${a}/${avatarJobs.length} avatars, ${p}/${proofJobs.length} proofs.`);
-    return;
+  let avatarCount = 0;
+  for (const name of avatarNames) {
+    writeFileSync(join(AVATAR_DIR, `${name}.svg`), avatarSvg(name), "utf8");
+    avatarCount++;
   }
 
-  console.log(`Fetching real photos (timeout ${TIMEOUT_MS / 1000}s, concurrency ${CONCURRENCY})...`);
-  console.log(`Avatars: ${avatarJobs.length} faces  ·  Proofs: ${proofJobs.length} themed photos`);
-
-  const av = await runPool(avatarJobs);
-  console.log(`Avatars  -> downloaded ${av.downloaded}, kept baseline ${av.kept}, missing ${av.missing}`);
-  const pr = await runPool(proofJobs);
-  console.log(`Proofs   -> downloaded ${pr.downloaded}, kept baseline ${pr.kept}, missing ${pr.missing}`);
-
-  if (av.missing + pr.missing > 0) {
-    console.log("\nSome assets had no network image and no baseline. Re-run with internet, or commit baselines first.");
-  } else if (av.downloaded + pr.downloaded === 0) {
-    console.log("\nNo downloads succeeded (offline?). Committed baselines are in place, so the demo still has valid thumbnails.");
-  } else {
-    console.log("\nDone. Real photos written to public/demo/. Commit them so they deploy with the app.");
+  // --- Proofs: canonical kind x pool + any existing basenames.
+  const proofBases = new Set<string>();
+  for (const kind of PROOF_KINDS) {
+    for (let n = 0; n < ASSET_POOL_PER_KIND; n++) proofBases.add(`${kind}-${n}`);
   }
+  existingBasenames(PROOF_DIR, ".jpg").forEach((b) => proofBases.add(b));
+  existingBasenames(PROOF_DIR, ".svg").forEach((b) => proofBases.add(b));
+
+  let proofCount = 0;
+  for (const base of proofBases) {
+    const kind = proofKindFromName(base);
+    const variant = parseInt(base.split("-")[1] ?? "0", 10) || 0;
+    writeFileSync(join(PROOF_DIR, `${base}.svg`), proofSvg(kind, variant), "utf8");
+    proofCount++;
+  }
+
+  console.log(`wrote ${avatarCount} avatar SVGs -> ${AVATAR_DIR}`);
+  console.log(`wrote ${proofCount} proof SVGs   -> ${PROOF_DIR}`);
+  console.log(`proof kinds: ${PROOF_KINDS.join(", ")} (pool ${ASSET_POOL_PER_KIND} each)`);
 }
 
-main().catch((e) => {
-  console.error("Asset generation error:", e);
-  process.exit(1);
-});
+main();
