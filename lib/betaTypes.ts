@@ -155,6 +155,20 @@ export type MemberConnection = {
   isDemo?: boolean;
 };
 
+export type NotificationType = "proof" | "feedback" | "useful" | "learn_from" | "message";
+export type AppNotification = {
+  id: string;
+  userId: string;
+  actorId?: string | null;
+  type: NotificationType | string;
+  title: string;
+  body?: string | null;
+  sourceType?: string | null;
+  sourceId?: string | null;
+  readAt?: string | null;
+  createdAt: string;
+};
+
 export type ConversationKind = "peer_note" | "feedback_request";
 export type Conversation = {
   id: string;
@@ -209,6 +223,7 @@ export type BetaAppSnapshot = {
   connections: MemberConnection[];
   conversations: Conversation[];
   messagesByConversation: Record<string, Message[]>;
+  notifications: AppNotification[];
 };
 
 export type ProofDraftInput = {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, Home, MessageSquare, Plus, User } from "lucide-react";
+import { Bell, BookOpen, Home, MessageSquare, Plus, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
@@ -12,12 +12,13 @@ import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account"];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady } = useBetaApp();
+  const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount } = useBetaApp();
+  const unread = unreadNotificationCount();
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
   const loading = supabaseEnabled && !authReady && isProtected;
   // Show the demo-data badge whenever seed data is what's on screen
@@ -51,7 +52,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/home" aria-label="Collective home">
             <CollectiveWordmark />
           </Link>
-          {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
+          <div className="flex items-center gap-2">
+            {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
+            <Link
+              href="/notifications"
+              aria-label={unread > 0 ? `Notifications, ${unread} unread` : "Notifications"}
+              className="relative grid h-10 w-10 place-items-center rounded-full bg-[var(--surface,#FFFDF8)] text-[var(--ink,#111111)] shadow-[0_6px_16px_rgba(71,52,18,0.08)]"
+            >
+              <Bell size={18} />
+              {unread > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-[#F2A900] px-1 text-[10px] font-black text-white">
+                  {unread > 9 ? "9+" : unread}
+                </span>
+              )}
+            </Link>
+          </div>
         </div>
       </header>
       <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5">

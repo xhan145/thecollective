@@ -262,7 +262,8 @@ export const seedSnapshot: BetaAppSnapshot = {
   savedItems: [],
   connections: [],
   conversations: [],
-  messagesByConversation: {}
+  messagesByConversation: {},
+  notifications: []
 };
 
 /** Demo seed status, for badges / debug. */

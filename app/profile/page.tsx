@@ -31,6 +31,10 @@ export default function ProfilePage() {
           <ButtonLink href="/profile/learning" variant="secondary" className="w-full">People you learn from</ButtonLink>
         </div>
         <ButtonLink href="/notes" variant="secondary" className="w-full">Peer notes &amp; requests</ButtonLink>
+        <div className="grid grid-cols-2 gap-3">
+          <ButtonLink href="/notifications" variant="secondary" className="w-full">Notifications</ButtonLink>
+          <ButtonLink href="/settings" variant="secondary" className="w-full">Settings</ButtonLink>
+        </div>
         <Card className="p-5">
           <Badge>Contribution</Badge>
           <h2 className="mt-3 text-xl font-extrabold text-[#111111]">Not rushed</h2>

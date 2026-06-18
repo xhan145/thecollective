@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   AppFeedback,
   AppFeedbackDraftInput,
+  AppNotification,
   Conversation,
   ConversationKind,
   Feedback,
@@ -39,6 +40,7 @@ export interface BetaUserBundle {
   connections: MemberConnection[];
   conversations: Conversation[];
   messagesByConversation: Record<string, Message[]>;
+  notifications: AppNotification[];
 }
 
 function safeName(name: string): string {
@@ -143,6 +145,21 @@ function mapConnection(row: any): MemberConnection {
   };
 }
 
+export function mapNotification(row: any): AppNotification {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    actorId: row.actor_id ?? null,
+    type: row.type,
+    title: row.title,
+    body: row.body ?? null,
+    sourceType: row.source_type ?? null,
+    sourceId: row.source_id ?? null,
+    readAt: row.read_at ?? null,
+    createdAt: row.created_at,
+  };
+}
+
 function mapConversation(row: any): Conversation {
   return {
     id: row.id,
@@ -212,7 +229,7 @@ export async function loadUserBundle(
 ): Promise<BetaUserBundle> {
   const profile = await ensureProfile(client, userId, email);
 
-  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes] =
+  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes] =
     await Promise.all([
       client.from("proofs").select("*").order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
@@ -227,6 +244,7 @@ export async function loadUserBundle(
       client.from("member_connections").select("*").eq("learner_id", userId).eq("status", "active"),
       client.from("conversations").select("*").or(`initiator_id.eq.${userId},recipient_id.eq.${userId}`).order("last_message_at", { ascending: false }),
       client.from("messages").select("*").order("created_at"),
+      client.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
     ]);
 
   const messagesByConversation: Record<string, Message[]> = {};
@@ -320,7 +338,16 @@ export async function loadUserBundle(
     connections,
     conversations: (convRes?.data ?? []).map(mapConversation),
     messagesByConversation,
+    notifications: (notifsRes?.data ?? []).map(mapNotification),
   };
+}
+
+export async function markNotificationRead(client: SupabaseClient, id: string): Promise<void> {
+  await client.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+}
+
+export async function markAllNotificationsRead(client: SupabaseClient, userId: string): Promise<void> {
+  await client.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", userId).is("read_at", null);
 }
 
 // ---------- write-through ----------

@@ -251,3 +251,54 @@ button, input, textarea, select { font: inherit; }
 .feed-card { scroll-snap-align: start; }
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ============================================================
+   Theme layer — light (default) + dark. The beta UI uses literal
+   brand hex utilities (e.g. bg-[#FFFDF8]); under .dark we remap the
+   common ones to warm-dark tokens, which themes the core surfaces in
+   bulk. Brand gold (#F2A900 / #FFB000) stays constant in both modes.
+   ============================================================ */
+:root {
+  --c-bg: #FFF8EE;
+  --c-surface: #FFFDF8;
+  --c-soft: #FFF1C7;
+  --c-ink: #111111;
+  --c-muted: #6E6E6E;
+  --c-line: #EFE7D8;
+  --c-input: #FFFFFF;
+}
+.dark {
+  color-scheme: dark;
+  --c-bg: #15110A;
+  --c-surface: #211B12;
+  --c-soft: #2C2413;
+  --c-ink: #F6F1E7;
+  --c-muted: #B7AC99;
+  --c-line: #352D20;
+  --c-input: #1C1710;
+}
+.dark body { background: var(--c-bg); color: var(--c-ink); }
+
+/* Backgrounds */
+.dark .bg-\[\#FFF8EE\],
+.dark .bg-\[\#FFF8EE\]\/92,
+.dark .bg-\[\#FFF8EE\]\/95 { background-color: var(--c-bg) !important; }
+.dark .bg-\[\#FFFDF8\],
+.dark .bg-\[\#FFFDF8\]\/95,
+.dark .bg-\[\#FFFDF8\]\/90 { background-color: var(--c-surface) !important; }
+.dark .bg-\[\#FFF1C7\] { background-color: var(--c-soft) !important; }
+.dark .bg-white { background-color: var(--c-input) !important; }
+
+/* Text */
+.dark .text-\[\#111111\],
+.dark .text-\[\#38322A\] { color: var(--c-ink) !important; }
+.dark .text-\[\#6E6E6E\] { color: var(--c-muted) !important; }
+
+/* Borders + rings */
+.dark .border-\[\#EFE7D8\],
+.dark .border-\[\#EFE7D8\]\/70 { border-color: var(--c-line) !important; }
+
+/* Bottom-nav gradient edge */
+.dark .from-\[\#FFF8EE\] { --tw-gradient-from: var(--c-bg) var(--tw-gradient-from-position) !important; }
+.dark .via-\[\#FFF8EE\] { --tw-gradient-via: var(--c-bg) var(--tw-gradient-via-position) !important; }
+.dark .to-\[\#FFF8EE\]\/70 { --tw-gradient-to: color-mix(in srgb, var(--c-bg) 70%, transparent) var(--tw-gradient-to-position) !important; }

@@ -32,6 +32,10 @@ declare module "lucide-react" {
   export const MessageCircle: LucideIcon;
   export const MessageSquare: LucideIcon;
   export const Monitor: LucideIcon;
+  export const Moon: LucideIcon;
+  export const Sun: LucideIcon;
+  export const ThumbsUp: LucideIcon;
+  export const UserPlus: LucideIcon;
   export const PenLine: LucideIcon;
   export const Play: LucideIcon;
   export const PlaySquare: LucideIcon;

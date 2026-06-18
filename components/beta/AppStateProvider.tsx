@@ -5,6 +5,7 @@ import { seedSnapshot } from "@/lib/betaData";
 import type { AiFeature, AiHelpfulness, AiInteraction, AiIssueType, AiResponse, AiSourceType, AiUserFeedback } from "@/lib/aiTypes";
 import type {
   AppFeedbackDraftInput,
+  AppNotification,
   BetaAppSnapshot,
   Conversation,
   Feedback,
@@ -33,6 +34,9 @@ import {
   persistSavedItem,
   persistUsefulMark,
   recordPracticeCompletion,
+  markAllNotificationsRead,
+  markNotificationRead as markNotificationReadRow,
+  mapNotification,
   removeConnection,
   removeSavedItem,
   removeUsefulMark,
@@ -82,6 +86,10 @@ type BetaAppContextValue = {
   replyToConversation: (conversationId: string, body: string) => Promise<void>;
   getConversations: () => Conversation[];
   getMessages: (conversationId: string) => Message[];
+  getNotifications: () => AppNotification[];
+  unreadNotificationCount: () => number;
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
   recordAiInteraction: (input: {
     feature: AiFeature;
     sourceType: AiSourceType;
@@ -156,6 +164,7 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     connections: bundle.connections,
     conversations: bundle.conversations,
     messagesByConversation: bundle.messagesByConversation,
+    notifications: bundle.notifications,
     aiInteractions: [],
     aiUserFeedback: []
   };
@@ -237,6 +246,31 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       sub.subscription.unsubscribe();
     };
   }, [supabaseEnabled, supabase]);
+
+  // Realtime: stream new notifications for the signed-in member straight into state.
+  useEffect(() => {
+    if (!supabaseEnabled || !supabase) return;
+    const uid = snapshot.currentUserId;
+    if (!uid) return;
+    const channel = supabase
+      .channel(`notifications:${uid}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${uid}` },
+        (payload) => {
+          const n = mapNotification(payload.new);
+          setSnapshot((current) =>
+            current.notifications.some((x) => x.id === n.id)
+              ? current
+              : { ...current, notifications: [n, ...current.notifications] }
+          );
+        }
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [supabaseEnabled, supabase, snapshot.currentUserId]);
 
   const currentUser = snapshot.users.find((user) => user.id === snapshot.currentUserId) || null;
   const isMockMode = !supabaseEnabled && !isFirebaseConfigured();
@@ -716,6 +750,29 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       },
       getMessages(conversationId) {
         return snapshot.messagesByConversation[conversationId] ?? [];
+      },
+      getNotifications() {
+        return snapshot.notifications;
+      },
+      unreadNotificationCount() {
+        return snapshot.notifications.filter((n) => !n.readAt).length;
+      },
+      markNotificationRead(id) {
+        const nowIso = new Date().toISOString();
+        setSnapshot((current) => ({
+          ...current,
+          notifications: current.notifications.map((n) => (n.id === id && !n.readAt ? { ...n, readAt: nowIso } : n))
+        }));
+        if (writesEnabled) void markNotificationReadRow(supabase!, id).catch(() => {});
+      },
+      markAllNotificationsRead() {
+        const nowIso = new Date().toISOString();
+        setSnapshot((current) => ({
+          ...current,
+          notifications: current.notifications.map((n) => (n.readAt ? n : { ...n, readAt: nowIso }))
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) void markAllNotificationsRead(supabase!, uid).catch(() => {});
       },
       getPromptById,
       getProofById,

@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { BetaAppProvider } from "@/components/beta/AppStateProvider";
+import { ThemeProvider } from "@/components/beta/ThemeProvider";
 import { ServiceWorkerRegister } from "@/components/beta/ServiceWorkerRegister";
 import "./globals.css";
+
+// Set the theme class before first paint to avoid a flash.
+const themeInitScript = `(function(){try{var p=localStorage.getItem('collective.theme')||'system';var d=p==='dark'||(p==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
 export const metadata: Metadata = {
   title: "Collective",
@@ -39,12 +43,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Collective" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <BetaAppProvider>
-          <ServiceWorkerRegister />
-          {children}
-        </BetaAppProvider>
+        <ThemeProvider>
+          <BetaAppProvider>
+            <ServiceWorkerRegister />
+            {children}
+          </BetaAppProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
