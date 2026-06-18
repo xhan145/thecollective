@@ -22,7 +22,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
   const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold transition";
   return (
     <div className={`flex flex-wrap gap-2 ${compact ? "mt-2.5" : "mt-4"}`}>
-      {!own && (
+      {!own && !proof.isDemo && (
         <button
           type="button"
           onClick={(e) => { stop(e); toggleUseful(proof.id); }}
@@ -199,7 +199,7 @@ function TimeAgo({ iso }: { iso: string }) {
 
 export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string }) {
   const name = authorName || "A member";
-  const showDemoBadge = proof.isDemo && process.env.NEXT_PUBLIC_SHOW_DEMO_BADGES === "true";
+  const showDemoBadge = Boolean(proof.isDemo);
   const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
   return (
     <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`}>
@@ -210,7 +210,7 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }:
           <span className="text-[#D9CDB8]">•</span>
           <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
           {showDemoBadge && (
-            <span className="ml-auto shrink-0 rounded-full bg-[#FFF8EE] px-2 py-0.5 text-[10px] font-bold text-[#9B958B]">Sample</span>
+            <span className="ml-auto shrink-0 rounded-full bg-[#FFF8EE] px-2 py-0.5 text-[10px] font-bold text-[#9B958B]">Example</span>
           )}
         </div>
         <div className="flex gap-3">
@@ -302,7 +302,7 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
             <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
             {author.bio && <p className="truncate text-xs text-[#6E6E6E]">{author.bio}</p>}
           </div>
-          {!own && (
+          {!own && !proof.isDemo && (
             <button
               type="button"
               onClick={() => toggleLearnFrom(proof.userId)}
@@ -315,7 +315,7 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
         </Card>
       )}
 
-      {author && !own && <PeerNoteComposer proof={proof} authorName={author.displayName} />}
+      {author && !own && !proof.isDemo && <PeerNoteComposer proof={proof} authorName={author.displayName} />}
 
       <Card className="p-5">
         <h2 className="text-lg font-extrabold text-[#111111]">Feedback</h2>

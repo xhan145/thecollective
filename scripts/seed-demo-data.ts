@@ -202,7 +202,7 @@ async function seed(sb: SupabaseClient) {
       username: persona.username,
       initials: persona.initials,
       bio: persona.bio,
-      avatar_url: `/demo/avatars/${persona.username}.svg`,
+      avatar_url: `/demo/avatars/${persona.username}.jpg`,
       current_direction_id: directionId,
       onboarding_completed: true,
       is_demo: true,
@@ -225,7 +225,7 @@ async function seed(sb: SupabaseClient) {
     const tmplPool = PROOF_TEMPLATES.filter((t) => t.directionSlug === owner.persona.directionSlug);
     const tmpl = tmplPool[Math.floor(rng() * tmplPool.length)] ?? PROOF_TEMPLATES[0];
     const assetN = Math.floor(rng() * 8);
-    const mediaUrl = `/demo/proof/${kind}-${assetN}.svg`;
+    const mediaUrl = `/demo/proof/${kind}-${assetN}.jpg`;
     const practiceList = practicesByDir.get(owner.directionId) ?? [];
     const practiceId = practiceList.length ? practiceList[Math.floor(rng() * practiceList.length)] : null;
     const createdAt = new Date(now - Math.floor(rng() * 45) * DAY - Math.floor(rng() * DAY)).toISOString();
@@ -376,8 +376,8 @@ async function seed(sb: SupabaseClient) {
     );
   }
 
-  // 5) Trust events + 6) counter refresh (modest scores)
-  log("Creating trust events + refreshing counters...");
+  // 5) Trust event examples + 6) counter refresh. Demo activity never earns trust points.
+  log("Creating zero-point demo trust examples + refreshing counters...");
   for (const u of userIds) {
     const { count: practiceCount } = await sb.from("practice_completions").select("id", { count: "exact", head: true }).eq("user_id", u.id);
     const { count: proofCount } = await sb.from("proofs").select("id", { count: "exact", head: true }).eq("user_id", u.id);
@@ -385,13 +385,13 @@ async function seed(sb: SupabaseClient) {
     const recvCount = feedbackReceived.get(u.id) ?? 0;
 
     const events: any[] = [];
-    for (let k = 0; k < (practiceCount ?? 0); k++) events.push({ user_id: u.id, type: "practice", points: 1, label: "Completed a practice", is_demo: true, demo_seed_id: `demo-te-${u.id}-p${k}` });
-    for (let k = 0; k < (proofCount ?? 0); k++) events.push({ user_id: u.id, type: "proof", points: 2, label: "Submitted proof", is_demo: true, demo_seed_id: `demo-te-${u.id}-pr${k}` });
-    for (let k = 0; k < (givenCount ?? 0); k++) events.push({ user_id: u.id, type: "peer-feedback", points: 2, label: "Gave useful feedback", is_demo: true, demo_seed_id: `demo-te-${u.id}-f${k}` });
+    for (let k = 0; k < (practiceCount ?? 0); k++) events.push({ user_id: u.id, type: "practice", points: 0, label: "Demo practice example", is_demo: true, demo_seed_id: `demo-te-${u.id}-p${k}` });
+    for (let k = 0; k < (proofCount ?? 0); k++) events.push({ user_id: u.id, type: "proof", points: 0, label: "Demo proof example", is_demo: true, demo_seed_id: `demo-te-${u.id}-pr${k}` });
+    for (let k = 0; k < (givenCount ?? 0); k++) events.push({ user_id: u.id, type: "peer-feedback", points: 0, label: "Demo feedback example", is_demo: true, demo_seed_id: `demo-te-${u.id}-f${k}` });
     if (events.length) await sb.from("trust_events").upsert(events, { onConflict: "demo_seed_id" });
 
     const { count: usefulGiven } = await sb.from("useful_marks").select("id", { count: "exact", head: true }).eq("user_id", u.id);
-    const trustScore = Math.min(90, events.reduce((s, e) => s + e.points, 0));
+    const trustScore = 0;
     await sb.from("profiles").update({
       practice_count: practiceCount ?? 0,
       proof_count: proofCount ?? 0,

@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
-import { mockAiService } from "@/lib/aiService";
-import type { AiFeature, AiUserContext } from "@/lib/aiTypes";
+import { runCollectivePanel } from "@/lib/ai/collective-orchestrator";
+import type { AiFeature, AiUserContext, CollectiveAiAction } from "@/lib/aiTypes";
 import type { Feedback, PracticePrompt, Proof } from "@/lib/betaTypes";
 
 type CollectiveAiRequest = {
-  feature: AiFeature;
-  input: {
+  action?: CollectiveAiAction;
+  feature?: AiFeature;
+  userContext?: AiUserContext;
+  input?: {
     prompt?: PracticePrompt;
     proof?: Proof | null;
     reflectionText?: string;
@@ -21,36 +23,58 @@ const fallbackContext: AiUserContext = {
   cohortId: "founding-circle"
 };
 
+const actionByFeature: Partial<Record<AiFeature, CollectiveAiAction>> = {
+  PRACTICE_PREP: "generate_practice",
+  PRACTICE_GENERATION: "generate_practice",
+  PROOF_PREP: "prepare_proof",
+  REFLECTION_HELPER: "reflect_on_proof",
+  FEEDBACK_COACH: "coach_feedback",
+  FEEDBACK_SUMMARY: "summarize_feedback",
+  SAFETY_REVIEW: "review_safety",
+  COLLECTIVE_PANEL: "run_demo_panel"
+};
+
+const supportedActions: CollectiveAiAction[] = [
+  "generate_practice",
+  "prepare_proof",
+  "reflect_on_proof",
+  "coach_feedback",
+  "summarize_feedback",
+  "review_safety",
+  "run_demo_panel"
+];
+
+function safeInput(input: CollectiveAiRequest["input"]): Record<string, unknown> {
+  return input && typeof input === "object" ? (input as Record<string, unknown>) : {};
+}
+
 export async function POST(request: Request) {
-  const body = (await request.json()) as CollectiveAiRequest;
-  const userContext = body.input.userContext || fallbackContext;
+  try {
+    const body = (await request.json()) as CollectiveAiRequest;
+    const input = safeInput(body.input);
+    const userContext = body.userContext || body.input?.userContext || fallbackContext;
 
-  if (body.feature === "PRACTICE_PREP" && body.input.prompt) {
-    return NextResponse.json(await mockAiService.generatePracticePrep(body.input.prompt, userContext));
+    if (body.action) {
+      if (!supportedActions.includes(body.action)) {
+        return NextResponse.json({ ok: false, error: "Unsupported Collective AI action." }, { status: 400 });
+      }
+
+      const result = await runCollectivePanel({ action: body.action, input, userContext });
+      return NextResponse.json(result);
+    }
+
+    if (body.feature) {
+      const action = actionByFeature[body.feature];
+      if (!action) {
+        return NextResponse.json({ error: "Unsupported Collective AI request." }, { status: 400 });
+      }
+
+      const result = await runCollectivePanel({ action, input, userContext }, { log: false, userContext });
+      return NextResponse.json(result.result.response);
+    }
+
+    return NextResponse.json({ ok: false, error: "Unsupported Collective AI request." }, { status: 400 });
+  } catch {
+    return NextResponse.json({ ok: false, error: "AI support is not available right now." }, { status: 500 });
   }
-
-  if (body.feature === "REFLECTION_HELPER") {
-    return NextResponse.json(
-      await mockAiService.generateReflectionHelp(
-        body.input.proof || null,
-        body.input.reflectionText || "",
-        body.input.prompt,
-        userContext
-      )
-    );
-  }
-
-  if (body.feature === "FEEDBACK_COACH" && body.input.proof) {
-    return NextResponse.json(
-      await mockAiService.generateFeedbackSuggestion(body.input.proof, body.input.draftFeedback || "", userContext)
-    );
-  }
-
-  if (body.feature === "FEEDBACK_SUMMARY" && body.input.proof) {
-    return NextResponse.json(
-      await mockAiService.generateFeedbackSummary(body.input.proof, body.input.feedbackList || [], userContext)
-    );
-  }
-
-  return NextResponse.json({ error: "Unsupported Collective AI request." }, { status: 400 });
 }

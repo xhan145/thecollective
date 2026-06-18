@@ -44,6 +44,24 @@ export default function NewProofPage() {
           <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{prompt?.title || "Practice proof"}</h2>
           <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.prompt || "Capture one small example of progress."}</p>
         </Card>
+        <AiSupportCard
+          title="Help me prepare"
+          description="AI can help you choose a safe proof shape and a focused feedback request."
+          ctaLabel="Help me prepare"
+          feature="PROOF_PREP"
+          sourceType="PRACTICE_PROMPT"
+          sourceId={promptId}
+          promptId={promptId}
+          inputSummary={prompt?.title || "Proof prep"}
+          onGenerate={() =>
+            aiService.prepareProof(prompt, {
+              userId: currentUser?.id || "user-alex",
+              displayName: currentUser?.displayName || "Alex",
+              cohortId: currentUser?.cohortId || "founding-circle",
+              trustLevelLabel: trustSummary.levelLabel
+            })
+          }
+        />
         <Card className="space-y-4 p-5">
           <div>
             <h2 className="text-lg font-extrabold text-[#111111]">Proof type</h2>
@@ -62,9 +80,9 @@ export default function NewProofPage() {
             <TextArea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Write a short reflection..." />
           </div>
           <AiSupportCard
-            title="Want help reflecting?"
+            title="Reflect on this"
             description="AI can help you notice what you practiced and choose one next small step. It will not judge the proof."
-            ctaLabel="Get reflection help"
+            ctaLabel="Reflect on this"
             feature="REFLECTION_HELPER"
             sourceType="PRACTICE_PROMPT"
             sourceId={promptId}

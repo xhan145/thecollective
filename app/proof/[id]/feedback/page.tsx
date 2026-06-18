@@ -42,7 +42,7 @@ export default function ProofFeedbackPage() {
             <AiSupportCard
               title="Make my feedback more useful"
               description="AI can suggest clearer wording. You review it and choose what to use."
-              ctaLabel="Coach my feedback"
+              ctaLabel="Make my feedback more useful"
               feature="FEEDBACK_COACH"
               sourceType="PEER_FEEDBACK"
               sourceId={proof.id}

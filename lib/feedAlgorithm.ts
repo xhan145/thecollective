@@ -16,6 +16,10 @@ export function rankHomeFeed(items: FeedItem[], user: DemoUser): RankedFeedItem[
   return enforcePassiveToActiveFlow(items.map((item, index) => scoreFeedItem(item, user, index)).sort((a, b) => b.score - a.score));
 }
 
+export function shouldShowDemoActivity(realItemCount: number): boolean {
+  return realItemCount < 8;
+}
+
 export function enforcePassiveToActiveFlow(items: RankedFeedItem[]) {
   const passive = items.filter((i) => i.mode === "passive");
   const bridge = items.filter((i) => i.mode === "bridge");

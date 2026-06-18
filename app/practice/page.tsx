@@ -23,9 +23,9 @@ export default function PracticePage() {
         </Card>
         {nextPrompt && (
           <AiSupportCard
-            title="Need a simple plan?"
+            title="Create a small practice"
             description="AI can help you understand the next practice without turning it into a performance."
-            ctaLabel="Ask AI"
+            ctaLabel="Create a small practice"
             feature="PRACTICE_PREP"
             sourceType="PRACTICE_PROMPT"
             sourceId={nextPrompt.id}

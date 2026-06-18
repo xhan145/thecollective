@@ -25,9 +25,9 @@ export default function ProofDetailPage() {
             <ProofDetail proof={proof} feedback={feedback} />
             {feedback.length >= 2 && (
               <AiSupportCard
-                title="Summarize feedback"
+                title="Summarize what to try next"
                 description="AI can turn peer feedback into one simple next practice step. It does not decide trust."
-                ctaLabel="Summarize feedback"
+                ctaLabel="Summarize what to try next"
                 feature="FEEDBACK_SUMMARY"
                 sourceType="FEEDBACK_LIST"
                 sourceId={proof.id}
@@ -43,7 +43,7 @@ export default function ProofDetailPage() {
                 }
               />
             )}
-            <ButtonLink href={`/proof/${proof.id}/feedback`} className="w-full">Give feedback</ButtonLink>
+            {!proof.isDemo && <ButtonLink href={`/proof/${proof.id}/feedback`} className="w-full">Give feedback</ButtonLink>}
             <Link href="/feed" className="block rounded-full px-4 py-3 text-center text-sm font-extrabold text-[#6E6E6E]">Back to feed</Link>
           </>
         ) : (

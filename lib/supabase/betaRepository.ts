@@ -23,6 +23,7 @@ import type {
 } from "@/lib/betaTypes";
 import type { AiInteraction, AiUserFeedback } from "@/lib/aiTypes";
 import { makeTrustEvent } from "@/lib/betaTrust";
+import { shouldShowDemoActivity } from "@/lib/feedAlgorithm";
 import { PROOF_BUCKET } from "./client";
 
 /** User-generated data loaded for the signed-in member (+ cohort feed). */
@@ -277,24 +278,26 @@ export async function loadUserBundle(
     feedbackByProof.set(f.proofId, list);
   }
 
-  // Real content first, demo content after — and drop demo entirely when the
-  // feature flag is off. Done in-memory so it works whether or not migration
-  // 016 (is_demo column) has been applied yet.
+  // Real content first. Demo examples only fill the feed when real proof volume
+  // is low, and they never cross into trust/reputation ranking.
   const includeDemo = process.env.NEXT_PUBLIC_INCLUDE_DEMO_CONTENT !== "false";
   // Score within each tier: proofs by people you learn from rank up, then useful
-  // marks, then recency. The real-above-demo invariant is never crossed.
+  // marks, then recency. Demo rows get no rank boost.
   const score = (row: any) =>
-    (teacherIds.has(row.user_id) ? 3 : 0) + (usefulCountByProof[row.id] ?? 0);
-  const proofRows = (proofsRes.data ?? [])
-    .filter((row: any) => includeDemo || !row.is_demo)
+    row.is_demo ? 0 : (teacherIds.has(row.user_id) ? 3 : 0) + (usefulCountByProof[row.id] ?? 0);
+  const sortRows = (rows: any[]) => rows
     .sort((a: any, b: any) => {
-      const ad = a.is_demo ? 1 : 0;
-      const bd = b.is_demo ? 1 : 0;
-      if (ad !== bd) return ad - bd; // real (0) before demo (1) — invariant
       const sd = score(b) - score(a);
-      if (sd !== 0) return sd; // learn-from + useful within tier
+      if (sd !== 0) return sd;
       return a.created_at < b.created_at ? 1 : -1; // newest first
     });
+  const allProofRows = proofsRes.data ?? [];
+  const realRows = sortRows(allProofRows.filter((row: any) => !row.is_demo));
+  const demoLimit = Math.max(0, 8 - realRows.length);
+  const demoRows = includeDemo && shouldShowDemoActivity(realRows.length)
+    ? sortRows(allProofRows.filter((row: any) => row.is_demo)).slice(0, demoLimit || 8)
+    : [];
+  const proofRows = [...realRows, ...demoRows];
 
   const proofs: Proof[] = proofRows.map((row: any) => ({
     id: row.id,

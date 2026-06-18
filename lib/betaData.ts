@@ -117,10 +117,10 @@ const DEMO_BIOS = [
 const TEXT_THUMB_KINDS = ["text", "note", "question"];
 const ASSET_POOL = 8;
 
-/** Deterministic /demo/proof SVG path for a proof's media type. */
+/** Deterministic /demo/proof image path for a proof's media type. */
 function thumbForMedia(mediaType: Proof["mediaType"], idx: number, rng: () => number): string {
   const kind = mediaType === "text" ? pick(rng, TEXT_THUMB_KINDS) : mediaType; // image|audio|video map 1:1
-  return `/demo/proof/${kind}-${idx % ASSET_POOL}.svg`;
+  return `/demo/proof/${kind}-${idx % ASSET_POOL}.jpg`;
 }
 
 function buildDemoUsers(): UserProfile[] {
@@ -132,7 +132,7 @@ function buildDemoUsers(): UserProfile[] {
     cohortId: "founding-circle",
     directionIds: [DIRECTION_IDS[i % DIRECTION_IDS.length]],
     bio: DEMO_BIOS[i % DEMO_BIOS.length],
-    avatarUrl: `/demo/avatars/${displayName.toLowerCase()}.svg`,
+    avatarUrl: `/demo/avatars/${displayName.toLowerCase()}.jpg`,
     createdAt: iso(60 * 24 * (NAMES.length - i))
   }));
 }
@@ -178,10 +178,11 @@ function generateCommunity(): GeneratedCommunity {
         status: "submitted",
         visibility: "cohort",
         feedbackIds: [],
-        createdAt: iso(createdMin)
+        createdAt: iso(createdMin),
+        isDemo: true
       };
 
-      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "proof", points: 5, label: "Submitted proof from practice", sourceId: proofId, createdAt: proof.createdAt });
+      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "proof", points: 0, label: "Demo proof example", sourceId: proofId, createdAt: proof.createdAt });
 
       const fbCount = Math.floor(rng() * 4); // 0..3 feedback notes
       for (let f = 0; f < fbCount; f++) {
@@ -202,11 +203,11 @@ function generateCommunity(): GeneratedCommunity {
         });
         proof.feedbackIds.push(fbId);
         proof.status = "feedback-ready";
-        trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "peer-feedback", points: 3, label: "Gave one useful feedback note", sourceId: fbId, createdAt: iso(Math.max(4, createdMin - 21 - f * 7)) });
-        if (helpful) trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "helpful", points: 7, label: "Feedback marked helpful", sourceId: fbId, createdAt: iso(Math.max(3, createdMin - 25 - f * 7)) });
+        trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "peer-feedback", points: 0, label: "Demo feedback example", sourceId: fbId, createdAt: iso(Math.max(4, createdMin - 21 - f * 7)) });
+        if (helpful) trustEvents.push({ id: `te-${teIdx++}`, userId: author.id, type: "helpful", points: 0, label: "Demo helpful feedback example", sourceId: fbId, createdAt: iso(Math.max(3, createdMin - 25 - f * 7)) });
       }
 
-      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "practice", points: 5, label: "Completed a practice", sourceId: promptId, createdAt: iso(createdMin + 15) });
+      trustEvents.push({ id: `te-${teIdx++}`, userId: user.id, type: "practice", points: 0, label: "Demo practice example", sourceId: promptId, createdAt: iso(createdMin + 15) });
       proofs.push(proof);
     }
   });
