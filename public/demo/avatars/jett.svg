@@ -1,10 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="JE avatar">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="member portrait">
   <defs>
-    <radialGradient id="bg" cx="34%" cy="28%" r="85%">
-      <stop offset="0%" stop-color="#FFF6DF"/>
-      <stop offset="100%" stop-color="#FFD986"/>
+    <radialGradient id="bg" cx="42%" cy="34%" r="75%">
+      <stop offset="0%" stop-color="#F6E7CE"/>
+      <stop offset="100%" stop-color="#F6E7CE" stop-opacity="0.78"/>
     </radialGradient>
+    <clipPath id="disc"><circle cx="50" cy="50" r="50"/></clipPath>
   </defs>
-  <circle cx="50" cy="50" r="48" fill="url(#bg)" stroke="#F2A900" stroke-width="3"/>
-  <text x="50" y="50" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="38" font-weight="800" fill="#7A5300" text-anchor="middle" dominant-baseline="central">JE</text>
+  <g clip-path="url(#disc)">
+    <rect x="0" y="0" width="100" height="100" fill="url(#bg)"/>
+    <circle cx="50" cy="50" r="50" fill="none" stroke="#F2A900" stroke-width="2.5" stroke-opacity="0.55"/>
+    <!-- shoulders -->
+    <path d="M16 100 Q16 76 50 76 Q84 76 84 100 Z" fill="#F2A900"/>
+    <path d="M42 78 Q50 86 58 78 L58 72 Q50 76 42 72 Z" fill="#F2A900" opacity="0.85"/>
+    <!-- neck -->
+    <rect x="44" y="64" width="12" height="14" rx="5" fill="#B0744A"/>
+    <!-- head -->
+    <ellipse cx="50" cy="47" rx="21" ry="23" fill="#C68A5E"/>
+    <circle cx="28" cy="49" r="4" fill="#C68A5E"/>
+    <circle cx="72" cy="49" r="4" fill="#C68A5E"/>
+    <!-- cheeks -->
+    <ellipse cx="40" cy="54" rx="3.5" ry="2.4" fill="#E8896B" opacity="0.28"/>
+    <ellipse cx="60" cy="54" rx="3.5" ry="2.4" fill="#E8896B" opacity="0.28"/>
+    
+    <!-- eyes -->
+    <ellipse cx="42.5" cy="46" rx="2.3" ry="3" fill="#2A2018"/>
+    <ellipse cx="57.5" cy="46" rx="2.3" ry="3" fill="#2A2018"/>
+    <circle cx="43.3" cy="45" r="0.8" fill="#fff" opacity="0.85"/>
+    <circle cx="58.3" cy="45" r="0.8" fill="#fff" opacity="0.85"/>
+    <!-- brows -->
+    <path d="M39 41 Q42.5 39 46 41" stroke="#2B1B14" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M54 41 Q57.5 39 61 41" stroke="#2B1B14" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <!-- nose -->
+    <path d="M50 47 L48 53 Q50 55 52 53" stroke="#B0744A" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- mouth -->
+    <path d="M44 58 Q50 63 56 58" stroke="#9A4A38" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <g stroke="#33302B" stroke-width="1.6" fill="none">
+      <circle cx="42.5" cy="46" r="5.2"/><circle cx="57.5" cy="46" r="5.2"/>
+      <line x1="47.7" y1="46" x2="52.3" y2="46"/><line x1="37.3" y1="46" x2="31" y2="44"/><line x1="62.7" y1="46" x2="69" y2="44"/>
+    </g>
+    <!-- hair on top -->
+    <path d="M28 47 C27 26 73 26 72 46 C72 34 64 31 46 32 C40 32 30 34 28 47 Z" fill="#2B1B14"/>
+  </g>
 </svg>

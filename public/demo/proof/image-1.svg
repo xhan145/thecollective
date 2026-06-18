@@ -1,14 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="image proof thumbnail">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="100" x2="100" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FFB000"/>
-      <stop offset="100%" stop-color="#F2A900"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="image proof"><defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFC23D"/><stop offset="100%" stop-color="#F2A900"/>
     </linearGradient>
+    <radialGradient id="gloss" cx="30%" cy="22%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.30"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect x="0" y="0" width="100" height="100" fill="url(#bg)"/>
-  <g stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-        <rect x="28" y="32" width="44" height="36" rx="5"/>
-        <circle cx="40" cy="44" r="4" fill="#FFFFFF" stroke="none"/>
-        <path d="M30 64 l14 -14 l10 10 l8 -8 l10 12"/>
-      </g>
-</svg>
+  <rect width="100" height="100" fill="url(#bg)"/><rect width="100" height="100" fill="url(#gloss)"/>
+        <rect x="22" y="28" width="58" height="46" rx="4" fill="#000000" opacity="0.10"/>
+        <rect x="20" y="26" width="58" height="46" rx="4" fill="#FFFDF8"/>
+        <clipPath id="ph"><rect x="24" y="30" width="50" height="38" rx="2"/></clipPath>
+        <g clip-path="url(#ph)">
+          <rect x="24" y="30" width="50" height="38" fill="#BFE3F2"/>
+          <circle cx="62" cy="40" r="6" fill="#FFD15C"/>
+          <path d="M24 68 L40 50 L50 60 L60 48 L74 64 L74 68 Z" fill="#7FB069"/>
+          <path d="M24 68 L44 56 L58 66 L74 56 L74 68 Z" fill="#5C8A4A"/>
+        </g></svg>
