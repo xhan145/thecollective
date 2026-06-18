@@ -94,15 +94,20 @@ function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 bg-gradient-to-t from-[#FFF8EE] via-[#FFF8EE] to-[#FFF8EE]/70 px-5 pb-[calc(12px+env(safe-area-inset-bottom,0px))] pt-4">
-      <motion.div whileTap={{ scale: 0.92 }} className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-4">
-        <Link
-          href="/proof/new/say-clear-thing"
-          className="grid h-[58px] w-[58px] place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_16px_34px_rgba(242,169,0,0.34)] transition hover:shadow-[0_20px_40px_rgba(242,169,0,0.44)]"
-          aria-label="Submit proof"
-        >
-          <Plus size={27} strokeWidth={2.6} />
-        </Link>
-      </motion.div>
+      {/* Wrapper owns centering (static translate, never touched by Motion);
+          the inner motion element owns the tap-scale so it can't wipe the
+          centering/raise transform. z-[60] keeps the FAB above the nav pill. */}
+      <div className="pointer-events-none absolute left-1/2 top-0 z-[60] -translate-x-1/2 -translate-y-4">
+        <motion.div whileTap={{ scale: 0.92 }} className="pointer-events-auto">
+          <Link
+            href="/proof/new/say-clear-thing"
+            className="grid h-[58px] w-[58px] place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_16px_34px_rgba(242,169,0,0.34)] outline-none transition-shadow hover:shadow-[0_20px_40px_rgba(242,169,0,0.44)] focus-visible:ring-4 focus-visible:ring-[#F2A900]/40"
+            aria-label="Submit proof"
+          >
+            <Plus size={27} strokeWidth={2.6} />
+          </Link>
+        </motion.div>
+      </div>
       <div className="grid grid-cols-4 rounded-[28px] border border-[#EFE7D8] bg-[#FFFDF8]/95 p-2 shadow-[0_16px_44px_rgba(71,52,18,0.10)] backdrop-blur">
         {items.map((item, index) => {
           const Icon = item.icon;
