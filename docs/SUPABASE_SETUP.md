@@ -1,5 +1,19 @@
 # Collective Web Beta — Supabase setup
 
+> **Closed beta?** For the full migration order (010–022), invite-code setup,
+> admin dashboard access, storage notes, proof limits, the manual QA checklist,
+> and known limitations, see **[BETA_QA.md](./BETA_QA.md)**.
+
+**Live Supabase beta verification (quick checklist):**
+1. Apply migrations 010–012, then 013, 014, 015, 016–021, then **022_beta_access.sql**.
+2. Confirm `directions` + `practices` rows exist (onboarding picker non-empty).
+3. Confirm the profile trigger creates a `profiles` row on signup.
+4. Confirm RLS allows a normal authenticated user to read/write their own rows.
+5. Confirm the `collective-proof-media` storage bucket exists.
+6. Configure auth redirect URLs (Site URL + `${APP_URL}/auth`).
+7. (Invite gate) Set `NEXT_PUBLIC_REQUIRE_INVITE_CODE=true` + create a code (`npm run beta:invite`).
+8. Set `ADMIN_EMAILS` and open `/admin/beta` to confirm stats + app feedback load.
+
 The web beta runs in **demo mode** (localStorage) with no backend. Add Supabase
 env vars and run the SQL below to switch it to a **live backend**: real
 email/password accounts, and proofs / feedback / trust / practice completions /

@@ -16,6 +16,7 @@
     "seed:demo:dry": "tsx scripts/seed-demo-data.ts --dry-run",
     "seed:demo:reset": "tsx scripts/seed-demo-data.ts --reset --yes",
     "seed:demo:media": "tsx scripts/seed-demo-data.ts --media-only --yes",
+    "beta:invite": "tsx scripts/create-beta-invite.ts",
     "gitnexus:analyze": "node .tools/gitnexus.mjs analyze . --index-only --name collective-v7-push-ready",
     "gitnexus:serve": "node .tools/gitnexus.mjs serve",
     "gitnexus:mcp": "node .tools/gitnexus.mjs mcp",

@@ -339,7 +339,7 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
               );
             })
           ) : (
-            <p className="rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#6E6E6E]">No feedback yet. Feedback can come next.</p>
+            <p className="rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#6E6E6E]">No feedback yet. Feedback can come after proof.</p>
           )}
         </div>
       </Card>

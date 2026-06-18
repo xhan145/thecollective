@@ -28,6 +28,10 @@ export type UserProfile = {
   feedbackGivenCount?: number;
   feedbackReceivedCount?: number;
   contributionCount?: number;
+  // Closed-beta invite gate (set when an invite code is redeemed).
+  betaAccess?: boolean;
+  inviteCode?: string | null;
+  betaJoinedAt?: string | null;
 };
 
 export type Cohort = {

@@ -15,7 +15,7 @@ export function AppFeedbackForm() {
   const [sent, setSent] = useState(false);
 
   if (sent) {
-    return <SuccessState title="Feedback saved." body="Thank you for helping shape the beta. Small notes are useful." />;
+    return <SuccessState title="Feedback saved." body="Thanks. This helps shape Collective." />;
   }
 
   return (

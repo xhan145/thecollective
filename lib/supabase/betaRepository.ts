@@ -70,6 +70,9 @@ function mapProfile(row: any): UserProfile {
     feedbackGivenCount: row.feedback_given_count ?? 0,
     feedbackReceivedCount: row.feedback_received_count ?? 0,
     contributionCount: row.contribution_count ?? 0,
+    betaAccess: row.beta_access ?? false,
+    inviteCode: row.invite_code ?? null,
+    betaJoinedAt: row.beta_joined_at ?? null,
   };
 }
 
@@ -452,12 +455,19 @@ export async function uploadProofFile(
 }
 
 /** Persist a proof (and optional attachment file) for the given local proof object. */
+/**
+ * Persist a proof (text first, so a reflection is never lost) and an optional
+ * attachment. Throws if the proof row itself fails to save so the caller can
+ * surface a calm retry without wiping the user's text. An attachment upload
+ * failure is non-fatal: the text proof still saves.
+ */
 export async function persistProof(
   client: SupabaseClient,
   proof: Proof,
   file?: File,
 ): Promise<void> {
-  await client.from("proofs").insert({
+  // 1) Save the proof row (the user's text). This must succeed.
+  const { error: proofError } = await client.from("proofs").insert({
     id: proof.id,
     user_id: proof.userId,
     prompt_id: proof.promptId,
@@ -468,19 +478,23 @@ export async function persistProof(
     status: proof.status,
     visibility: proof.visibility,
   });
+  if (proofError) throw new Error(proofError.message);
 
+  // 2) Attachment is best-effort — a failed upload must not lose the text proof.
   const attachment = proof.attachments[0];
   if (attachment) {
     let storagePath = attachment.storagePath ?? null;
     if (file) storagePath = await uploadProofFile(client, proof.userId, proof.id, file);
-    await client.from("proof_attachments").insert({
-      proof_id: proof.id,
-      media_type: attachment.mediaType,
-      file_name: attachment.fileName,
-      mime_type: attachment.mimeType,
-      size_bytes: attachment.sizeBytes,
-      storage_path: storagePath,
-    });
+    if (storagePath) {
+      await client.from("proof_attachments").insert({
+        proof_id: proof.id,
+        media_type: attachment.mediaType,
+        file_name: attachment.fileName,
+        mime_type: attachment.mimeType,
+        size_bytes: attachment.sizeBytes,
+        storage_path: storagePath,
+      });
+    }
   }
 
   await insertTrust(client, makeTrustEvent(proof.userId, "proof", "Submitted proof from practice", proof.id));

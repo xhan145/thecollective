@@ -11,6 +11,7 @@ import { Badge } from "./ui";
 import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
+import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 
 const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account"];
 
@@ -31,6 +32,19 @@ export function AppShell({ children }: { children: ReactNode }) {
     // otherwise a hard refresh on an authed route bounces to /auth.
     if (!currentUser && isProtected) {
       router.replace("/auth");
+      return;
+    }
+    // Invite gate: a real (non-demo) Supabase member without beta access is sent
+    // to the access screen. Demo explorers (ids start with "user-") are exempt.
+    if (
+      REQUIRE_INVITE &&
+      supabaseEnabled &&
+      currentUser &&
+      !currentUser.id.startsWith("user-") &&
+      !currentUser.betaAccess &&
+      isProtected
+    ) {
+      router.replace("/access");
       return;
     }
     // Real (Supabase) users who haven't onboarded go to onboarding first.
@@ -71,7 +85,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
       <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5">
         {loading ? (
-          <ScreenSkeleton />
+          <div className="space-y-4">
+            <p className="text-center text-sm font-extrabold text-[#6E6E6E]">Getting your space ready…</p>
+            <ScreenSkeleton />
+          </div>
         ) : (
           <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
             {children}

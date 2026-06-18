@@ -61,7 +61,7 @@ export default function HomePage() {
           {latestProof ? (
             <ProofCard proof={latestProof} feedbackCount={getFeedbackForProof(latestProof.id).length} authorName={snapshot.users.find((u) => u.id === latestProof.userId)?.displayName} authorAvatarUrl={snapshot.users.find((u) => u.id === latestProof.userId)?.avatarUrl} />
           ) : (
-            <EmptyState title="No proof yet" body="Submit one small example of practice when you are ready." cta={<ButtonLink href={`/proof/new/${nextPrompt.id}`}>Submit proof</ButtonLink>} />
+            <EmptyState title="No proof yet" body="Start with one small practice." cta={<ButtonLink href={`/proof/new/${nextPrompt.id}`}>Submit proof</ButtonLink>} />
           )}
         </section>
 

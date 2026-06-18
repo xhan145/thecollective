@@ -47,6 +47,7 @@ import {
   type BetaUserBundle
 } from "@/lib/supabase/betaRepository";
 import { loadContent, type CollectiveContent } from "@/lib/supabase/contentRepository";
+import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
 
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
@@ -68,7 +69,8 @@ type BetaAppContextValue = {
   completeOnboarding: (directionId: string) => Promise<void>;
   updateProfile: (fields: { displayName?: string; username?: string; bio?: string }) => Promise<void>;
   completePractice: (promptId: string) => void;
-  submitProof: (input: ProofDraftInput) => Proof | null;
+  submitProof: (input: ProofDraftInput) => Promise<{ proof: Proof | null; error: string | null }>;
+  logEvent: (eventType: BetaEventType, metadata?: Record<string, unknown>) => void;
   addFeedback: (input: FeedbackDraftInput) => Feedback | null;
   markFeedbackHelpful: (feedbackId: string) => void;
   submitAppFeedback: (input: AppFeedbackDraftInput) => void;
@@ -365,6 +367,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
             username: meta.username
           }).catch(() => {});
         }
+        if (data.session) void logBetaEvent(supabase!, data.session.user.id, "signup_completed");
         return { error: null, needsConfirmation: !data.session };
       },
       async signInWithEmail(email, password) {
@@ -389,7 +392,10 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           };
         });
         const uid = authUid();
-        if (writesEnabled && uid) await updateOnboarding(supabase!, uid, directionId).catch(() => {});
+        if (writesEnabled && uid) {
+          await updateOnboarding(supabase!, uid, directionId).catch(() => {});
+          void logBetaEvent(supabase!, uid, "onboarding_completed", undefined, { directionId });
+        }
       },
       async updateProfile(fields) {
         setSnapshot((current) => {
@@ -431,59 +437,60 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         const uid = authUid();
         if (writesEnabled && uid) {
           void recordPracticeCompletion(supabase!, uid, promptId, `Completed ${label}`).catch(() => {});
+          void logBetaEvent(supabase!, uid, "practice_completed", undefined, { promptId });
         }
       },
-      submitProof(input) {
-        let created: Proof | null = null;
+      logEvent(eventType, metadata) {
+        if (writesEnabled) void logBetaEvent(supabase!, authUid(), eventType, undefined, metadata);
+      },
+      async submitProof(input) {
         const uid = authUid();
-        const currentUserId = uid || snapshot.currentUserId || "user-alex";
-        setSnapshot((current) => {
-          const ownerId = uid || current.currentUserId || "user-alex";
-          const prompt = current.prompts.find((item) => item.id === input.promptId);
-          const directionId = prompt?.directionId || current.directions[0]?.id || "direction-confidence";
-          const proofId = makeId("proof");
-          const attachment = input.attachment
-            ? (() => {
-                const { file, ...meta } = input.attachment!;
-                void file;
-                return {
-                  ...meta,
-                  id: makeId("attachment"),
-                  storagePath: proofStoragePath(ownerId, proofId, meta.fileName)
-                };
-              })()
-            : undefined;
+        const ownerId = uid || snapshot.currentUserId || "user-alex";
+        const prompt = snapshot.prompts.find((item) => item.id === input.promptId);
+        const directionId = prompt?.directionId || snapshot.directions[0]?.id || "direction-confidence";
+        const proofId = makeId("proof");
+        const attachment = input.attachment
+          ? (() => {
+              const { file, ...meta } = input.attachment!;
+              void file;
+              return { ...meta, id: makeId("attachment"), storagePath: proofStoragePath(ownerId, proofId, meta.fileName) };
+            })()
+          : undefined;
 
-          created = {
-            id: proofId,
-            userId: ownerId,
-            promptId: input.promptId,
-            directionId,
-            title: titleFromBody(input.body, `${input.mediaType[0].toUpperCase()}${input.mediaType.slice(1)} proof`),
-            body: input.body.trim(),
-            mediaType: input.mediaType,
-            attachments: attachment ? [attachment] : [],
-            status: "submitted",
-            visibility: "private",
-            feedbackIds: [],
-            createdAt: new Date().toISOString()
-          };
+        const created: Proof = {
+          id: proofId,
+          userId: ownerId,
+          promptId: input.promptId,
+          directionId,
+          title: titleFromBody(input.body, `${input.mediaType[0].toUpperCase()}${input.mediaType.slice(1)} proof`),
+          body: input.body.trim(),
+          mediaType: input.mediaType,
+          attachments: attachment ? [attachment] : [],
+          status: "submitted",
+          visibility: "private",
+          feedbackIds: [],
+          createdAt: new Date().toISOString()
+        };
 
-          return {
-            ...current,
-            currentUserId: ownerId,
-            proofs: [created, ...current.proofs],
-            trustEvents: [
-              makeTrustEvent(ownerId, "proof", "Submitted proof from practice", proofId),
-              ...current.trustEvents
-            ]
-          };
-        });
-        if (writesEnabled && uid && created) {
-          void persistProof(supabase!, created, input.attachment?.file).catch(() => {});
+        // Optimistic insert so the proof appears immediately and the text is never lost.
+        setSnapshot((current) => ({
+          ...current,
+          currentUserId: ownerId,
+          proofs: [created, ...current.proofs],
+          trustEvents: [makeTrustEvent(ownerId, "proof", "Submitted proof from practice", proofId), ...current.trustEvents]
+        }));
+
+        // Demo mode (no backend): the optimistic proof is the source of truth.
+        if (!writesEnabled || !uid) return { proof: created, error: null };
+        try {
+          await persistProof(supabase!, created, input.attachment?.file);
+          void logBetaEvent(supabase!, uid, "proof_submit_succeeded", undefined, { proofId });
+          return { proof: created, error: null };
+        } catch {
+          // The optimistic proof stays in local state, so the user's text is not lost.
+          void logBetaEvent(supabase!, uid, "proof_submit_failed", undefined, { proofId });
+          return { proof: created, error: "We couldn’t save this proof yet. Your text is still here — try again." };
         }
-        void currentUserId;
-        return created;
       },
       addFeedback(input) {
         let created: Feedback | null = null;
@@ -534,6 +541,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         });
         if (writesEnabled && uid && created) {
           void persistFeedback(supabase!, created).catch(() => {});
+          void logBetaEvent(supabase!, uid, "feedback_submitted", undefined, { proofId: input.proofId });
         }
         return created;
       },
@@ -579,6 +587,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         });
         if (writesEnabled && uid) {
           void persistAppFeedback(supabase!, uid, input).catch(() => {});
+          void logBetaEvent(supabase!, uid, "app_feedback_submitted", undefined, { category: input.category });
         }
       },
       recordAiInteraction(input) {

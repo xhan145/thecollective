@@ -6,6 +6,7 @@ import Link from "next/link";
 import { CollectiveMark } from "@/components/beta/Brand";
 import { Button, Card } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
+import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 
 const field =
   "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
@@ -19,6 +20,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -30,14 +32,27 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
     setLoading(true);
     try {
       if (mode === "signup") {
+        if (REQUIRE_INVITE && !inviteCode.trim()) {
+          setError("An invite code is required to join the closed beta.");
+          return;
+        }
         const result = await signUpWithEmail(email, password, {
           displayName: displayName.trim() || undefined,
           username: username.trim().replace(/\s+/g, "").toLowerCase() || undefined
         });
-        if (result.error) setError(result.error);
-        else if (result.needsConfirmation) {
-          setNotice("Check your email to confirm your account, then sign in.");
+        if (result.error) {
+          setError(result.error);
+        } else if (result.needsConfirmation) {
+          // No session yet — they confirm, sign in, then redeem at /access.
+          setNotice("Check your email to confirm your account, then sign in to enter your code.");
           setMode("login");
+        } else if (REQUIRE_INVITE) {
+          const redeemed = await redeemInvite(inviteCode);
+          if (redeemed.ok) window.location.assign("/onboarding");
+          else {
+            // Account exists; let them retry the code on the access screen.
+            router.push("/access");
+          }
         } else {
           router.push("/onboarding");
         }
@@ -72,6 +87,9 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             )}
             <input className={field} type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
             <input className={field} type="password" required minLength={8} placeholder={mode === "signup" ? "Password (8+ characters)" : "Password"} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
+            {mode === "signup" && REQUIRE_INVITE && (
+              <input className={field} placeholder="Invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} autoComplete="one-time-code" aria-label="Invite code" />
+            )}
             {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
             {notice && <p className="rounded-2xl bg-[#FFF8EE] p-3 text-sm font-bold leading-6 text-[#38322A]">{notice}</p>}
             <Button type="submit" className="w-full" disabled={loading}>

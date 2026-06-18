@@ -13,15 +13,62 @@ import { getCollectiveAiService } from "@/lib/aiService";
 export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
   const router = useRouter();
-  const { currentUser, trustSummary, getPromptById, submitProof } = useBetaApp();
+  const { currentUser, trustSummary, getPromptById, submitProof, logEvent } = useBetaApp();
   const promptId = params.promptId || "say-clear-thing";
   const prompt = getPromptById(promptId);
   const [mediaType, setMediaType] = useState<ProofMediaType>("text");
   const [body, setBody] = useState("");
   const [attachment, setAttachment] = useState<AttachmentDraft | undefined>();
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
   const aiService = getCollectiveAiService();
+
+  // MVP upload limits (bytes). Keep text/caption safe even when a file is rejected.
+  const SIZE_LIMITS: Record<string, number> = {
+    image: 10 * 1024 * 1024,
+    audio: 25 * 1024 * 1024,
+    video: 100 * 1024 * 1024
+  };
+  function validateAttachment(): string | null {
+    if (!attachment?.file) return null;
+    const kind = attachment.mediaType;
+    const limit = SIZE_LIMITS[kind];
+    if (limit && attachment.sizeBytes > limit) {
+      return `That ${kind} is too large for this beta (max ${Math.round(limit / (1024 * 1024))} MB). Your text is still here.`;
+    }
+    const mime = attachment.mimeType || attachment.file.type || "";
+    if (kind === "image" && !mime.startsWith("image/")) return "That file is not an image. Your text is still here.";
+    if (kind === "audio" && !mime.startsWith("audio/")) return "That file is not audio. Your text is still here.";
+    if (kind === "video" && !mime.startsWith("video/")) return "That file is not a video. Your text is still here.";
+    return null;
+  }
+
+  async function handleSubmit() {
+    if (!body.trim() && !attachment) {
+      setError("Add a short reflection or attach proof before submitting.");
+      return;
+    }
+    const fileError = validateAttachment();
+    if (fileError) {
+      setError(fileError);
+      return;
+    }
+    setError("");
+    setSubmitting(true);
+    logEvent("proof_submit_started", { promptId, mediaType });
+    try {
+      const { proof, error: saveError } = await submitProof({ promptId, body, mediaType, attachment });
+      if (saveError) {
+        // Text is preserved in state — the user can simply try again.
+        setError(saveError);
+        return;
+      }
+      if (proof) setSubmittedId(proof.id);
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   if (submittedId) {
     return (
@@ -100,18 +147,8 @@ export default function NewProofPage() {
           <AttachmentPicker mediaType={mediaType} attachment={attachment} onAttachment={setAttachment} onRemove={() => setAttachment(undefined)} />
           {error && <p className="rounded-[18px] bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
           <p className="text-center text-xs leading-5 text-[#6E6E6E]">Only share what you are comfortable sharing.</p>
-          <Button
-            className="w-full"
-            onClick={() => {
-              if (!body.trim() && !attachment) {
-                setError("Add a short reflection or attach proof before submitting.");
-                return;
-              }
-              const proof = submitProof({ promptId, body, mediaType, attachment });
-              if (proof) setSubmittedId(proof.id);
-            }}
-          >
-            Submit proof
+          <Button className="w-full" disabled={submitting} onClick={handleSubmit}>
+            {submitting ? "Saving…" : "Submit proof"}
           </Button>
         </Card>
       </div>

@@ -4,6 +4,8 @@ A mobile-first Collective prototype for the core loop: discover, practice, prove
 
 The current web beta is a warm cream/gold PWA shell for iPhone Safari and mobile browsers. It works in demo mode without backend credentials and keeps proof, feedback, trust, and app feedback local until Firebase is connected.
 
+> **Running a closed beta on live Supabase?** Start with **[docs/BETA_QA.md](docs/BETA_QA.md)** — required env vars, migration order (010–022), invite-code setup, the `/admin/beta` dashboard, storage notes, proof upload limits, the full manual QA checklist, and known limitations.
+
 ## Run in Replit
 
 Paste Prompt 1 from `docs/REPLIT_AGENT_PROMPTS.md` into Replit Agent. Manual fallback:
