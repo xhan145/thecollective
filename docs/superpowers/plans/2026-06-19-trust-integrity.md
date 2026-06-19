@@ -44,6 +44,76 @@ Current RLS (migration 011) being changed:
 
 ---
 
+### Task 0: Fix proof/feedback id generation (use real UUIDs)
+
+**Why:** `proofs.id` and `feedback.id` are `uuid` columns, but the provider generates ids via `makeId("proof")` → `"proof-<ts>-<rand>"`, which is not a valid uuid. `persistProof`/`persistFeedback` send `id: proof.id` into those uuid columns, so real inserts throw `invalid input syntax for type uuid` (confirmed: 0 real proofs/feedback exist on the live DB — the path has never succeeded). The trust RPCs in later tasks key off these ids, so they must be valid uuids that match the persisted row. Fix: generate proof/feedback ids with `crypto.randomUUID()` so the local id IS the DB id.
+
+**Files:**
+- Modify: `components/beta/AppStateProvider.tsx` (two id-generation sites)
+
+**Interfaces:**
+- Produces: proof + feedback objects whose `id` is a valid uuid, used unchanged by `persistProof`/`persistFeedback` (they still send `id: …`, now valid) and by the trust RPCs in Task 1/2.
+
+- [ ] **Step 1: Switch the proof id to a uuid**
+
+In `components/beta/AppStateProvider.tsx`, inside `submitProof`, change:
+
+```ts
+        const proofId = makeId("proof");
+```
+
+to:
+
+```ts
+        const proofId = crypto.randomUUID();
+```
+
+- [ ] **Step 2: Switch the feedback id to a uuid**
+
+In `components/beta/AppStateProvider.tsx`, inside `addFeedback`, change:
+
+```ts
+          const feedbackId = makeId("feedback");
+```
+
+to:
+
+```ts
+          const feedbackId = crypto.randomUUID();
+```
+
+Leave all other `makeId(...)` calls as-is — conversations/messages/useful/saved/connection inserts don't send a client id into a uuid PK (the DB generates those), so they're unaffected.
+
+- [ ] **Step 3: Typecheck**
+
+Run:
+
+```bash
+cd "/c/Users/xhan1/OneDrive/Documents/New project/collective-v7-android-agent-prototype-local"
+npm run typecheck
+```
+
+Expected: no errors. (`crypto.randomUUID()` is available in the browser; these methods run only in `"use client"` code.)
+
+- [ ] **Step 4: Confirm no other proof/feedback id forcing remains**
+
+Run:
+
+```bash
+grep -n "makeId(\"proof\")\|makeId(\"feedback\")\|makeId('proof')\|makeId('feedback')" components/beta/AppStateProvider.tsx
+```
+
+Expected: zero matches.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add components/beta/AppStateProvider.tsx
+git commit -m "fix: generate proof/feedback ids as uuids so they persist + match DB"
+```
+
+---
+
 ### Task 1: Write and apply migration `023_trust_integrity.sql`
 
 **Files:**
@@ -501,6 +571,7 @@ git commit -m "docs: trust integrity manual QA check"
 ## Self-Review
 
 **1. Spec coverage:**
+- Proof/feedback ids are valid uuids that match the persisted DB row (prereq for trust RPCs) → Task 0. ✓
 - De-dupe + unique constraint (I1) → Task 1 Steps 2–3, verified Task 3 Step 2. ✓
 - Lock-down `with check (false)` (L1) → Task 1 Step 3 §3, verified Task 3 Step 1. ✓
 - `_trust_points` server-side mapping, values unchanged → Task 1 §4. ✓
