@@ -53,10 +53,14 @@ begin
 end;
 $$;
 
--- Public wrapper for admin/manual repair.
+-- Self-repair wrapper: a member may recompute ONLY their own counts.
+-- (Admin/cross-user repair runs via the service role, which bypasses this.)
 create or replace function public.recompute_profile_counts(p_uid uuid)
 returns void language plpgsql security definer set search_path = public, pg_temp as $$
 begin
+  if p_uid is distinct from auth.uid() then
+    raise exception 'can only recompute your own counts';
+  end if;
   perform public._recompute_profile_counts(p_uid);
 end;
 $$;
@@ -127,10 +131,13 @@ begin
 end;
 $$;
 
--- 8) Grants: only authenticated users may call the action RPCs; no public/anon.
-revoke all on function public._trust_points(text) from public;
-revoke all on function public._recompute_profile_counts(uuid) from public;
-revoke all on function public._insert_trust(uuid, text, text, text) from public;
+-- 8) Grants. Internal helpers must be UNREACHABLE by clients — in Supabase,
+--    anon/authenticated hold DIRECT execute grants on public functions, so
+--    `revoke from public` is not enough; revoke from anon + authenticated too.
+--    (The SECURITY DEFINER action RPCs still call them as the function owner.)
+revoke all on function public._trust_points(text) from public, anon, authenticated;
+revoke all on function public._recompute_profile_counts(uuid) from public, anon, authenticated;
+revoke all on function public._insert_trust(uuid, text, text, text) from public, anon, authenticated;
 revoke all on function public.recompute_profile_counts(uuid) from public, anon;
 revoke all on function public.record_proof_trust(uuid) from public, anon;
 revoke all on function public.record_practice_trust(uuid) from public, anon;
