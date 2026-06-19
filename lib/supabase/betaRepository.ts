@@ -22,7 +22,6 @@ import type {
   UserProfile,
 } from "@/lib/betaTypes";
 import type { AiInteraction, AiUserFeedback } from "@/lib/aiTypes";
-import { makeTrustEvent } from "@/lib/betaTrust";
 import { shouldShowDemoActivity } from "@/lib/feedAlgorithm";
 import { PROOF_BUCKET } from "./client";
 
@@ -358,42 +357,13 @@ export async function markAllNotificationsRead(client: SupabaseClient, userId: s
 
 // ---------- write-through ----------
 
-async function insertTrust(client: SupabaseClient, event: TrustEvent) {
-  await client.from("trust_events").insert({
-    user_id: event.userId,
-    type: event.type,
-    points: event.points,
-    label: event.label,
-    source_id: event.sourceId ?? null,
-  });
-}
-
 /**
- * Recompute the acting user's profile counters + trust_score from source tables.
- * Idempotent and drift-free. RLS only lets a user update their own profile row,
- * so always call this with the user who performed the action; other users'
- * counters refresh the next time they load.
+ * Recompute a user's profile counters + trust_score from source tables, server-side.
+ * Thin wrapper over the SECURITY DEFINER RPC (counters are owned by the DB now).
+ * Use for admin/manual repair; the action RPCs already recompute affected users.
  */
-export async function refreshProfileStats(client: SupabaseClient, userId: string): Promise<void> {
-  const [pc, pr, fg, fr, te] = await Promise.all([
-    client.from("practice_completions").select("id", { count: "exact", head: true }).eq("user_id", userId),
-    client.from("proofs").select("id", { count: "exact", head: true }).eq("user_id", userId),
-    client.from("feedback").select("id", { count: "exact", head: true }).eq("author_id", userId),
-    client.from("feedback").select("id", { count: "exact", head: true }).eq("recipient_id", userId),
-    client.from("trust_events").select("points").eq("user_id", userId),
-  ]);
-  const trustScore = (te.data ?? []).reduce((sum, row: any) => sum + (row.points ?? 0), 0);
-  await client
-    .from("profiles")
-    .update({
-      practice_count: pc.count ?? 0,
-      proof_count: pr.count ?? 0,
-      feedback_given_count: fg.count ?? 0,
-      feedback_received_count: fr.count ?? 0,
-      trust_score: trustScore,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", userId);
+export async function recomputeProfileCounts(client: SupabaseClient, userId: string): Promise<void> {
+  await client.rpc("recompute_profile_counts", { p_uid: userId });
 }
 
 /** Persist onboarding completion + chosen direction. */
@@ -434,11 +404,11 @@ export async function recordPracticeCompletion(
   promptId: string,
   label: string,
 ) {
+  void label; // label is now stamped server-side by the RPC
   await client
     .from("practice_completions")
     .upsert({ user_id: userId, prompt_id: promptId }, { onConflict: "user_id,prompt_id" });
-  await insertTrust(client, makeTrustEvent(userId, "practice", label, promptId));
-  await refreshProfileStats(client, userId);
+  await client.rpc("record_practice_trust", { p_prompt_id: promptId });
 }
 
 export async function uploadProofFile(
@@ -497,8 +467,7 @@ export async function persistProof(
     }
   }
 
-  await insertTrust(client, makeTrustEvent(proof.userId, "proof", "Submitted proof from practice", proof.id));
-  await refreshProfileStats(client, proof.userId);
+  await client.rpc("record_proof_trust", { p_proof_id: proof.id });
 }
 
 export async function persistFeedback(client: SupabaseClient, feedback: Feedback): Promise<void> {
@@ -515,8 +484,7 @@ export async function persistFeedback(client: SupabaseClient, feedback: Feedback
     next_step_note: feedback.nextStepNote ?? null,
   });
   await client.from("proofs").update({ status: "feedback-ready" }).eq("id", feedback.proofId);
-  await insertTrust(client, makeTrustEvent(feedback.authorId, "peer-feedback", "Gave useful feedback", feedback.id));
-  await refreshProfileStats(client, feedback.authorId);
+  await client.rpc("record_feedback_trust", { p_feedback_id: feedback.id });
 }
 
 export async function persistMarkHelpful(
@@ -524,8 +492,8 @@ export async function persistMarkHelpful(
   feedbackId: string,
   authorId: string,
 ): Promise<void> {
-  await client.from("feedback").update({ helpful: true }).eq("id", feedbackId);
-  await insertTrust(client, makeTrustEvent(authorId, "helpful", "Feedback marked helpful", feedbackId));
+  void authorId; // the RPC derives + credits the author server-side
+  await client.rpc("mark_feedback_helpful", { p_feedback_id: feedbackId });
 }
 
 // ---------- engagement: useful marks / saved items / learn-from ----------
