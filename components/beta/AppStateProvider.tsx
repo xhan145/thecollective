@@ -448,7 +448,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         const ownerId = uid || snapshot.currentUserId || "user-alex";
         const prompt = snapshot.prompts.find((item) => item.id === input.promptId);
         const directionId = prompt?.directionId || snapshot.directions[0]?.id || "direction-confidence";
-        const proofId = makeId("proof");
+        const proofId = crypto.randomUUID();
         const attachment = input.attachment
           ? (() => {
               const { file, ...meta } = input.attachment!;
@@ -511,7 +511,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           const ownerId = uid || current.currentUserId || "user-alex";
           const proof = current.proofs.find((item) => item.id === input.proofId);
           if (!proof || !body.trim()) return current;
-          const feedbackId = makeId("feedback");
+          const feedbackId = crypto.randomUUID();
           created = {
             id: feedbackId,
             proofId: proof.id,
