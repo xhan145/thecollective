@@ -467,7 +467,14 @@ export async function persistProof(
     }
   }
 
-  await client.rpc("record_proof_trust", { p_proof_id: proof.id });
+  // Trust is best-effort: the proof row is already saved, and trust_score is
+  // recompute-from-source, so a hiccup here self-heals on the next action/load.
+  // Never let it surface as "proof failed to save".
+  try {
+    await client.rpc("record_proof_trust", { p_proof_id: proof.id });
+  } catch {
+    /* non-fatal — proof persisted; trust will reconcile later */
+  }
 }
 
 export async function persistFeedback(client: SupabaseClient, feedback: Feedback): Promise<void> {

@@ -90,13 +90,16 @@ begin
 end;
 $$;
 
-create or replace function public.record_practice_trust(p_prompt_id uuid)
+-- prompt_id is TEXT (practice_completions.prompt_id) and may be a non-uuid slug
+-- when content falls back to the seed; the param must be text, not uuid.
+drop function if exists public.record_practice_trust(uuid);
+create or replace function public.record_practice_trust(p_prompt_id text)
 returns void language plpgsql security definer set search_path = public, pg_temp as $$
 begin
   if not exists (select 1 from public.practice_completions where user_id = auth.uid() and prompt_id = p_prompt_id) then
     raise exception 'no completion for this practice';
   end if;
-  perform public._insert_trust(auth.uid(), 'practice', 'Completed a practice', p_prompt_id::text);
+  perform public._insert_trust(auth.uid(), 'practice', 'Completed a practice', p_prompt_id);
   perform public._recompute_profile_counts(auth.uid());
 end;
 $$;
@@ -140,11 +143,11 @@ revoke all on function public._recompute_profile_counts(uuid) from public, anon,
 revoke all on function public._insert_trust(uuid, text, text, text) from public, anon, authenticated;
 revoke all on function public.recompute_profile_counts(uuid) from public, anon;
 revoke all on function public.record_proof_trust(uuid) from public, anon;
-revoke all on function public.record_practice_trust(uuid) from public, anon;
+revoke all on function public.record_practice_trust(text) from public, anon;
 revoke all on function public.record_feedback_trust(uuid) from public, anon;
 revoke all on function public.mark_feedback_helpful(uuid) from public, anon;
 grant execute on function public.recompute_profile_counts(uuid) to authenticated;
 grant execute on function public.record_proof_trust(uuid) to authenticated;
-grant execute on function public.record_practice_trust(uuid) to authenticated;
+grant execute on function public.record_practice_trust(text) to authenticated;
 grant execute on function public.record_feedback_trust(uuid) to authenticated;
 grant execute on function public.mark_feedback_helpful(uuid) to authenticated;
