@@ -119,15 +119,23 @@ service key is never exposed to the browser.
 - [ ] Log out, log back in → data persists
 - [ ] Confirm `/auth`, `/signup`, `/onboarding`, `/access` show no bottom nav / FAB
 - [ ] Confirm the bottom FAB is centered on mobile widths (320–430)
+- [ ] Trust integrity (migration 023): as a signed-in member, confirm proof / practice /
+      feedback / mark-helpful each add exactly one trust event; confirm a feedback
+      recipient's `feedback_received_count` updates without them re-submitting; confirm a
+      direct `supabase.from('trust_events').insert(...)` (or `rpc('_insert_trust', …)`)
+      from the browser console is rejected.
 - [ ] `npm run typecheck` and `npm run build` pass
 
 ## 8. Known limitations (technical debt)
 
-1. **Receiver counters lag.** RLS lets a user update only their own profile row, so the
-   acting user's counters refresh immediately (`refreshProfileStats`), but a proof
-   *recipient's* `feedback_received_count` refreshes the next time *they* load. Fix later
-   with a `SECURITY DEFINER` RPC or a server route — kept out of this pass to avoid
-   widening trust-write surface.
+1. **Receiver counters — FIXED in migration 023 (Phase A).** Trust writes + counter
+   recompute now run through `SECURITY DEFINER` RPCs that recompute every affected user
+   server-side (e.g. `record_feedback_trust` recomputes both giver and recipient), and
+   direct `trust_events` inserts are denied (`with check (false)`) so trust is no longer
+   client-mintable. Remaining nuance: another user's *live* session still reflects the
+   change only on their next load (we don't push into their session). The old per-user
+   `refreshProfileStats` client helper was replaced by `recomputeProfileCounts` (a thin
+   wrapper over the own-id `recompute_profile_counts` RPC).
 2. **Trust point values unchanged.** Existing `TRUST_POINTS` (proof 5 / feedback 3 /
    practice 5 / helpful 7) were preserved rather than re-mapped to the brief's
    suggested 3/2/1, because changing them silently re-scores all existing + demo trust

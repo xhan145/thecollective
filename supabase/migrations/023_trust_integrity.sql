@@ -27,7 +27,7 @@ create policy "trust_events_insert_denied" on public.trust_events
 
 -- 4) Point values — single server-side source (unchanged from app TRUST_POINTS).
 create or replace function public._trust_points(p_type text)
-returns integer language sql immutable as $$
+returns integer language sql immutable set search_path = pg_catalog, pg_temp as $$
   select case p_type
     when 'proof' then 5
     when 'practice' then 5
