@@ -7,6 +7,7 @@ import type {
   AppFeedbackDraftInput,
   AppNotification,
   BetaAppSnapshot,
+  Contribution,
   Conversation,
   Feedback,
   FeedbackDraftInput,
@@ -42,6 +43,9 @@ import {
   removeUsefulMark,
   sendMessage,
   startConversation,
+  submitContribution,
+  acceptContribution,
+  setProofOpen,
   updateOnboarding,
   updateProfile as updateProfileRow,
   type BetaUserBundle
@@ -108,6 +112,12 @@ type BetaAppContextValue = {
     issueType?: AiIssueType;
     comment?: string;
   }) => AiUserFeedback | null;
+  submitContribution: (input: { proofId: string; observation: string; nextStep: string }) => Promise<{ contribution: Contribution | null; error: string | null }>;
+  acceptContribution: (contributionId: string) => Promise<void>;
+  toggleProofOpen: (proofId: string, open: boolean, focus?: string) => void;
+  getOpenProofs: () => Proof[];
+  getContributionsForProof: (proofId: string) => Contribution[];
+  isEligibleToContribute: () => boolean;
   getPromptById: (promptId: string) => PracticePrompt | undefined;
   getProofById: (proofId: string) => Proof | undefined;
   getFeedbackForProof: (proofId: string) => Feedback[];
@@ -126,7 +136,8 @@ function readSnapshot(): BetaAppSnapshot {
       ...seedSnapshot,
       ...parsed,
       aiInteractions: parsed.aiInteractions || [],
-      aiUserFeedback: parsed.aiUserFeedback || []
+      aiUserFeedback: parsed.aiUserFeedback || [],
+      contributions: parsed.contributions || []
     };
   } catch {
     return seedSnapshot;
@@ -168,7 +179,8 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     messagesByConversation: bundle.messagesByConversation,
     notifications: bundle.notifications,
     aiInteractions: [],
-    aiUserFeedback: []
+    aiUserFeedback: [],
+    contributions: bundle.contributions,
   };
 }
 
@@ -782,6 +794,69 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         }));
         const uid = authUid();
         if (writesEnabled && uid) void markAllNotificationsRead(supabase!, uid).catch(() => {});
+      },
+      async submitContribution(input) {
+        const uid = authUid();
+        const me = uid || snapshot.currentUserId || "user-alex";
+        const proof = snapshot.proofs.find((p) => p.id === input.proofId);
+        if (!proof || !input.observation.trim() || !input.nextStep.trim()) {
+          return { contribution: null, error: "Add an observation and a next step." };
+        }
+        const optimistic: Contribution = {
+          id: makeId("contribution"), proofId: proof.id, contributorId: me, ownerId: proof.userId,
+          observation: input.observation.trim(), nextStep: input.nextStep.trim(),
+          status: "pending", createdAt: new Date().toISOString(), acceptedAt: null,
+        };
+        setSnapshot((current) => ({ ...current, contributions: [optimistic, ...current.contributions] }));
+        if (!writesEnabled || !uid) return { contribution: optimistic, error: null };
+        try {
+          const id = await submitContribution(supabase!, input);
+          void logBetaEvent(supabase!, uid, "contribution_submitted", undefined, { proofId: input.proofId });
+          setSnapshot((current) => ({
+            ...current,
+            contributions: current.contributions.map((c) => (c.id === optimistic.id ? { ...c, id } : c)),
+          }));
+          return { contribution: { ...optimistic, id }, error: null };
+        } catch {
+          return { contribution: optimistic, error: "We couldn't send your contribution yet — your text is still here, try again." };
+        }
+      },
+      async acceptContribution(contributionId) {
+        setSnapshot((current) => ({
+          ...current,
+          contributions: current.contributions.map((c) =>
+            c.id === contributionId ? { ...c, status: "accepted", acceptedAt: new Date().toISOString() } : c),
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) {
+          try {
+            await acceptContribution(supabase!, contributionId);
+            void logBetaEvent(supabase!, uid, "contribution_accepted", undefined, { contributionId });
+          } catch { /* optimistic accept stays; reconciles on next load */ }
+        }
+      },
+      toggleProofOpen(proofId, open, focus) {
+        setSnapshot((current) => ({
+          ...current,
+          proofs: current.proofs.map((p) =>
+            p.id === proofId ? { ...p, openForContributions: open, contributionFocus: focus ?? null } : p),
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) void setProofOpen(supabase!, proofId, open, focus ?? null).catch(() => {});
+      },
+      getOpenProofs() {
+        const me = snapshot.currentUserId;
+        return snapshot.proofs.filter((p) => p.openForContributions && p.userId !== me);
+      },
+      getContributionsForProof(proofId) {
+        return snapshot.contributions.filter((c) => c.proofId === proofId);
+      },
+      isEligibleToContribute() {
+        const me = snapshot.currentUserId;
+        if (!me) return false;
+        const hasProof = snapshot.proofs.some((p) => p.userId === me);
+        const gaveFeedback = snapshot.feedback.some((f) => f.authorId === me);
+        return hasProof && gaveFeedback;
       },
       getPromptById,
       getProofById,

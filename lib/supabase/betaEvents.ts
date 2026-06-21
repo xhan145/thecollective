@@ -15,7 +15,9 @@ export type BetaEventType =
   | "proof_submit_succeeded"
   | "proof_submit_failed"
   | "feedback_submitted"
-  | "app_feedback_submitted";
+  | "app_feedback_submitted"
+  | "contribution_submitted"
+  | "contribution_accepted";
 
 /**
  * Insert a beta event. Never throws and never blocks the user flow — logging
