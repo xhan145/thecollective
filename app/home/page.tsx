@@ -79,6 +79,7 @@ export default function HomePage() {
           </div>
         </Card>
         <InstallPwaCard />
+        <ButtonLink href="/contribute" variant="secondary" className="w-full">Contribute — help someone's next step</ButtonLink>
       </div>
     </AppShell>
   );
