@@ -5,6 +5,7 @@ import type {
   AppFeedback,
   AppFeedbackDraftInput,
   AppNotification,
+  Contribution,
   Conversation,
   ConversationKind,
   Feedback,
@@ -41,6 +42,7 @@ export interface BetaUserBundle {
   conversations: Conversation[];
   messagesByConversation: Record<string, Message[]>;
   notifications: AppNotification[];
+  contributions: Contribution[];
 }
 
 function safeName(name: string): string {
@@ -188,6 +190,21 @@ function mapMessage(row: any): Message {
   };
 }
 
+function mapContribution(row: any): Contribution {
+  return {
+    id: row.id,
+    proofId: row.proof_id,
+    contributorId: row.contributor_id,
+    ownerId: row.owner_id,
+    observation: row.observation,
+    nextStep: row.next_step,
+    status: row.status,
+    createdAt: row.created_at,
+    acceptedAt: row.accepted_at ?? null,
+    isDemo: row.is_demo ?? false,
+  };
+}
+
 function publicUrl(client: SupabaseClient, path: string | null | undefined): string | undefined {
   if (!path) return undefined;
   return client.storage.from(PROOF_BUCKET).getPublicUrl(path).data.publicUrl;
@@ -232,7 +249,7 @@ export async function loadUserBundle(
 ): Promise<BetaUserBundle> {
   const profile = await ensureProfile(client, userId, email);
 
-  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes] =
+  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes] =
     await Promise.all([
       client.from("proofs").select("*").order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
@@ -248,6 +265,7 @@ export async function loadUserBundle(
       client.from("conversations").select("*").or(`initiator_id.eq.${userId},recipient_id.eq.${userId}`).order("last_message_at", { ascending: false }),
       client.from("messages").select("*").order("created_at"),
       client.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
+      client.from("contributions").select("*").or(`contributor_id.eq.${userId},owner_id.eq.${userId}`),
     ]);
 
   const messagesByConversation: Record<string, Message[]> = {};
@@ -317,6 +335,8 @@ export async function loadUserBundle(
     isDemo: row.is_demo ?? false,
     thumbnailUrl: row.thumbnail_url ?? undefined,
     mediaUrl: row.media_url ?? undefined,
+    openForContributions: row.open_for_contributions ?? false,
+    contributionFocus: row.contribution_focus ?? null,
   }));
 
   return {
@@ -344,6 +364,7 @@ export async function loadUserBundle(
     conversations: (convRes?.data ?? []).map(mapConversation),
     messagesByConversation,
     notifications: (notifsRes?.data ?? []).map(mapNotification),
+    contributions: (contribRes?.data ?? []).map(mapContribution),
   };
 }
 
@@ -673,6 +694,36 @@ export async function persistAiUserFeedback(
     issue_type: feedback.issueType ?? null,
     comment: feedback.comment ?? null,
   });
+}
+
+/** Submit a contribution to an open proof (server-gated by G1). Returns new id or throws. */
+export async function submitContribution(
+  client: SupabaseClient,
+  input: { proofId: string; observation: string; nextStep: string },
+): Promise<string> {
+  const { data, error } = await client.rpc("submit_contribution", {
+    p_proof_id: input.proofId,
+    p_observation: input.observation,
+    p_next_step: input.nextStep,
+  });
+  if (error) throw new Error(error.message);
+  return data as string;
+}
+
+/** Owner accepts a contribution -> credits the contributor via the trust RPC. */
+export async function acceptContribution(client: SupabaseClient, contributionId: string): Promise<void> {
+  const { error } = await client.rpc("record_contribution_trust", { p_contribution_id: contributionId });
+  if (error) throw new Error(error.message);
+}
+
+/** Toggle a proof's open-for-contributions flag + focus (owner only via RLS). */
+export async function setProofOpen(
+  client: SupabaseClient,
+  proofId: string,
+  open: boolean,
+  focus: string | null,
+): Promise<void> {
+  await client.from("proofs").update({ open_for_contributions: open, contribution_focus: focus }).eq("id", proofId);
 }
 
 // re-export the input types used by callers for convenience

@@ -92,6 +92,21 @@ export type Proof = {
   isDemo?: boolean;
   thumbnailUrl?: string;
   mediaUrl?: string;
+  openForContributions?: boolean;
+  contributionFocus?: string | null;
+};
+
+export type Contribution = {
+  id: string;
+  proofId: string;
+  contributorId: string;
+  ownerId: string;
+  observation: string;
+  nextStep: string;
+  status: "pending" | "accepted";
+  createdAt: string;
+  acceptedAt?: string | null;
+  isDemo?: boolean;
 };
 
 export type Feedback = {
@@ -228,6 +243,7 @@ export type BetaAppSnapshot = {
   conversations: Conversation[];
   messagesByConversation: Record<string, Message[]>;
   notifications: AppNotification[];
+  contributions: Contribution[];
 };
 
 export type ProofDraftInput = {

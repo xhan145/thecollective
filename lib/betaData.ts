@@ -288,7 +288,8 @@ export const seedSnapshot: BetaAppSnapshot = {
   connections: [],
   conversations: [],
   messagesByConversation: {},
-  notifications: []
+  notifications: [],
+  contributions: []
 };
 
 /** Demo seed status, for badges / debug. */
