@@ -78,7 +78,7 @@ function OwnerOpenControl({ proof, toggle }: { proof: import("@/lib/betaTypes").
           <Button className="w-full" onClick={() => toggle(proof.id, true, focus.trim() || undefined)}>Open this proof</Button>
         </>
       ) : (
-        <Button variant="secondary" className="w-full" onClick={() => toggle(proof.id, false)}>Close to new contributions</Button>
+        <Button variant="secondary" className="w-full" onClick={() => toggle(proof.id, false, focus.trim() || undefined)}>Close to new contributions</Button>
       )}
     </Card>
   );
