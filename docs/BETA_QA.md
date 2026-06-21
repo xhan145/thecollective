@@ -124,6 +124,11 @@ service key is never exposed to the browser.
       recipient's `feedback_received_count` updates without them re-submitting; confirm a
       direct `supabase.from('trust_events').insert(...)` (or `rpc('_insert_trust', …)`)
       from the browser console is rejected.
+- [ ] Contribute (migration 024): mark a proof open for contributions; as a second
+      eligible member, submit a contribution (observation + next step); as the owner,
+      accept it; confirm the contributor gets +15 and their contribution_count rises;
+      confirm an ineligible member sees the locked state; confirm a non-owner cannot
+      accept (rpc rejects).
 - [ ] `npm run typecheck` and `npm run build` pass
 
 ## 8. Known limitations (technical debt)
