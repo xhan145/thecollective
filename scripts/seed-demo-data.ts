@@ -291,11 +291,13 @@ async function seed(sb: SupabaseClient) {
     feedbackReceived.set(proof.ownerId, (feedbackReceived.get(proof.ownerId) ?? 0) + 1);
   }
 
-  // 4c) Contributions (Phase B): open a few proofs + one accepted contribution each.
+  // Contributions (Phase B): open a few proofs + one accepted contribution each.
   log(`Opening ${DEMO_OPEN_PROOFS} demo proofs for contributions...`);
-  for (const op of proofs.slice(0, DEMO_OPEN_PROOFS)) {
+  for (const [idx, op] of proofs.slice(0, DEMO_OPEN_PROOFS).entries()) {
     await sb.from("proofs").update({ open_for_contributions: true, contribution_focus: DEMO_CONTRIBUTION_FOCUS }).eq("id", op.id);
-    const contributor = userIds.find((u) => u.id !== op.ownerId);
+    // Vary the contributor per proof (not always the first persona).
+    const pool = userIds.filter((u) => u.id !== op.ownerId);
+    const contributor = pool[idx % pool.length];
     if (!contributor) continue;
     await sb.from("contributions").upsert({
       proof_id: op.id,

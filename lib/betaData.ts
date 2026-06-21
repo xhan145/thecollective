@@ -278,8 +278,9 @@ seedOpenProofs.forEach((p) => {
   p.contributionFocus = "Help me make the first line clearer";
 });
 export const seedContributions: Contribution[] = seedOpenProofs.slice(0, 3).map((p, i) => {
-  const contributorId =
-    (community?.users ?? []).map((u) => u.id).find((id) => id !== p.userId && id !== "user-alex") || "user-jordan";
+  // Vary the contributor per proof so the seed doesn't look like one author wrote all.
+  const pool = (community?.users ?? []).map((u) => u.id).filter((id) => id !== "user-alex" && id !== p.userId);
+  const contributorId = pool.length ? pool[i % pool.length] : "user-jordan";
   return {
     id: `contribution-seed-${i}`,
     proofId: p.id,
