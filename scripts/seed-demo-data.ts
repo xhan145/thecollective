@@ -19,7 +19,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { config as loadEnv } from "dotenv";
 import {
-  buildPersonas, DEMO_COHORT, DIRECTIONS, FEEDBACK_NOTES, FEEDBACK_REQUEST_OPENERS,
+  buildPersonas, DEMO_COHORT, DEMO_CONTRIBUTION_FOCUS, DEMO_OPEN_PROOFS, DIRECTIONS,
+  FEEDBACK_NOTES, FEEDBACK_REQUEST_OPENERS,
   mulberry32, PEER_NOTE_OPENERS, PEER_REPLIES, pickProofKind, PROOF_TEMPLATES, SIZES,
   USEFUL_REASONS, type Persona, type SizeName
 } from "./demo/shared";
@@ -112,6 +113,7 @@ async function reset(sb: SupabaseClient) {
   await sb.from("useful_marks").delete().eq("is_demo", true);
   await sb.from("saved_items").delete().eq("is_demo", true);
   await sb.from("member_connections").delete().eq("is_demo", true);
+  await sb.from("contributions").delete().eq("is_demo", true);
   await sb.from("feedback").delete().eq("is_demo", true);
   await sb.from("trust_events").delete().eq("is_demo", true);
   await sb.from("proofs").delete().eq("is_demo", true);
@@ -287,6 +289,25 @@ async function seed(sb: SupabaseClient) {
       demo_seed_id: `demo-fb-${i}`
     }, { onConflict: "demo_seed_id" });
     feedbackReceived.set(proof.ownerId, (feedbackReceived.get(proof.ownerId) ?? 0) + 1);
+  }
+
+  // 4c) Contributions (Phase B): open a few proofs + one accepted contribution each.
+  log(`Opening ${DEMO_OPEN_PROOFS} demo proofs for contributions...`);
+  for (const op of proofs.slice(0, DEMO_OPEN_PROOFS)) {
+    await sb.from("proofs").update({ open_for_contributions: true, contribution_focus: DEMO_CONTRIBUTION_FOCUS }).eq("id", op.id);
+    const contributor = userIds.find((u) => u.id !== op.ownerId);
+    if (!contributor) continue;
+    await sb.from("contributions").upsert({
+      proof_id: op.id,
+      contributor_id: contributor.id,
+      owner_id: op.ownerId,
+      observation: "The opening states the point before the detail — that lands well.",
+      next_step: "Try cutting the second sentence so the first idea stands alone.",
+      status: "accepted",
+      accepted_at: new Date().toISOString(),
+      is_demo: true,
+      demo_seed_id: `demo-contribution-accepted-${op.id}`
+    }, { onConflict: "demo_seed_id" });
   }
 
   // 4b) Useful marks (ranking signal; never own proof; one per user/target)

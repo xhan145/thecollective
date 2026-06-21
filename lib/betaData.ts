@@ -1,4 +1,4 @@
-import type { AppFeedback, BetaAppSnapshot, Cohort, Direction, Feedback, PracticePrompt, Proof, TrustEvent, UserProfile } from "./betaTypes";
+import type { AppFeedback, BetaAppSnapshot, Cohort, Contribution, Direction, Feedback, PracticePrompt, Proof, TrustEvent, UserProfile } from "./betaTypes";
 
 // ---------------------------------------------------------------------------
 // DEMO DATA SWITCH
@@ -269,6 +269,30 @@ export const seedFeedback: Feedback[] = community ? community.feedback : [];
 export const seedTrustEvents: TrustEvent[] = community ? community.trustEvents : [];
 export const seedAppFeedback: AppFeedback[] = community ? community.appFeedback : [];
 
+// Phase B (Contribute): open a few non-Alex demo proofs so the Contribute queue
+// is populated in the no-account demo path, and seed a couple of pending
+// contributions so the owner view (ReceivedContributions) isn't empty.
+const seedOpenProofs = community ? community.proofs.filter((p) => p.userId !== "user-alex").slice(0, 5) : [];
+seedOpenProofs.forEach((p) => {
+  p.openForContributions = true;
+  p.contributionFocus = "Help me make the first line clearer";
+});
+export const seedContributions: Contribution[] = seedOpenProofs.slice(0, 3).map((p, i) => {
+  const contributorId =
+    (community?.users ?? []).map((u) => u.id).find((id) => id !== p.userId && id !== "user-alex") || "user-jordan";
+  return {
+    id: `contribution-seed-${i}`,
+    proofId: p.id,
+    contributorId,
+    ownerId: p.userId,
+    observation: "Your opening states the point before the detail — that lands well.",
+    nextStep: "Try trimming the second sentence so the first idea stands alone.",
+    status: "pending",
+    createdAt: iso(140 + i * 25),
+    acceptedAt: null
+  };
+});
+
 export const seedSnapshot: BetaAppSnapshot = {
   currentUserId: null,
   users: seedUsers,
@@ -289,7 +313,7 @@ export const seedSnapshot: BetaAppSnapshot = {
   conversations: [],
   messagesByConversation: {},
   notifications: [],
-  contributions: []
+  contributions: seedContributions
 };
 
 /** Demo seed status, for badges / debug. */

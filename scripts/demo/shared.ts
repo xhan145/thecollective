@@ -199,3 +199,7 @@ export function pickProofKind(rng: () => number): ProofKind {
 
 export const ASSET_POOL_PER_KIND = 8;
 export const PROOF_KINDS: ProofKind[] = ["text", "image", "audio", "video", "question", "note"];
+
+// Phase B (Contribute): how many demo proofs to open for contributions + the focus.
+export const DEMO_OPEN_PROOFS = 6;
+export const DEMO_CONTRIBUTION_FOCUS = "Help me make the first line clearer";
