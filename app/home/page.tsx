@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Bell, CheckCircle2 } from "lucide-react";
+import { Bell, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/beta/AppShell";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { DirectionCard, LoopSignalRow, PracticePromptCard, TrustSnapshotCard } from "@/components/beta/LoopCards";
 import { ProofCard } from "@/components/beta/ProofComponents";
-import { Badge, ButtonLink, Card, EmptyState, PageHeader, SectionLabel } from "@/components/beta/ui";
+import { Badge, ButtonLink, Card, EmptyState, HeroCard, PageHeader, ProgressBar, SectionLabel } from "@/components/beta/ui";
 import { InstallPwaCard } from "@/components/beta/InstallPwaCard";
-import { AnimatedBar } from "@/components/beta/motion";
 
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
@@ -35,19 +34,15 @@ export default function HomePage() {
           }
         />
 
-        <Card interactive className="p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-bold text-[#111111]">Today's Focus</p>
-              <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{featuredDirection?.title ?? "Choose a direction"}</h2>
-            </div>
-            <ButtonLink href="/practice" className="h-11 min-h-11 w-11 px-0" aria-label="Continue today's focus">
-              <ArrowRight size={19} />
-            </ButtonLink>
+        <HeroCard>
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#B07A00]">Your next step</p>
+          <h2 className="mt-1 font-display text-xl font-bold text-[#111111]">{nextPrompt.title}</h2>
+          <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">{nextPrompt.estimatedMinutes} min · low pressure</p>
+          <ButtonLink href={`/proof/new/${nextPrompt.id}`} className="mt-4 w-full">Begin →</ButtonLink>
+          <div className="mt-4">
+            <ProgressBar value={66} label="This week" />
           </div>
-          <AnimatedBar value={72} className="mt-4" />
-          <p className="mt-3 text-xs font-bold text-[#6E6E6E]">2 of 3 practices completed</p>
-        </Card>
+        </HeroCard>
 
         <LoopSignalRow />
 
