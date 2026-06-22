@@ -1,8 +1,12 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Lora } from "next/font/google";
 import { BetaAppProvider } from "@/components/beta/AppStateProvider";
 import { ThemeProvider } from "@/components/beta/ThemeProvider";
 import { ServiceWorkerRegister } from "@/components/beta/ServiceWorkerRegister";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const lora = Lora({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-lora", display: "swap" });
 
 // Set the theme class before first paint to avoid a flash.
 const themeInitScript = `(function(){try{var p=localStorage.getItem('collective.theme')||'system';var d=p==='dark'||(p==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
@@ -37,7 +41,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${lora.variable}`}>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -45,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>
+      <body className="font-sans">
         <ThemeProvider>
           <BetaAppProvider>
             <ServiceWorkerRegister />
