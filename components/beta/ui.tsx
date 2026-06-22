@@ -21,7 +21,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
             <CollectiveMiniMark className="h-7 w-11" />
             <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#6E6E6E]">Collective</span>
           </div>
-          <h1 className="text-[31px] font-extrabold leading-tight tracking-tight text-[#111111]">{title}</h1>
+          <h1 className="font-display text-[31px] font-bold leading-tight tracking-tight text-[#111111]">{title}</h1>
           {subtitle && <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{subtitle}</p>}
         </div>
         {action}
@@ -56,7 +56,7 @@ export function Card({
 }
 
 const buttonStyles = {
-  primary: "bg-[#F2A900] text-white shadow-[0_10px_24px_rgba(242,169,0,0.30)]",
+  primary: "bg-gradient-to-r from-[#FFB000] to-[#F2A900] text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]",
   secondary: "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]",
   quiet: "bg-transparent text-[#6E6E6E]"
 } as const;
@@ -74,7 +74,7 @@ export function Button({
       whileTap={{ scale: 0.96 }}
       whileHover={variant === "primary" ? { y: -1, boxShadow: "0 14px 30px rgba(242,169,0,0.38)" } : { y: -1 }}
       transition={{ duration: 0.2, ease: easeOut }}
-      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold disabled:opacity-50 ${buttonStyles[variant]} ${className}`}
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold disabled:opacity-50 ${buttonStyles[variant]} ${className} outline-none transition-transform active:scale-95 focus-visible:ring-4 focus-visible:ring-[#F2A900]/40`}
       {...props}
     >
       {children}
@@ -131,7 +131,7 @@ export function EmptyState({ title, body, cta }: { title: string; body: string; 
       >
         <CollectiveMiniMark className="mx-auto h-12 w-20" />
       </motion.div>
-      <h3 className="mt-4 text-xl font-extrabold text-[#111111]">{title}</h3>
+      <p className="font-display text-lg font-bold text-[#111111]">{title}</p>
       <p className="mx-auto mt-2 max-w-[270px] text-sm leading-6 text-[#6E6E6E]">{body}</p>
       {cta && <div className="mt-5">{cta}</div>}
     </Card>
@@ -171,5 +171,50 @@ export function TextInput({ className = "", ...props }: ComponentPropsWithoutRef
       className={`min-h-12 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 text-sm text-[#111111] outline-none transition placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7] ${className}`}
       {...props}
     />
+  );
+}
+
+/** Visual representation of the Collective loop. Plain chips, or numbered steps. */
+export function LoopStrip({ numbered = false, steps = ["Practice", "Prove", "Feedback", "Trust"] }: { numbered?: boolean; steps?: string[] }) {
+  if (numbered) {
+    return (
+      <div className="flex items-center gap-1.5" role="list" aria-label="How Collective works">
+        {steps.map((s, i) => (
+          <div key={s} role="listitem" className="flex-1 text-center">
+            <span className="mx-auto mb-1 grid h-7 w-7 place-items-center rounded-full bg-[#FFE7AE] text-[11px] font-extrabold text-[#7A5300]">{i + 1}</span>
+            <span className="block text-[10px] font-bold text-[#B07A00]">{s}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-wrap gap-1.5" role="list" aria-label="How Collective works">
+      {steps.map((s) => (
+        <span key={s} role="listitem" className="rounded-full bg-[#FFF1C7] px-3 py-1 text-[11px] font-bold text-[#7A5300]">{s}</span>
+      ))}
+    </div>
+  );
+}
+
+/** Calm weekly-progress bar (gold fill). value is 0–100. */
+export function ProgressBar({ value, label }: { value: number; label?: string }) {
+  const pct = Math.max(0, Math.min(100, value));
+  return (
+    <div>
+      {label && <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#9B958B]">{label}</p>}
+      <div className="h-2 overflow-hidden rounded-full bg-[#FFE7AE]" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+        <div className="h-full rounded-full bg-gradient-to-r from-[#FFB000] to-[#F2A900] transition-[width] duration-500" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+/** Focal "hero" surface: warm cream→gold gradient card for the one key action on a screen. */
+export function HeroCard({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-[24px] border border-[#F6E7C8] bg-gradient-to-br from-[#FFF1C7] to-[#FFFDF8] p-5 shadow-[0_12px_30px_rgba(71,52,18,0.12)] ${className}`}>
+      {children}
+    </div>
   );
 }
