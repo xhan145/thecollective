@@ -203,7 +203,7 @@ export function ProgressBar({ value, label }: { value: number; label?: string })
   return (
     <div>
       {label && <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[#9B958B]">{label}</p>}
-      <div className="h-2 overflow-hidden rounded-full bg-[#FFE7AE]" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+      <div className="h-2 overflow-hidden rounded-full bg-[#FFE7AE]" role="progressbar" aria-label={label ?? "Progress"} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
         <div className="h-full rounded-full bg-gradient-to-r from-[#FFB000] to-[#F2A900] transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </div>
     </div>
