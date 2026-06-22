@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CollectiveMark } from "@/components/beta/Brand";
-import { Button, Card } from "@/components/beta/ui";
+import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 
@@ -69,11 +69,20 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   return (
     <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
       <div className="text-center">
-        <CollectiveMark className="mx-auto h-[92px] w-[190px]" />
-        <h1 className="mt-5 text-[32px] font-extrabold leading-tight">
-          {mode === "signup" ? "Join the closed beta." : "Welcome back."}
+        <CollectiveMark className="mx-auto h-[88px] w-[180px]" />
+        <h1 className="mt-5 font-display text-[32px] font-bold leading-tight text-[#111111]">
+          {mode === "signup" ? "Small steps. Real progress." : "Welcome back."}
         </h1>
-        <p className="mt-3 text-sm leading-6 text-[#6E6E6E]">Small steps. Real progress.</p>
+        <p className="mx-auto mt-3 max-w-[320px] text-sm leading-6 text-[#6E6E6E]">
+          {mode === "signup"
+            ? "Practice one small thing. Show your proof. Get useful feedback. Build trust over time — no likes, no followers."
+            : "Small steps. Real progress."}
+        </p>
+        {mode === "signup" && (
+          <div className="mt-4 flex justify-center">
+            <LoopStrip />
+          </div>
+        )}
       </div>
 
       {supabaseEnabled ? (
