@@ -287,6 +287,7 @@ button, input, textarea, select { font: inherit; }
 .dark .bg-\[\#FFFDF8\]\/95,
 .dark .bg-\[\#FFFDF8\]\/90 { background-color: var(--c-surface) !important; }
 .dark .bg-\[\#FFF1C7\] { background-color: var(--c-soft) !important; }
+.dark .bg-\[\#FFE7AE\] { background-color: var(--c-soft) !important; }
 .dark .bg-white { background-color: var(--c-input) !important; }
 
 /* Text */
@@ -297,8 +298,14 @@ button, input, textarea, select { font: inherit; }
 /* Borders + rings */
 .dark .border-\[\#EFE7D8\],
 .dark .border-\[\#EFE7D8\]\/70 { border-color: var(--c-line) !important; }
+.dark .border-\[\#F6E7C8\] { border-color: var(--c-line) !important; }
 
 /* Bottom-nav gradient edge */
 .dark .from-\[\#FFF8EE\] { --tw-gradient-from: var(--c-bg) var(--tw-gradient-from-position) !important; }
 .dark .via-\[\#FFF8EE\] { --tw-gradient-via: var(--c-bg) var(--tw-gradient-via-position) !important; }
 .dark .to-\[\#FFF8EE\]\/70 { --tw-gradient-to: color-mix(in srgb, var(--c-bg) 70%, transparent) var(--tw-gradient-to-position) !important; }
+
+/* HeroCard gradient (Slice-1 redesign) — keep it a warm-dark surface in dark mode
+   so remapped near-white text stays legible (not light-on-cream). */
+.dark .from-\[\#FFF1C7\] { --tw-gradient-from: var(--c-soft) var(--tw-gradient-from-position) !important; }
+.dark .to-\[\#FFFDF8\] { --tw-gradient-to: var(--c-surface) var(--tw-gradient-to-position) !important; }
