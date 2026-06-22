@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { CollectiveMark } from "@/components/beta/Brand";
-import { Button, Card } from "@/components/beta/ui";
+import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 
 export default function OnboardingPage() {
@@ -41,7 +41,7 @@ export default function OnboardingPage() {
 
       {step === 0 && (
         <div className="mt-8 space-y-5 text-center">
-          <h1 className="text-[30px] font-extrabold leading-tight">Welcome to Collective.</h1>
+          <h1 className="font-display text-[30px] font-bold leading-tight">Welcome to Collective.</h1>
           <p className="mx-auto max-w-[320px] text-[15px] leading-7 text-[#6E6E6E]">
             A calm place to practice one small step, show what you practiced, and build trust over time. It does not need to be perfect.
           </p>
@@ -53,7 +53,7 @@ export default function OnboardingPage() {
 
       {step === 1 && (
         <div className="mt-8 space-y-4">
-          <h1 className="text-2xl font-extrabold">Choose a direction.</h1>
+          <h1 className="font-display text-2xl font-bold">Choose a direction.</h1>
           <p className="text-sm leading-6 text-[#6E6E6E]">Pick one focus to start. You can change it anytime.</p>
           <div className="space-y-3">
             {snapshot.directions.map((d) => {
@@ -80,6 +80,10 @@ export default function OnboardingPage() {
               );
             })}
           </div>
+          <div className="rounded-[20px] border border-[#EFE7D8] bg-[#FFFDF8] p-4">
+            <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#B07A00]">How it works</p>
+            <LoopStrip numbered />
+          </div>
           <Button className="w-full" disabled={!directionId} onClick={() => setStep(2)}>
             Continue <ArrowRight size={17} />
           </Button>
@@ -88,7 +92,7 @@ export default function OnboardingPage() {
 
       {step === 2 && (
         <div className="mt-8 space-y-4">
-          <h1 className="text-2xl font-extrabold">How Collective works.</h1>
+          <h1 className="font-display text-2xl font-bold">How Collective works.</h1>
           <Card className="space-y-3 p-5">
             {[
               ["Practice", "Take one small step. Low pressure."],
