@@ -133,6 +133,11 @@ export type AiUserContext = {
   displayName: string;
   cohortId: string;
   trustLevelLabel?: string;
+  // Personalization signals (best-effort; omitted when absent).
+  goalText?: string | null;
+  startingLevel?: string | null;
+  contextTags?: string[];
+  directionTitle?: string | null;
 };
 
 export type AiService = {

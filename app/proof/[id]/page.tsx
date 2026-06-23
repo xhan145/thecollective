@@ -13,7 +13,7 @@ import { getCollectiveAiService } from "@/lib/aiService";
 
 export default function ProofDetailPage() {
   const params = useParams<{ id: string }>();
-  const { currentUser, trustSummary, getProofById, getFeedbackForProof, toggleProofOpen } = useBetaApp();
+  const { snapshot, currentUser, trustSummary, getProofById, getFeedbackForProof, toggleProofOpen } = useBetaApp();
   const proof = getProofById(params.id);
   const feedback = proof ? getFeedbackForProof(proof.id) : [];
   const aiService = getCollectiveAiService();
@@ -48,7 +48,11 @@ export default function ProofDetailPage() {
                     userId: currentUser?.id || "user-alex",
                     displayName: currentUser?.displayName || "Alex",
                     cohortId: currentUser?.cohortId || "founding-circle",
-                    trustLevelLabel: trustSummary.levelLabel
+                    trustLevelLabel: trustSummary.levelLabel,
+                    goalText: currentUser?.goalText ?? null,
+                    startingLevel: currentUser?.startingLevel ?? null,
+                    contextTags: currentUser?.contextTags ?? [],
+                    directionTitle: snapshot.directions.find((d) => d.id === currentUser?.currentDirectionId)?.title ?? null,
                   })
                 }
               />

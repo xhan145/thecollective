@@ -38,7 +38,11 @@ export default function PracticePage() {
                 userId: currentUser?.id || "user-alex",
                 displayName: currentUser?.displayName || "Alex",
                 cohortId: currentUser?.cohortId || "founding-circle",
-                trustLevelLabel: trustSummary.levelLabel
+                trustLevelLabel: trustSummary.levelLabel,
+                goalText: currentUser?.goalText ?? null,
+                startingLevel: currentUser?.startingLevel ?? null,
+                contextTags: currentUser?.contextTags ?? [],
+                directionTitle: snapshot.directions.find((d) => d.id === currentUser?.currentDirectionId)?.title ?? null,
               })
             }
           />

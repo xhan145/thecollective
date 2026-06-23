@@ -12,7 +12,7 @@ import { getCollectiveAiService } from "@/lib/aiService";
 export default function ProofFeedbackPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const { currentUser, trustSummary, getProofById, getFeedbackForProof, addFeedback } = useBetaApp();
+  const { snapshot, currentUser, trustSummary, getProofById, getFeedbackForProof, addFeedback } = useBetaApp();
   const [sent, setSent] = useState(false);
   const [clarity, setClarity] = useState("");
   const [useful, setUseful] = useState("");
@@ -55,7 +55,11 @@ export default function ProofFeedbackPage() {
                   userId: currentUser?.id || "user-alex",
                   displayName: currentUser?.displayName || "Alex",
                   cohortId: currentUser?.cohortId || "founding-circle",
-                  trustLevelLabel: trustSummary.levelLabel
+                  trustLevelLabel: trustSummary.levelLabel,
+                  goalText: currentUser?.goalText ?? null,
+                  startingLevel: currentUser?.startingLevel ?? null,
+                  contextTags: currentUser?.contextTags ?? [],
+                  directionTitle: snapshot.directions.find((d) => d.id === currentUser?.currentDirectionId)?.title ?? null,
                 })
               }
               onApply={(response) => {
