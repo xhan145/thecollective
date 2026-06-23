@@ -57,6 +57,14 @@ const STORAGE_KEY = "collective.beta.snapshot.v1";
 
 export type AuthResult = { error: string | null; needsConfirmation?: boolean };
 
+export type OnboardingPayload = {
+  directionId: string;
+  goalText?: string;
+  startingLevel?: import("@/lib/betaTypes").PracticeLevel;
+  contextTags?: import("@/lib/betaTypes").ContextTag[];
+  cadence?: string;
+};
+
 type BetaAppContextValue = {
   snapshot: BetaAppSnapshot;
   currentUser: UserProfile | null;
@@ -70,7 +78,7 @@ type BetaAppContextValue = {
   signUpWithEmail: (email: string, password: string, meta?: { displayName?: string; username?: string }) => Promise<AuthResult>;
   signInWithEmail: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
-  completeOnboarding: (directionId: string) => Promise<void>;
+  completeOnboarding: (payload: OnboardingPayload) => Promise<void>;
   updateProfile: (fields: { displayName?: string; username?: string; bio?: string }) => Promise<void>;
   completePractice: (promptId: string) => void;
   submitProof: (input: ProofDraftInput) => Promise<{ proof: Proof | null; error: string | null }>;
@@ -391,22 +399,37 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         if (writesEnabled) await supabase!.auth.signOut();
         setSnapshot(seedSnapshot);
       },
-      async completeOnboarding(directionId) {
+      async completeOnboarding(payload) {
         setSnapshot((current) => {
           if (!current.currentUserId) return current;
           return {
             ...current,
             users: current.users.map((u) =>
               u.id === current.currentUserId
-                ? { ...u, currentDirectionId: directionId, onboardingCompleted: true, directionIds: [directionId] }
+                ? {
+                    ...u,
+                    currentDirectionId: payload.directionId,
+                    onboardingCompleted: true,
+                    directionIds: [payload.directionId],
+                    goalText: payload.goalText ?? null,
+                    startingLevel: payload.startingLevel ?? null,
+                    contextTags: payload.contextTags ?? [],
+                    cadence: payload.cadence ?? null,
+                  }
                 : u
-            )
+            ),
           };
         });
         const uid = authUid();
         if (writesEnabled && uid) {
-          await updateOnboarding(supabase!, uid, directionId).catch(() => {});
-          void logBetaEvent(supabase!, uid, "onboarding_completed", undefined, { directionId });
+          await updateOnboarding(supabase!, uid, {
+            directionId: payload.directionId,
+            goalText: payload.goalText,
+            startingLevel: payload.startingLevel,
+            contextTags: payload.contextTags,
+            cadence: payload.cadence,
+          }).catch(() => {});
+          void logBetaEvent(supabase!, uid, "onboarding_completed", undefined, { directionId: payload.directionId });
         }
       },
       async updateProfile(fields) {
