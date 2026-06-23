@@ -8,6 +8,25 @@ export type FeedbackTone = "kind" | "specific" | "next-step";
 export type TrustEventType = "practice" | "proof" | "peer-feedback" | "helpful" | "accepted-contribution";
 export type AppFeedbackCategory = "bug" | "confusing" | "idea" | "safety" | "other";
 
+export type PracticeLevel = "starter" | "building" | "comfortable";
+
+export type ContextTag =
+  | "speaking_up_at_work"
+  | "upcoming_situation"
+  | "personal_growth"
+  | "rebuilding_habit"
+  | "relationships"
+  | "clearer_thinking";
+
+export const CONTEXT_TAGS: { id: ContextTag; label: string }[] = [
+  { id: "speaking_up_at_work", label: "Speaking up at work" },
+  { id: "upcoming_situation", label: "A specific upcoming situation" },
+  { id: "personal_growth", label: "Personal growth" },
+  { id: "rebuilding_habit", label: "Rebuilding a habit" },
+  { id: "relationships", label: "Relationships & connection" },
+  { id: "clearer_thinking", label: "Clearer thinking & decisions" },
+];
+
 export type UserProfile = {
   id: string;
   displayName: string;
@@ -28,6 +47,11 @@ export type UserProfile = {
   feedbackGivenCount?: number;
   feedbackReceivedCount?: number;
   contributionCount?: number;
+  // Personalized onboarding answers.
+  goalText?: string | null;
+  startingLevel?: PracticeLevel | null;
+  contextTags?: ContextTag[];
+  cadence?: string | null;
   // Closed-beta invite gate (set when an invite code is redeemed).
   betaAccess?: boolean;
   inviteCode?: string | null;
@@ -64,6 +88,8 @@ export type PracticePrompt = {
   beginnerSafe: boolean;
   instructions?: string;
   proofPrompt?: string;
+  level?: PracticeLevel;
+  contextTags?: ContextTag[];
 };
 
 export type ProofAttachment = {
