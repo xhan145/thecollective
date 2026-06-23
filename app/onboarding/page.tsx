@@ -6,6 +6,8 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { CollectiveMark } from "@/components/beta/Brand";
 import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
+import { CONTEXT_TAGS } from "@/lib/betaTypes";
+import type { PracticeLevel, ContextTag } from "@/lib/betaTypes";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -13,6 +15,10 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [directionId, setDirectionId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [startingLevel, setStartingLevel] = useState<PracticeLevel | null>(null);
+  const [contextTags, setContextTags] = useState<ContextTag[]>([]);
+  const [goalText, setGoalText] = useState("");
+  const [cadence, setCadence] = useState<string | null>(null);
 
   // Must be signed in (Supabase mode) to onboard.
   useEffect(() => {
@@ -31,7 +37,13 @@ export default function OnboardingPage() {
   async function finish() {
     if (!directionId) return;
     setSaving(true);
-    await completeOnboarding(directionId);
+    await completeOnboarding({
+      directionId,
+      goalText: goalText.trim() || undefined,
+      startingLevel: startingLevel ?? undefined,
+      contextTags: contextTags.length ? contextTags : undefined,
+      cadence: cadence ?? undefined,
+    });
     router.push("/home");
   }
 
@@ -92,6 +104,73 @@ export default function OnboardingPage() {
 
       {step === 2 && (
         <div className="mt-8 space-y-4">
+          <h1 className="font-display text-2xl font-bold">Where are you starting?</h1>
+          <p className="text-sm leading-6 text-[#6E6E6E]">No scores here — just so practices fit you.</p>
+          <div className="space-y-3">
+            {([["starter", "Just starting"], ["building", "Some practice"], ["comfortable", "Fairly comfortable"]] as const).map(([val, label]) => (
+              <button key={val} type="button" onClick={() => setStartingLevel(val as PracticeLevel)}
+                className={`w-full rounded-[18px] border p-4 text-left text-sm font-extrabold transition ${startingLevel === val ? "border-[#F2A900] bg-[#FFFDF8] text-[#7A5300]" : "border-[#EFE7D8] bg-[#FFFDF8] text-[#111111]"}`}>
+                {label}
+              </button>
+            ))}
+          </div>
+          <Button className="w-full" disabled={!startingLevel} onClick={() => setStep(3)}>Continue <ArrowRight size={17} /></Button>
+          <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className="mt-8 space-y-4">
+          <h1 className="font-display text-2xl font-bold">Why now?</h1>
+          <p className="text-sm leading-6 text-[#6E6E6E]">Optional — pick any that fit.</p>
+          <div className="flex flex-wrap gap-2">
+            {CONTEXT_TAGS.map((tag) => {
+              const on = contextTags.includes(tag.id);
+              return (
+                <button key={tag.id} type="button"
+                  onClick={() => setContextTags((c) => on ? c.filter((x) => x !== tag.id) : [...c, tag.id])}
+                  className={`rounded-full border px-4 py-2 text-sm font-bold transition ${on ? "border-[#F2A900] bg-[#FFF1C7] text-[#7A5300]" : "border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
+                  {tag.label}
+                </button>
+              );
+            })}
+          </div>
+          <Button className="w-full" onClick={() => setStep(4)}>Continue <ArrowRight size={17} /></Button>
+          <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div className="mt-8 space-y-4">
+          <h1 className="font-display text-2xl font-bold">What do you want to get better at?</h1>
+          <p className="text-sm leading-6 text-[#6E6E6E]">One line, in your words. Optional — you can skip.</p>
+          <textarea value={goalText} onChange={(e) => setGoalText(e.target.value)} rows={3}
+            placeholder="e.g. Speak up in meetings without overthinking"
+            className="w-full rounded-2xl border border-[#EFE7D8] bg-white p-4 text-sm text-[#111111] outline-none focus:border-[#F2A900]" />
+          <Button className="w-full" onClick={() => setStep(5)}>Continue <ArrowRight size={17} /></Button>
+          <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
+        </div>
+      )}
+
+      {step === 5 && (
+        <div className="mt-8 space-y-4">
+          <h1 className="font-display text-2xl font-bold">How often feels right?</h1>
+          <p className="text-sm leading-6 text-[#6E6E6E]">Low pressure. Change it anytime.</p>
+          <div className="space-y-3">
+            {["a few minutes a day", "a couple times a week"].map((c) => (
+              <button key={c} type="button" onClick={() => setCadence(c)}
+                className={`w-full rounded-[18px] border p-4 text-left text-sm font-extrabold transition ${cadence === c ? "border-[#F2A900] bg-[#FFFDF8] text-[#7A5300]" : "border-[#EFE7D8] bg-[#FFFDF8] text-[#111111]"}`}>
+                {c.charAt(0).toUpperCase() + c.slice(1)}
+              </button>
+            ))}
+          </div>
+          <Button className="w-full" disabled={!cadence} onClick={() => setStep(6)}>Continue <ArrowRight size={17} /></Button>
+          <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
+        </div>
+      )}
+
+      {step === 6 && (
+        <div className="mt-8 space-y-4">
           <h1 className="font-display text-2xl font-bold">How Collective works.</h1>
           <Card className="space-y-3 p-5">
             {[
@@ -117,6 +196,7 @@ export default function OnboardingPage() {
           <Button className="w-full" disabled={saving} onClick={finish}>
             {saving ? "Setting up..." : "Start practicing"}
           </Button>
+          <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
         </div>
       )}
     </main>
