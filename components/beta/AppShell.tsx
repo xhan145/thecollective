@@ -117,7 +117,7 @@ function BottomNav() {
       <div className="pointer-events-none absolute left-1/2 top-0 z-[60] -translate-x-1/2 -translate-y-4">
         <motion.div whileTap={{ scale: 0.92 }} className="pointer-events-auto">
           <Link
-            href="/proof/new/say-clear-thing"
+            href="/proof/new/conf-s1"
             className="grid h-[58px] w-[58px] place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_16px_34px_rgba(242,169,0,0.34)] outline-none transition-shadow hover:shadow-[0_20px_40px_rgba(242,169,0,0.44)] focus-visible:ring-4 focus-visible:ring-[#F2A900]/40"
             aria-label="Submit proof"
           >

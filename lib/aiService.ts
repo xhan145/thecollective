@@ -40,6 +40,10 @@ function textFromInput(input: Record<string, unknown>) {
   }
 }
 
+function safetyTextFromInput(input: Record<string, unknown>) {
+  return typeof input.text === "string" ? input.text : textFromInput(input);
+}
+
 function safetyResponse(action: CollectiveAiAction, safety: SafetyReviewOutput): AiResponse {
   const title = safety.needs_human_review ? "Needs a human review" : "Add one more detail";
   const summary = safety.safe_redirect || "This needs a little more context before AI can help safely.";
@@ -246,7 +250,7 @@ export const mockAiService: AiService = {
   async runCollectivePanel(input: CollectivePanelInput) {
     const safety = await mockAiService.reviewSafety({
       action: input.action,
-      text: textFromInput(input.input),
+      text: safetyTextFromInput(input.input),
       context: input.input
     });
 

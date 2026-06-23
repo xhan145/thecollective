@@ -29,6 +29,8 @@ export default function ProofFeedbackPage() {
         <PageHeader title="Give feedback" subtitle="Respond to the practice, not the person." />
         {!proof ? (
           <EmptyState title="Proof not found" body="This proof is not available in the current session." />
+        ) : proof.isDemo ? (
+          <EmptyState title="Example proof" body="This is example activity, so feedback is not saved to a member profile." />
         ) : sent ? (
           <SuccessState
             title="Feedback saved."
