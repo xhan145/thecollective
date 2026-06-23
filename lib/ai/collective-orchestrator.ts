@@ -9,6 +9,9 @@ import * as practiceCoach from "./agents/practice-coach";
 import * as reflectionHelper from "./agents/reflection-helper";
 import * as safetyReviewer from "./agents/safety-reviewer";
 import * as summaryComposer from "./agents/summary-composer";
+import { runAgent } from "./openai";
+import { assertBrandSafe } from "./outputPolicy";
+import { z } from "zod";
 
 type RunOptions = {
   userContext?: AiUserContext;
@@ -163,31 +166,117 @@ export async function runSafetyReview(input: SafetyReviewInput, options?: RunOpt
 
 export async function runPracticeCoach(input: SpecialistInput, options?: RunOptions): Promise<AiResponse> {
   const startedAt = Date.now();
-  const output = await mockAiService.generatePractice({ direction: input.direction, context: input.context, prompt: input.prompt }, options?.userContext || fallbackUserContext);
-  await logAgentRun(practiceCoach.agentName, input, output, "ok", startedAt, options);
-  return output;
+  const ctx = options?.userContext || fallbackUserContext;
+  const base = await mockAiService.generatePractice({ direction: input.direction, context: input.context, prompt: input.prompt }, ctx);
+  try {
+    const out = await runAgent({
+      agentSystemPrompt: practiceCoach.systemPrompt,
+      userPrompt: `Direction: ${input.direction || input.prompt?.title || "confidence"}\nContext: ${input.context || input.prompt?.description || ""}`,
+      schema: practiceCoach.outputSchema,
+      jsonHint: "title, summary, steps (array of 2-4 short strings), focus, encouragement, nextSmallStep",
+      persona: ctx,
+    });
+    assertBrandSafe([out.title, out.summary, out.focus, out.encouragement, out.nextSmallStep, ...out.steps]);
+    const response: AiResponse = {
+      ...base,
+      title: out.title,
+      summary: out.summary,
+      bullets: out.steps,
+      suggestedNextStep: out.nextSmallStep,
+      structured: { kind: "practicePrep", data: { title: out.title, steps: out.steps, focus: out.focus, encouragement: out.encouragement } },
+    };
+    await logAgentRun(practiceCoach.agentName, input, response, "ok", startedAt, options);
+    return response;
+  } catch {
+    await logAgentRun(practiceCoach.agentName, input, base, "fallback", startedAt, options);
+    return base;
+  }
 }
 
 export async function runReflectionHelper(input: SpecialistInput, options?: RunOptions): Promise<AiResponse> {
   const startedAt = Date.now();
-  const output = await mockAiService.reflectOnProof(input.proof || null, input.reflectionText || "", input.prompt, options?.userContext || fallbackUserContext);
-  await logAgentRun(reflectionHelper.agentName, input, output, "ok", startedAt, options);
-  return output;
+  const ctx = options?.userContext || fallbackUserContext;
+  const base = await mockAiService.reflectOnProof(input.proof || null, input.reflectionText || "", input.prompt, ctx);
+  try {
+    const out = await runAgent({
+      agentSystemPrompt: reflectionHelper.systemPrompt,
+      userPrompt: `Proof: ${input.proof?.title || ""}\nReflection: ${input.reflectionText || ""}\nPractice: ${input.prompt?.title || ""}`,
+      schema: reflectionHelper.outputSchema,
+      jsonHint: "validation, whatYouPracticed, nextSmallStep",
+      persona: ctx,
+    });
+    assertBrandSafe([out.validation, out.whatYouPracticed, out.nextSmallStep]);
+    const response: AiResponse = {
+      ...base,
+      title: base.title,
+      summary: out.validation,
+      bullets: [out.whatYouPracticed, out.nextSmallStep],
+      suggestedNextStep: out.nextSmallStep,
+      structured: { kind: "reflectionHelp", data: { validation: out.validation, whatYouPracticed: out.whatYouPracticed, nextSmallStep: out.nextSmallStep } },
+    };
+    await logAgentRun(reflectionHelper.agentName, input, response, "ok", startedAt, options);
+    return response;
+  } catch {
+    await logAgentRun(reflectionHelper.agentName, input, base, "fallback", startedAt, options);
+    return base;
+  }
 }
 
 export async function runFeedbackCoach(input: SpecialistInput, options?: RunOptions): Promise<AiResponse> {
   const startedAt = Date.now();
+  const ctx = options?.userContext || fallbackUserContext;
   const proof = input.proof || fallbackProof;
-  const output = await mockAiService.coachFeedback(proof, input.draftFeedback || "", options?.userContext || fallbackUserContext);
-  await logAgentRun(feedbackCoach.agentName, input, output, "ok", startedAt, options);
-  return output;
+  const base = await mockAiService.coachFeedback(proof, input.draftFeedback || "", ctx);
+  try {
+    const out = await runAgent({
+      agentSystemPrompt: feedbackCoach.systemPrompt,
+      userPrompt: `Proof: ${proof.title}\nDraft feedback: ${input.draftFeedback || ""}`,
+      schema: feedbackCoach.outputSchema,
+      jsonHint: "whatWorked, suggestion, encouragement",
+      persona: ctx,
+    });
+    assertBrandSafe([out.whatWorked, out.suggestion, out.encouragement]);
+    const response: AiResponse = {
+      ...base,
+      bullets: [`What worked: ${out.whatWorked}`, `Suggestion: ${out.suggestion}`, `Encouragement: ${out.encouragement}`],
+      suggestedNextStep: out.suggestion,
+      structured: { kind: "feedbackCoach", data: { whatWorked: out.whatWorked, suggestion: out.suggestion, encouragement: out.encouragement } },
+    };
+    await logAgentRun(feedbackCoach.agentName, input, response, "ok", startedAt, options);
+    return response;
+  } catch {
+    await logAgentRun(feedbackCoach.agentName, input, base, "fallback", startedAt, options);
+    return base;
+  }
 }
 
 export async function runSummaryComposer(input: SpecialistInput & { response?: AiResponse }, options?: RunOptions): Promise<AiResponse> {
   const startedAt = Date.now();
-  const response = input.response || (await mockAiService.summarizeFeedback(input.proof || fallbackProof, input.feedbackList || [], options?.userContext || fallbackUserContext));
-  await logAgentRun(summaryComposer.agentName, input, response, "ok", startedAt, options);
-  return response;
+  const ctx = options?.userContext || fallbackUserContext;
+  const base = input.response || (await mockAiService.summarizeFeedback(input.proof || fallbackProof, input.feedbackList || [], ctx));
+  try {
+    const out = await runAgent({
+      agentSystemPrompt: summaryComposer.systemPrompt,
+      userPrompt: `Proof: ${input.proof?.title || ""}\nFeedback count: ${(input.feedbackList || []).length}\nNotes: ${(input.feedbackList || []).map((f) => f.body).join(" | ").slice(0, 800)}`,
+      schema: summaryComposer.outputSchema,
+      jsonHint: "title, summary, bullets (array of up to 3 short strings), suggestedNextStep",
+      persona: ctx,
+    });
+    assertBrandSafe([out.title, out.summary, out.suggestedNextStep, ...out.bullets]);
+    const response: AiResponse = {
+      ...base,
+      title: out.title,
+      summary: out.summary,
+      bullets: out.bullets,
+      suggestedNextStep: out.suggestedNextStep,
+      structured: { kind: "feedbackSummary", data: { commonTheme: out.summary, usefulSuggestion: out.bullets[0] || out.suggestedNextStep, nextPracticeStep: out.suggestedNextStep } },
+    };
+    await logAgentRun(summaryComposer.agentName, input, response, "ok", startedAt, options);
+    return response;
+  } catch {
+    await logAgentRun(summaryComposer.agentName, input, base, "fallback", startedAt, options);
+    return base;
+  }
 }
 
 export async function runCollectivePanel(input: CollectivePanelInput, options?: RunOptions): Promise<CollectivePanelResult> {
@@ -211,8 +300,27 @@ export async function runCollectivePanel(input: CollectivePanelInput, options?: 
       response = await runPracticeCoach(raw, runOptions);
     } else if (input.action === "prepare_proof") {
       const startedAt = Date.now();
-      response = await mockAiService.prepareProof(raw.prompt, userContext);
-      await logAgentRun(practiceCoach.agentName, raw, response, safety.status, startedAt, runOptions);
+      const baseProof = await mockAiService.prepareProof(raw.prompt, userContext);
+      try {
+        const out = await runAgent({
+          agentSystemPrompt: practiceCoach.systemPrompt,
+          userPrompt: `Help prepare safe proof for the practice: ${raw.prompt?.title || "this practice"}. Describe a small proof idea, a safe scope, a feedback request, and one next step.`,
+          schema: z.object({ proofIdea: z.string(), safeScope: z.string(), feedbackRequest: z.string(), nextSmallStep: z.string() }),
+          jsonHint: "proofIdea, safeScope, feedbackRequest, nextSmallStep",
+          persona: userContext,
+        });
+        assertBrandSafe([out.proofIdea, out.safeScope, out.feedbackRequest, out.nextSmallStep]);
+        response = {
+          ...baseProof,
+          bullets: [`Proof idea: ${out.proofIdea}`, `Safe scope: ${out.safeScope}`, `Feedback request: ${out.feedbackRequest}`],
+          suggestedNextStep: out.nextSmallStep,
+          structured: { kind: "proofPrep", data: { proofIdea: out.proofIdea, safeScope: out.safeScope, feedbackRequest: out.feedbackRequest, nextSmallStep: out.nextSmallStep } },
+        };
+        await logAgentRun(practiceCoach.agentName, raw, response, "ok", startedAt, runOptions);
+      } catch {
+        response = baseProof;
+        await logAgentRun(practiceCoach.agentName, raw, response, "fallback", startedAt, runOptions);
+      }
     } else if (input.action === "reflect_on_proof") {
       response = await runReflectionHelper(raw, runOptions);
     } else if (input.action === "coach_feedback") {
