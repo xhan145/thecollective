@@ -14,7 +14,7 @@ export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
   const router = useRouter();
   const { currentUser, trustSummary, getPromptById, submitProof, logEvent } = useBetaApp();
-  const promptId = params.promptId || "say-clear-thing";
+  const promptId = params.promptId || "conf-s1";
   const prompt = getPromptById(promptId);
   const [mediaType, setMediaType] = useState<ProofMediaType>("text");
   const [body, setBody] = useState("");
@@ -89,7 +89,10 @@ export default function NewProofPage() {
         <Card className="p-5">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">Practice prompt</p>
           <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{prompt?.title || "Practice proof"}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.prompt || "Capture one small example of progress."}</p>
+          <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.proofPrompt || prompt?.prompt || "Capture one small example of progress."}</p>
+          {currentUser?.goalText && (
+            <p className="mt-2 text-xs leading-5 text-[#7A5300]">Toward your goal: "{currentUser.goalText}" — it doesn't need to be perfect.</p>
+          )}
         </Card>
         <AiSupportCard
           title="Help me prepare"

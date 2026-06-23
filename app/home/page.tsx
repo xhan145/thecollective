@@ -8,6 +8,7 @@ import { DirectionCard, LoopSignalRow, PracticePromptCard, TrustSnapshotCard } f
 import { ProofCard } from "@/components/beta/ProofComponents";
 import { Badge, ButtonLink, Card, EmptyState, HeroCard, PageHeader, ProgressBar, SectionLabel } from "@/components/beta/ui";
 import { InstallPwaCard } from "@/components/beta/InstallPwaCard";
+import { getNextPractice } from "@/lib/personalization";
 
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
@@ -16,16 +17,19 @@ export default function HomePage() {
     snapshot.directions.find((direction) => direction.id === currentUser?.currentDirectionId) ||
     snapshot.directions.find((direction) => direction.slug === "confident-communication" || direction.slug === "communication") ||
     snapshot.directions[0];
-  const directionPrompts = snapshot.prompts.filter((prompt) => prompt.directionId === featuredDirection?.id);
-  const promptPool = directionPrompts.length ? directionPrompts : snapshot.prompts;
-  const nextPrompt = promptPool.find((prompt) => !snapshot.completedPracticeIds.includes(prompt.id)) || promptPool[0];
+  const nextPrompt =
+    getNextPractice(
+      { currentDirectionId: currentUser?.currentDirectionId ?? null, startingLevel: currentUser?.startingLevel ?? null, contextTags: currentUser?.contextTags ?? [] },
+      snapshot.prompts,
+      snapshot.completedPracticeIds,
+    ) || snapshot.prompts[0];
 
   return (
     <AppShell>
       <div className="space-y-6">
         <PageHeader
           title={`Good morning${currentUser ? `, ${currentUser.displayName}` : ""}.`}
-          subtitle="Small steps. Real progress."
+          subtitle={currentUser?.goalText ? `Working toward: ${currentUser.goalText}` : "Small steps. Real progress."}
           action={
             <Link href="/feed" className="relative grid h-11 w-11 place-items-center rounded-full bg-[#FFFDF8] text-[#111111] shadow-[0_10px_30px_rgba(71,52,18,0.08)]" aria-label="Notifications">
               <Bell size={19} />
