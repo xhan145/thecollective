@@ -13,7 +13,7 @@ import { getCollectiveAiService } from "@/lib/aiService";
 export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
   const router = useRouter();
-  const { currentUser, trustSummary, getPromptById, submitProof, logEvent } = useBetaApp();
+  const { snapshot, currentUser, trustSummary, getPromptById, submitProof, logEvent } = useBetaApp();
   const promptId = params.promptId || "conf-s1";
   const prompt = getPromptById(promptId);
   const [mediaType, setMediaType] = useState<ProofMediaType>("text");
@@ -108,7 +108,11 @@ export default function NewProofPage() {
               userId: currentUser?.id || "user-alex",
               displayName: currentUser?.displayName || "Alex",
               cohortId: currentUser?.cohortId || "founding-circle",
-              trustLevelLabel: trustSummary.levelLabel
+              trustLevelLabel: trustSummary.levelLabel,
+              goalText: currentUser?.goalText ?? null,
+              startingLevel: currentUser?.startingLevel ?? null,
+              contextTags: currentUser?.contextTags ?? [],
+              directionTitle: snapshot.directions.find((d) => d.id === currentUser?.currentDirectionId)?.title ?? null,
             })
           }
         />
@@ -143,7 +147,11 @@ export default function NewProofPage() {
                 userId: currentUser?.id || "user-alex",
                 displayName: currentUser?.displayName || "Alex",
                 cohortId: currentUser?.cohortId || "founding-circle",
-                trustLevelLabel: trustSummary.levelLabel
+                trustLevelLabel: trustSummary.levelLabel,
+                goalText: currentUser?.goalText ?? null,
+                startingLevel: currentUser?.startingLevel ?? null,
+                contextTags: currentUser?.contextTags ?? [],
+                directionTitle: snapshot.directions.find((d) => d.id === currentUser?.currentDirectionId)?.title ?? null,
               })
             }
           />
