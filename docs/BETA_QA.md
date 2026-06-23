@@ -158,3 +158,13 @@ service key is never exposed to the browser.
 - Signed-URL proof media + basic media moderation.
 - Beta funnel view in `/admin/beta` built on `beta_events`.
 - Audio/video upload hardening (resumable uploads, progress, retries).
+
+## 10. AI layer (real model)
+
+- Provider: OpenAI `gpt-4o-mini` via the `openai` SDK, server-only (`OPENAI_API_KEY`).
+- No key set → mock mode (identical to today). Key set → 5 agents return real,
+  persona-aware coaching; any error/parse/schema/brand failure falls back to mock.
+- Safety: deterministic input pre-gate (`reviewTextSafety`) + output brand/schema
+  validation (`assertBrandSafe` + zod). Off-brand/malformed output never reaches a user.
+- `COLLECTIVE_PANEL`/demo panel stays mock by design.
+- Verify pure layer: `npx tsx scripts/check-ai-output-policy.ts`.
