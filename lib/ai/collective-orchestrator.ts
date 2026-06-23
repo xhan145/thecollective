@@ -326,8 +326,7 @@ export async function runCollectivePanel(input: CollectivePanelInput, options?: 
     } else if (input.action === "coach_feedback") {
       response = await runFeedbackCoach(raw, runOptions);
     } else if (input.action === "summarize_feedback") {
-      response = await mockAiService.summarizeFeedback(raw.proof || fallbackProof, raw.feedbackList || [], userContext);
-      await runSummaryComposer({ ...raw, response }, runOptions);
+      response = await runSummaryComposer(raw, runOptions);
     } else if (input.action === "review_safety") {
       response = boundaryResponse(input.action, safety);
     } else {
