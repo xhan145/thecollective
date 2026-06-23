@@ -9,8 +9,11 @@ The web beta includes:
 - `lib/aiTypes.ts`: structured AI models and feedback models.
 - `lib/collectiveAiPolicy.ts`: central safety/system policy.
 - `lib/aiService.ts`: `AiService`, `mockAiService`, and remote endpoint stub.
+- `lib/ai/collective-orchestrator.ts`: safety-first v0 orchestrator for agent-style actions.
+- `lib/ai/agents/*`: versioned practice, reflection, feedback, safety, and summary agent prompts.
 - `components/beta/AiSupportCard.tsx`: compact response UI with helpfulness feedback.
-- `/api/ai/collective`: serverless stub that currently returns mock structured responses.
+- `/api/ai/collective`: server route that supports both old `feature` requests and new `action` requests.
+- `ai/golden/*.jsonl` and `scripts/ai/evaluate-golden.ts`: mock-mode golden eval foundation.
 
 Mock mode works without real API keys.
 
@@ -74,6 +77,7 @@ Set:
 ```bash
 NEXT_PUBLIC_COLLECTIVE_AI_MOCK_MODE=false
 NEXT_PUBLIC_COLLECTIVE_AI_ENDPOINT=/api/ai/collective
+COLLECTIVE_AI_MODEL=collective-mock-v0
 ```
 
-Then replace the serverless stub with a backend that calls the chosen model provider using private server-side keys only. Do not put model API keys in Android or web clients.
+Then add the chosen model provider behind `lib/ai/collective-orchestrator.ts` using private server-side keys only. Do not put model API keys in Android or web clients.

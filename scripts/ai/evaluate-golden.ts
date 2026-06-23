@@ -77,7 +77,7 @@ function runRubric(file: string, example: GoldenExample, text: string, result: A
   const reasons: string[] = [];
   const action = example.action || (file === "demo_activity.jsonl" ? "run_demo_panel" : "generate_practice");
 
-  if (!/next|try|step|practice|write|record|repeat|ask|add|choose/i.test(text)) {
+  if (!/next|try|step|practice|write|record|repeat|ask|add|choose|use/i.test(text)) {
     reasons.push("missing one small next step");
   }
   if (includesAny(text, cloutTerms)) {

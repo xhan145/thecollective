@@ -49,7 +49,7 @@ export default function FeedPage() {
             <EmptyState
               title="No proof yet"
               body="No real proof yet. Here are example proofs to help you start."
-              cta={<ButtonLink href="/proof/new/say-clear-thing">Submit proof</ButtonLink>}
+              cta={<ButtonLink href="/proof/new/conf-s1">Submit proof</ButtonLink>}
             />
           )}
         </section>

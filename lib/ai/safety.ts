@@ -32,7 +32,9 @@ const medicalBoundaryPatterns = [
 const privateInfoPatterns = [
   /\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/,
   /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i,
-  /\b(?:password|api key|secret key|service role)\b/i
+  /\b(?:password|api key|secret key|service role)\b/i,
+  /\bphone number and email\b/i,
+  /\bprivate contact\b/i
 ];
 
 const harmfulFeedbackPatterns = [

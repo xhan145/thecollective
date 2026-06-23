@@ -57,6 +57,10 @@ function inputText(input: Record<string, unknown>) {
   }
 }
 
+function safetyText(input: Record<string, unknown>) {
+  return typeof input.text === "string" ? input.text : inputText(input);
+}
+
 function panelResult(action: CollectiveAiAction, response: AiResponse, safety: SafetyReviewOutput): CollectivePanelResult {
   return {
     ok: true,
@@ -192,7 +196,7 @@ export async function runCollectivePanel(input: CollectivePanelInput, options?: 
   const safety = await runSafetyReview(
     {
       action: input.action,
-      text: inputText(input.input),
+      text: safetyText(input.input),
       context: input.input
     },
     runOptions

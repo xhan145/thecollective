@@ -7,10 +7,12 @@ import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { PracticePromptCard } from "@/components/beta/LoopCards";
 import { Button, Card, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { getCollectiveAiService } from "@/lib/aiService";
+import { getPersonalizedPractices, getNextPractice } from "@/lib/personalization";
 
 export default function PracticePage() {
   const { snapshot, currentUser, trustSummary, completePractice } = useBetaApp();
-  const nextPrompt = snapshot.prompts.find((prompt) => !snapshot.completedPracticeIds.includes(prompt.id)) || snapshot.prompts[0];
+  const persona = { currentDirectionId: currentUser?.currentDirectionId ?? null, startingLevel: currentUser?.startingLevel ?? null, contextTags: currentUser?.contextTags ?? [] };
+  const nextPrompt = getNextPractice(persona, snapshot.prompts, snapshot.completedPracticeIds) || snapshot.prompts[0];
   const aiService = getCollectiveAiService();
 
   return (
@@ -41,6 +43,23 @@ export default function PracticePage() {
             }
           />
         )}
+
+        <section className="space-y-3">
+          <SectionLabel title="For you" />
+          {getPersonalizedPractices(persona, snapshot.prompts).slice(0, 5).map((prompt) => {
+            const completed = snapshot.completedPracticeIds.includes(prompt.id);
+            return (
+              <div key={prompt.id} className="space-y-2">
+                <PracticePromptCard prompt={prompt} completed={completed} />
+                {!completed && (
+                  <Button className="w-full" variant="secondary" onClick={() => completePractice(prompt.id)}>
+                    <CheckCircle2 size={17} /> I did this already
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+        </section>
 
         {snapshot.directions.map((direction) => {
           const prompts = snapshot.prompts.filter((prompt) => prompt.directionId === direction.id);

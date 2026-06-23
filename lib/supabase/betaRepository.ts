@@ -71,6 +71,10 @@ function mapProfile(row: any): UserProfile {
     feedbackGivenCount: row.feedback_given_count ?? 0,
     feedbackReceivedCount: row.feedback_received_count ?? 0,
     contributionCount: row.contribution_count ?? 0,
+    goalText: row.goal_text ?? null,
+    startingLevel: row.starting_level ?? null,
+    contextTags: row.context_tags ?? [],
+    cadence: row.cadence ?? null,
     betaAccess: row.beta_access ?? false,
     inviteCode: row.invite_code ?? null,
     betaJoinedAt: row.beta_joined_at ?? null,
@@ -387,16 +391,20 @@ export async function recomputeProfileCounts(client: SupabaseClient, userId: str
   await client.rpc("recompute_profile_counts", { p_uid: userId });
 }
 
-/** Persist onboarding completion + chosen direction. */
+/** Persist onboarding completion + chosen direction + personalization answers. */
 export async function updateOnboarding(
   client: SupabaseClient,
   userId: string,
-  directionId: string | null,
+  payload: { directionId: string | null; goalText?: string | null; startingLevel?: string | null; contextTags?: string[]; cadence?: string | null },
 ): Promise<void> {
   await client
     .from("profiles")
     .update({
-      current_direction_id: directionId,
+      current_direction_id: payload.directionId,
+      goal_text: payload.goalText ?? null,
+      starting_level: payload.startingLevel ?? null,
+      context_tags: payload.contextTags ?? [],
+      cadence: payload.cadence ?? null,
       onboarding_completed: true,
       updated_at: new Date().toISOString(),
     })
