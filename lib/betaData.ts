@@ -27,24 +27,53 @@ const pick = <T,>(rng: () => number, arr: T[]) => arr[Math.floor(rng() * arr.len
 // ---------------------------------------------------------------------------
 
 export const seedDirections: Direction[] = [
-  { id: "direction-confidence", slug: "confidence", title: "Confidence", subtitle: "Practice one clear step before it feels perfect.", description: "Build calm confidence through small proof-backed attempts.", promptIds: ["say-clear-thing", "name-one-preference"] },
-  { id: "direction-communication", slug: "communication", title: "Communication", subtitle: "Say what matters with clarity and care.", description: "Practice voice notes, useful questions, and simple explanations.", promptIds: ["ask-useful-question", "explain-idea-simply"] },
-  { id: "direction-momentum", slug: "momentum", title: "Momentum", subtitle: "Build consistency without pressure.", description: "Turn effort into a repeatable rhythm that feels safe to keep.", promptIds: ["five-minute-step", "close-one-loop"] },
-  { id: "direction-self-trust", slug: "self-trust", title: "Self-trust", subtitle: "Notice evidence that you follow through.", description: "Capture proof of honest effort and use feedback gently.", promptIds: ["honest-reflection", "practice-boundary"] },
-  { id: "direction-contribution", slug: "contribution", title: "Contribution", subtitle: "Help others safely when you have useful context.", description: "Give specific feedback without chasing attention or status.", promptIds: ["give-specific-feedback", "spot-next-step"] }
+  { id: "direction-confidence", slug: "confidence", title: "Confidence", subtitle: "Practice one clear step before it feels perfect.", description: "Build calm confidence through small proof-backed attempts.", promptIds: ["conf-s1","conf-s2","conf-b1","conf-b2","conf-c1","conf-c2"] },
+  { id: "direction-communication", slug: "communication", title: "Communication", subtitle: "Say what matters with clarity and care.", description: "Practice voice notes, useful questions, and simple explanations.", promptIds: ["comm-s1","comm-s2","comm-b1","comm-b2","comm-c1","comm-c2"] },
+  { id: "direction-momentum", slug: "momentum", title: "Momentum", subtitle: "Build consistency without pressure.", description: "Turn effort into a repeatable rhythm that feels safe to keep.", promptIds: ["mom-s1","mom-s2","mom-b1","mom-b2","mom-c1","mom-c2"] },
+  { id: "direction-self-trust", slug: "self-trust", title: "Self-trust", subtitle: "Notice evidence that you follow through.", description: "Capture proof of honest effort and use feedback gently.", promptIds: ["self-s1","self-s2","self-b1","self-b2","self-c1","self-c2"] },
+  { id: "direction-contribution", slug: "contribution", title: "Contribution", subtitle: "Help others safely when you have useful context.", description: "Give specific feedback without chasing attention or status.", promptIds: ["contrib-s1","contrib-s2","contrib-b1","contrib-b2","contrib-c1","contrib-c2"] }
 ];
 
 export const seedPrompts: PracticePrompt[] = [
-  { id: "say-clear-thing", directionId: "direction-confidence", title: "Say one clear thing", description: "Record or write one idea in plain language.", prompt: "Say one idea out loud as if you were sharing it with a teammate.", type: "voice-note", estimatedMinutes: 5, beginnerSafe: true },
-  { id: "name-one-preference", directionId: "direction-confidence", title: "Name one preference", description: "Practice stating a preference without apologizing for it.", prompt: "Write one sentence that names what you prefer and why.", type: "reflection", estimatedMinutes: 4, beginnerSafe: true },
-  { id: "ask-useful-question", directionId: "direction-communication", title: "Ask one useful question", description: "Turn pressure to perform into curiosity.", prompt: "Ask one question that would help a teammate move forward.", type: "conversation", estimatedMinutes: 5, beginnerSafe: true },
-  { id: "explain-idea-simply", directionId: "direction-communication", title: "Explain your idea simply", description: "Use one example and one next step.", prompt: "Explain a current idea in three short sentences.", type: "proof", estimatedMinutes: 7, beginnerSafe: true },
-  { id: "five-minute-step", directionId: "direction-momentum", title: "Five-minute useful step", description: "Make progress small enough to begin.", prompt: "Pick one useful five-minute action and capture proof when it is done.", type: "proof", estimatedMinutes: 5, beginnerSafe: true },
-  { id: "close-one-loop", directionId: "direction-momentum", title: "Close one loop", description: "Finish one small open item today.", prompt: "Choose one unfinished thing and make it visibly more complete.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true },
-  { id: "honest-reflection", directionId: "direction-self-trust", title: "Honest reflection", description: "Notice effort without turning it into judgment.", prompt: "Write what you tried, what changed, and what you will try next.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true },
-  { id: "practice-boundary", directionId: "direction-self-trust", title: "Practice a boundary", description: "Prepare a respectful no or not-yet.", prompt: "Draft one boundary sentence that is clear and calm.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true },
-  { id: "give-specific-feedback", directionId: "direction-contribution", title: "Give specific feedback", description: "Respond to the practice, not the person.", prompt: "Write one thing that worked and one useful next step.", type: "reflection", estimatedMinutes: 7, beginnerSafe: true },
-  { id: "spot-next-step", directionId: "direction-contribution", title: "Spot the next step", description: "Help someone choose one safe next action.", prompt: "Read a proof and suggest one small next step inside their request.", type: "conversation", estimatedMinutes: 7, beginnerSafe: true }
+  // direction-confidence
+  { id: "conf-s1", directionId: "direction-confidence", title: "Say one clear thing", description: "Share a single idea in plain language.", prompt: "Say or write one idea as if to a teammate — no softening.", type: "voice-note", estimatedMinutes: 5, beginnerSafe: true, level: "starter", contextTags: ["speaking_up_at_work"], proofPrompt: "Capture the one clear thing you said. What felt different about not softening it?" },
+  { id: "conf-s2", directionId: "direction-confidence", title: "Name one preference", description: "State a preference without apologizing.", prompt: "Write one sentence naming what you prefer and why.", type: "reflection", estimatedMinutes: 4, beginnerSafe: true, level: "starter", contextTags: ["personal_growth"], proofPrompt: "Show the preference you named. Where did you notice the urge to apologize?" },
+  { id: "conf-b1", directionId: "direction-confidence", title: "Ask for what you need", description: "Make one small, direct ask.", prompt: "Make one clear request today and note the response.", type: "proof", estimatedMinutes: 6, beginnerSafe: true, level: "building", contextTags: ["speaking_up_at_work", "relationships"], proofPrompt: "What did you ask for, and how did it land? Keep it factual, not self-judging." },
+  { id: "conf-b2", directionId: "direction-confidence", title: "Hold a pause", description: "Let a silence sit before answering.", prompt: "In one conversation, pause two seconds before responding.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true, level: "building", contextTags: ["upcoming_situation"], proofPrompt: "Describe the moment you paused. What changed when you didn't rush?" },
+  { id: "conf-c1", directionId: "direction-confidence", title: "Disagree kindly", description: "Voice a different view, calmly.", prompt: "Share one respectful disagreement and your reason.", type: "proof", estimatedMinutes: 7, beginnerSafe: true, level: "comfortable", contextTags: ["speaking_up_at_work"], proofPrompt: "What did you disagree with, and how did you keep it kind and clear?" },
+  { id: "conf-c2", directionId: "direction-confidence", title: "Own a decision out loud", description: "State a choice you're making and why.", prompt: "Tell someone a decision you've made, with one reason.", type: "conversation", estimatedMinutes: 6, beginnerSafe: true, level: "comfortable", contextTags: ["upcoming_situation", "clearer_thinking"], proofPrompt: "Show the decision you owned. What made it easier (or harder) to say plainly?" },
+
+  // direction-communication
+  { id: "comm-s1", directionId: "direction-communication", title: "Ask one useful question", description: "Trade proving for curiosity.", prompt: "Ask one question that helps a teammate move forward.", type: "conversation", estimatedMinutes: 5, beginnerSafe: true, level: "starter", contextTags: ["speaking_up_at_work"], proofPrompt: "Share the question you asked. What did it open up?" },
+  { id: "comm-s2", directionId: "direction-communication", title: "Rewrite a rambly message", description: "Cut to two clear lines.", prompt: "Take a draft and trim it to two clear sentences.", type: "reflection", estimatedMinutes: 4, beginnerSafe: true, level: "starter", contextTags: ["clearer_thinking"], proofPrompt: "Show before/after. What did you cut, and what got clearer?" },
+  { id: "comm-b1", directionId: "direction-communication", title: "Explain it in three sentences", description: "Point, example, next step.", prompt: "Explain one idea in exactly three sentences.", type: "proof", estimatedMinutes: 7, beginnerSafe: true, level: "building", contextTags: ["clearer_thinking", "personal_growth"], proofPrompt: "Share your three sentences. Did the structure make it land?" },
+  { id: "comm-b2", directionId: "direction-communication", title: "Reflect back what you heard", description: "Confirm before responding.", prompt: "In one chat, summarize the other person before replying.", type: "conversation", estimatedMinutes: 6, beginnerSafe: true, level: "building", contextTags: ["relationships"], proofPrompt: "What did you reflect back, and how did the conversation shift?" },
+  { id: "comm-c1", directionId: "direction-communication", title: "Give a hard update simply", description: "Bad news, no padding, with a next step.", prompt: "Deliver one difficult update plainly + one next step.", type: "proof", estimatedMinutes: 8, beginnerSafe: true, level: "comfortable", contextTags: ["speaking_up_at_work", "upcoming_situation"], proofPrompt: "Show how you said the hard thing clearly and kindly. What was the next step you offered?" },
+  { id: "comm-c2", directionId: "direction-communication", title: "Lead with the outcome", description: "Headline first, detail after.", prompt: "Send one message that states the outcome in line one.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true, level: "comfortable", contextTags: ["clearer_thinking"], proofPrompt: "Share the opening line. Did leading with the outcome help the reader?" },
+
+  // direction-momentum
+  { id: "mom-s1", directionId: "direction-momentum", title: "One five-minute step", description: "Make progress small enough to begin.", prompt: "Do one useful five-minute action and capture proof.", type: "proof", estimatedMinutes: 5, beginnerSafe: true, level: "starter", contextTags: ["rebuilding_habit"], proofPrompt: "Show the small thing you finished. What made starting easier?" },
+  { id: "mom-s2", directionId: "direction-momentum", title: "Close one open loop", description: "Finish one lingering item.", prompt: "Complete one thing that's been sitting too long.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true, level: "starter", contextTags: ["personal_growth"], proofPrompt: "What loop did you close? How did finishing it feel?" },
+  { id: "mom-b1", directionId: "direction-momentum", title: "Restart small after a miss", description: "The smallest version counts.", prompt: "After a gap, do the tiniest version of your habit.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true, level: "building", contextTags: ["rebuilding_habit"], proofPrompt: "Show your restart. What was the smallest version that still counted?" },
+  { id: "mom-b2", directionId: "direction-momentum", title: "Protect one focused block", description: "Guard 15 minutes from distraction.", prompt: "Take 15 distraction-free minutes on one task.", type: "proof", estimatedMinutes: 6, beginnerSafe: true, level: "building", contextTags: ["clearer_thinking"], proofPrompt: "What did you protect the time for, and what got done?" },
+  { id: "mom-c1", directionId: "direction-momentum", title: "Ship something unfinished", description: "Progress over polish.", prompt: "Share one thing before it feels perfect.", type: "proof", estimatedMinutes: 7, beginnerSafe: true, level: "comfortable", contextTags: ["upcoming_situation"], proofPrompt: "Show what you shipped early. What did 'good enough' unlock?" },
+  { id: "mom-c2", directionId: "direction-momentum", title: "Set one honest deadline", description: "A date you'll actually keep.", prompt: "Commit to one realistic deadline and tell someone.", type: "conversation", estimatedMinutes: 5, beginnerSafe: true, level: "comfortable", contextTags: ["personal_growth"], proofPrompt: "What did you commit to, by when, and to whom?" },
+
+  // direction-self-trust
+  { id: "self-s1", directionId: "direction-self-trust", title: "Honest reflection", description: "Notice effort without judgment.", prompt: "Write what you tried, what changed, what's next.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true, level: "starter", contextTags: ["personal_growth"], proofPrompt: "Share your reflection. Where did you catch judgment creeping in?" },
+  { id: "self-s2", directionId: "direction-self-trust", title: "Log a follow-through", description: "Proof you did what you said.", prompt: "Note one thing you said you'd do — and did.", type: "reflection", estimatedMinutes: 4, beginnerSafe: true, level: "starter", contextTags: ["rebuilding_habit"], proofPrompt: "Show the follow-through. What does it tell you about yourself?" },
+  { id: "self-b1", directionId: "direction-self-trust", title: "Practice a calm boundary", description: "A clear not-yet, no apology.", prompt: "Draft one calm boundary sentence.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true, level: "building", contextTags: ["relationships"], proofPrompt: "Share the boundary you drafted. What made it feel clear and kind?" },
+  { id: "self-b2", directionId: "direction-self-trust", title: "Separate fact from story", description: "What happened vs. what you assumed.", prompt: "Write the fact, then the story you added.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true, level: "building", contextTags: ["clearer_thinking"], proofPrompt: "Show the fact vs. the story. What changed once you split them?" },
+  { id: "self-c1", directionId: "direction-self-trust", title: "Keep a hard promise to yourself", description: "Small, but you kept it.", prompt: "Make and keep one small promise to yourself today.", type: "proof", estimatedMinutes: 6, beginnerSafe: true, level: "comfortable", contextTags: ["personal_growth", "rebuilding_habit"], proofPrompt: "What did you promise and keep? How did keeping it land?" },
+  { id: "self-c2", directionId: "direction-self-trust", title: "Decide without over-checking", description: "Trust one call.", prompt: "Make one small decision without seeking reassurance.", type: "reflection", estimatedMinutes: 5, beginnerSafe: true, level: "comfortable", contextTags: ["clearer_thinking", "upcoming_situation"], proofPrompt: "Show the call you made solo. What did trusting yourself feel like?" },
+
+  // direction-contribution
+  { id: "contrib-s1", directionId: "direction-contribution", title: "Give specific feedback", description: "Respond to the work, not the person.", prompt: "Write one thing that worked + one useful next step.", type: "reflection", estimatedMinutes: 7, beginnerSafe: true, level: "starter", contextTags: ["relationships"], proofPrompt: "Share the feedback you gave. Was it specific and kind?" },
+  { id: "contrib-s2", directionId: "direction-contribution", title: "Spot the next step", description: "Help someone choose one safe action.", prompt: "Read a proof and suggest one small next step.", type: "conversation", estimatedMinutes: 7, beginnerSafe: true, level: "starter", contextTags: ["clearer_thinking"], proofPrompt: "What next step did you suggest, and why that one?" },
+  { id: "contrib-b1", directionId: "direction-contribution", title: "Offer context, not control", description: "Share what helps; let them decide.", prompt: "Give one piece of useful context without taking over.", type: "reflection", estimatedMinutes: 6, beginnerSafe: true, level: "building", contextTags: ["relationships", "speaking_up_at_work"], proofPrompt: "Show the context you offered. How did you leave the choice with them?" },
+  { id: "contrib-b2", directionId: "direction-contribution", title: "Ask before advising", description: "Find out what help they want.", prompt: "Ask 'what would help?' before offering a fix.", type: "conversation", estimatedMinutes: 5, beginnerSafe: true, level: "building", contextTags: ["relationships"], proofPrompt: "What did asking first change about the help you gave?" },
+  { id: "contrib-c1", directionId: "direction-contribution", title: "Share what you learned", description: "Turn one lesson into help.", prompt: "Write one thing you learned that could help someone.", type: "proof", estimatedMinutes: 8, beginnerSafe: true, level: "comfortable", contextTags: ["personal_growth"], proofPrompt: "Share the lesson. Who might it help, and how?" },
+  { id: "contrib-c2", directionId: "direction-contribution", title: "Encourage one person", description: "Specific, earned encouragement.", prompt: "Tell one person a specific thing they did well.", type: "conversation", estimatedMinutes: 5, beginnerSafe: true, level: "comfortable", contextTags: ["relationships"], proofPrompt: "What did you notice and name for them? Keep it specific, not flattery." },
 ];
 
 // ---------------------------------------------------------------------------
@@ -133,7 +162,8 @@ function buildDemoUsers(): UserProfile[] {
     directionIds: [DIRECTION_IDS[i % DIRECTION_IDS.length]],
     bio: DEMO_BIOS[i % DEMO_BIOS.length],
     avatarUrl: `/demo/avatars/${displayName.toLowerCase()}.jpg`,
-    createdAt: iso(60 * 24 * (NAMES.length - i))
+    createdAt: iso(60 * 24 * (NAMES.length - i)),
+    ...(i === 0 ? { currentDirectionId: "direction-confidence", startingLevel: "building" as const, contextTags: ["speaking_up_at_work" as const], goalText: "Speak up in meetings without overthinking", cadence: "a few minutes a day" } : {}),
   }));
 }
 
@@ -232,7 +262,7 @@ function generateCommunity(): GeneratedCommunity {
     userId: users[(i + 2) % users.length].id,
     category: appCats[i % appCats.length],
     body,
-    route: pick(rng, ["/home", "/practice", "/feed", "/proof/new/say-clear-thing", "/install"]),
+    route: pick(rng, ["/home", "/practice", "/feed", "/proof/new/conf-s1", "/install"]),
     createdAt: iso(120 + i * 95),
     reviewed: i % 4 === 0
   }));
@@ -246,7 +276,8 @@ function generateCommunity(): GeneratedCommunity {
 
 const minimalUser: UserProfile = {
   id: "user-alex", displayName: "Alex", initials: "A", role: "founder",
-  cohortId: "founding-circle", directionIds: ["direction-confidence", "direction-communication"], createdAt: now
+  cohortId: "founding-circle", directionIds: ["direction-confidence", "direction-communication"], createdAt: now,
+  currentDirectionId: "direction-confidence", startingLevel: "building" as const, contextTags: ["speaking_up_at_work" as const], goalText: "Speak up in meetings without overthinking", cadence: "a few minutes a day"
 };
 
 const community = DEMO_SEED_ENABLED ? generateCommunity() : null;
@@ -306,7 +337,7 @@ export const seedSnapshot: BetaAppSnapshot = {
   appFeedback: seedAppFeedback,
   aiInteractions: [],
   aiUserFeedback: [],
-  completedPracticeIds: DEMO_SEED_ENABLED ? ["say-clear-thing", "ask-useful-question", "five-minute-step", "honest-reflection"] : [],
+  completedPracticeIds: DEMO_SEED_ENABLED ? ["conf-s1", "comm-s1", "mom-s1", "self-s1"] : [],
   usefulMarks: [],
   usefulCountByProof: {},
   savedItems: [],
