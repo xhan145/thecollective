@@ -334,7 +334,9 @@ export function isAiEnabled() {
 export function isMockAiMode() {
   const explicit = process.env.NEXT_PUBLIC_COLLECTIVE_AI_MOCK_MODE || process.env.VITE_COLLECTIVE_AI_MOCK_MODE;
   if (explicit) return explicit !== "false";
-  return !getAiEndpoint();
+  // Real mode only when a server-side OpenAI key exists. The browser never has
+  // this var, so client-side stays on mock/route — which is correct.
+  return !process.env.OPENAI_API_KEY;
 }
 
 export function makeRemoteAiService(endpoint: string): AiService {
