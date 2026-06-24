@@ -197,12 +197,22 @@ function TimeAgo({ iso }: { iso: string }) {
   return <>{label}</>;
 }
 
-export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string }) {
+export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, relation, canGiveFeedback }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string; relation?: import("@/lib/feed/rankProofFeed").FeedRelation; canGiveFeedback?: boolean }) {
+  const { isLearningFrom, toggleLearnFrom } = useBetaApp();
+  const learning = isLearningFrom(proof.userId);
+  const router = useRouter();
   const name = authorName || "A member";
   const showDemoBadge = Boolean(proof.isDemo);
   const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
   return (
-    <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`}>
+    <div
+      role="link"
+      tabIndex={0}
+      aria-label={`Proof detail for ${proof.title}`}
+      className="cursor-pointer"
+      onClick={() => router.push(`/proof/${proof.id}`)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/proof/${proof.id}`); } }}
+    >
       <Card interactive className="p-3">
         <div className="mb-2.5 flex items-center gap-2">
           <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
@@ -213,6 +223,13 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }:
             <span className="ml-auto shrink-0 rounded-full bg-[#FFF8EE] px-2 py-0.5 text-[10px] font-bold text-[#9B958B]">Example</span>
           )}
         </div>
+        {relation && (
+          <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${
+            relation === "ahead" ? "bg-[#FFF1C7] text-[#7A5300]" : relation === "behind" ? "bg-[#FFF8EE] text-[#6E6E6E]" : "bg-[#F1F0EC] text-[#6E6E6E]"
+          }`}>
+            {relation === "ahead" ? "▲ Learn from" : relation === "behind" ? "▼ You're ahead here" : "● Around your level"}
+          </span>
+        )}
         <div className="flex gap-3">
           <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-[#FFF1C7] to-[#FFD986] text-[#8A5D00]">
             {thumb ? (
@@ -229,8 +246,24 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl }:
           </div>
         </div>
         <ProofActions proof={proof} compact />
+        {relation && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {relation !== "behind" && (
+              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleLearnFrom(proof.userId); }}
+                className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${learning ? "bg-[#FFE7AE] text-[#7A5300]" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
+                {learning ? "✓ Learning from" : "Learn from"}
+              </button>
+            )}
+            {relation === "behind" && canGiveFeedback && (
+              <Link href={`/proof/${proof.id}/feedback`} onClick={(e) => e.stopPropagation()}
+                className="rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-1.5 text-xs font-extrabold text-[#6E6E6E]">
+                Give feedback
+              </Link>
+            )}
+          </div>
+        )}
       </Card>
-    </Link>
+    </div>
   );
 }
 
