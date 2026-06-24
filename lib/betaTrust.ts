@@ -16,6 +16,15 @@ export function trustLevelForPoints(points: number): TrustSummary["levelLabel"] 
   return "New";
 }
 
+const TRUST_TIERS = ["New", "Practicing", "Reliable", "Helpful", "Contributor"] as const;
+
+/** 0–4 earned-level rank from a profile's trust points. Missing score => 0 (New). */
+export function levelRank(profile: { trustScore?: number | null }): number {
+  const label = trustLevelForPoints(profile.trustScore ?? 0);
+  const i = TRUST_TIERS.indexOf(label as (typeof TRUST_TIERS)[number]);
+  return i < 0 ? 0 : i;
+}
+
 export function summarizeTrust(userId: string, events: TrustEvent[]): TrustSummary {
   const userEvents = events.filter((event) => event.userId === userId);
   const totalPoints = userEvents.reduce((sum, event) => sum + event.points, 0);
