@@ -3,6 +3,7 @@ import { Inter, Lora } from "next/font/google";
 import { BetaAppProvider } from "@/components/beta/AppStateProvider";
 import { ThemeProvider } from "@/components/beta/ThemeProvider";
 import { ServiceWorkerRegister } from "@/components/beta/ServiceWorkerRegister";
+import QueryProvider from "@/components/QueryProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -51,10 +52,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans">
         <ThemeProvider>
-          <BetaAppProvider>
-            <ServiceWorkerRegister />
-            {children}
-          </BetaAppProvider>
+          <QueryProvider>
+            <BetaAppProvider>
+              <ServiceWorkerRegister />
+              {children}
+            </BetaAppProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
