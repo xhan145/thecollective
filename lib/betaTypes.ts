@@ -47,6 +47,11 @@ export type UserProfile = {
   feedbackGivenCount?: number;
   feedbackReceivedCount?: number;
   contributionCount?: number;
+  practiceTrust?: number;
+  feedbackTrust?: number;
+  consistencyTrust?: number;
+  contributionTrust?: number;
+  spamSignal?: number;
   // Personalized onboarding answers.
   goalText?: string | null;
   startingLevel?: PracticeLevel | null;

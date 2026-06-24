@@ -63,6 +63,16 @@ export async function GET(req: Request) {
     .order("created_at", { ascending: false })
     .limit(50);
 
+  const { data: spamRows } = await service
+    .from("profiles")
+    .select("id, display_name, username, spam_signal, is_demo")
+    .gt("spam_signal", 0)
+    .order("spam_signal", { ascending: false })
+    .limit(25);
+  const spamReview = (spamRows ?? []).map((r: any) => ({
+    id: r.id, name: r.display_name || r.username || r.id, spamSignal: r.spam_signal ?? 0, isDemo: !!r.is_demo,
+  }));
+
   return NextResponse.json({
     stats: {
       totalUsers, demoUsers, onboardedUsers, betaUsers,
@@ -79,5 +89,6 @@ export async function GET(req: Request) {
     })),
     onboardingIncomplete,
     noProof,
+    spamReview,
   });
 }
