@@ -12,7 +12,8 @@ type Stats = {
 type AppFeedbackRow = { id: string; name: string; category: string; rating: number | null; route: string | null; body: string; status: string; createdAt: string };
 type ProofRow = { id: string; name?: string; title: string; mediaType: string; createdAt: string };
 type Person = { id: string; name?: string; createdAt: string };
-type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[] };
+type SpamRow = { id: string; name: string; spamSignal: number; isDemo: boolean };
+type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[] };
 
 const STATUSES = ["new", "reviewing", "planned", "resolved", "dismissed"];
 
@@ -115,6 +116,20 @@ export default function AdminBetaPage() {
               ))}
             </div>
           </section>
+
+          {data.spamReview && data.spamReview.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-extrabold text-[#111111]">Spam review (signal only — no auto-action)</h2>
+              <ul className="space-y-1">
+                {data.spamReview.map((s: SpamRow) => (
+                  <li key={s.id} className="flex items-center justify-between rounded-xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2 text-sm">
+                    <span className="text-[#111111]">{s.name}{s.isDemo ? " (demo)" : ""}</span>
+                    <span className="font-extrabold text-[#7A5300]">signal {s.spamSignal}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
       )}
     </main>
