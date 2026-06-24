@@ -12,10 +12,6 @@ function interestScore(viewer: UserProfile, proof: Proof): number {
   if (proof.directionId && proof.directionId === viewer.currentDirectionId) s += 5;
   else if (proof.directionId && viewer.directionIds?.includes(proof.directionId)) s += 1.5;
   else s += 0.1; // floor — kept, never dropped
-  const vTags = viewer.contextTags ?? [];
-  // Proof doesn't have contextTags in type, so we access it dynamically
-  const pTags = (proof as Record<string, unknown>).contextTags as string[] | undefined ?? [];
-  if (vTags.length && pTags.length) s += pTags.filter((t: string) => vTags.includes(t as unknown as never)).length * 0.75;
   return s;
 }
 

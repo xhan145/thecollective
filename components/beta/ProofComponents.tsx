@@ -198,8 +198,7 @@ function TimeAgo({ iso }: { iso: string }) {
 }
 
 export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, relation, canGiveFeedback }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string; relation?: import("@/lib/feed/rankProofFeed").FeedRelation; canGiveFeedback?: boolean }) {
-  const { isUseful, toggleUseful, isLearningFrom, toggleLearnFrom } = useBetaApp();
-  const useful = isUseful(proof.id);
+  const { isLearningFrom, toggleLearnFrom } = useBetaApp();
   const learning = isLearningFrom(proof.userId);
   const router = useRouter();
   const name = authorName || "A member";
@@ -212,7 +211,7 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
       aria-label={`Proof detail for ${proof.title}`}
       className="cursor-pointer"
       onClick={() => router.push(`/proof/${proof.id}`)}
-      onKeyDown={(e) => { if (e.key === "Enter") router.push(`/proof/${proof.id}`); }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/proof/${proof.id}`); } }}
     >
       <Card interactive className="p-3">
         <div className="mb-2.5 flex items-center gap-2">
@@ -249,10 +248,6 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
         <ProofActions proof={proof} compact />
         {relation && (
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleUseful(proof.id); }}
-              className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${useful ? "bg-[#FFE7AE] text-[#7A5300]" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
-              {useful ? "✓ Useful" : "Useful"}
-            </button>
             {relation !== "behind" && (
               <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleLearnFrom(proof.userId); }}
                 className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${learning ? "bg-[#FFE7AE] text-[#7A5300]" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
