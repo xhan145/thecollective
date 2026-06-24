@@ -21,7 +21,7 @@ import type {
   UserProfile
 } from "@/lib/betaTypes";
 import { firebaseModeLabel, isFirebaseConfigured, proofStoragePath } from "@/lib/firebase";
-import { makeTrustEvent, summarizeTrust } from "@/lib/betaTrust";
+import { makeTrustEvent, summarizeTrust, trustLevelForPoints } from "@/lib/betaTrust";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import {
   loadUserBundle,
@@ -298,10 +298,11 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
   const isMockMode = !supabaseEnabled && !isFirebaseConfigured();
   const firebaseMode = supabaseEnabled ? "Supabase connected" : firebaseModeLabel();
 
-  const trustSummary = useMemo(
-    () => summarizeTrust(snapshot.currentUserId || "user-alex", snapshot.trustEvents),
-    [snapshot.currentUserId, snapshot.trustEvents]
-  );
+  const trustSummary = useMemo(() => {
+    const summary = summarizeTrust(snapshot.currentUserId || "user-alex", snapshot.trustEvents);
+    const cu = snapshot.users.find((u) => u.id === snapshot.currentUserId);
+    return { ...summary, levelLabel: trustLevelForPoints(cu?.trustScore ?? summary.totalPoints) };
+  }, [snapshot.currentUserId, snapshot.trustEvents, snapshot.users]);
 
   const value = useMemo<BetaAppContextValue>(() => {
     const writesEnabled = supabaseEnabled && !!supabase;
@@ -319,7 +320,9 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       return snapshot.feedback.filter((item) => item.proofId === proofId);
     }
     function getTrustSummaryForUser(userId: string) {
-      return summarizeTrust(userId, snapshot.trustEvents);
+      const summary = summarizeTrust(userId, snapshot.trustEvents);
+      const u = snapshot.users.find((user) => user.id === userId);
+      return { ...summary, levelLabel: trustLevelForPoints(u?.trustScore ?? summary.totalPoints) };
     }
 
     async function startThread(

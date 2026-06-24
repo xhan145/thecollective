@@ -27,6 +27,7 @@ create or replace function public._insert_trust_capped(p_uid uuid, p_type text, 
 returns void language plpgsql security definer set search_path = public, pg_temp as $$
 declare v_today int; v_points int;
 begin
+  perform pg_advisory_xact_lock(hashtext(p_uid::text || p_type));
   select count(*) into v_today from public.trust_events
    where user_id = p_uid and type = p_type and points > 0 and created_at::date = current_date;
   v_points := case when v_today < p_daily_cap then public._trust_points(p_type) else 0 end;
