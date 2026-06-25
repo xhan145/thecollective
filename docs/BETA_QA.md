@@ -159,7 +159,35 @@ service key is never exposed to the browser.
 - Beta funnel view in `/admin/beta` built on `beta_events`.
 - Audio/video upload hardening (resumable uploads, progress, retries).
 
-## 10. AI layer (real model)
+## 10. Knowledge Tips
+
+### Tables
+- **`practice_tips`** — user-submitted text tips (≤280 chars) anchored to a specific practice. RLS: authors can insert/delete their own rows; all authenticated users can read.
+- **`tip_reports`** — member reports on a tip (one per member per tip). RLS: authenticated users can insert/select their own rows; service role sees all.
+
+### Submit gate
+A tip can only be submitted by a user who has **completed the practice** (`practice_completions` row exists for that `practice_id` + `user_id`). The server route (`POST /api/practices/[id]/tips`) enforces this before insert.
+
+### Trust types
+| Event | Points | Cap |
+|---|---|---|
+| `tip-submit` | +1 | Once per tip (capped) |
+| `useful-tip` | +6 | Once per tip per receiver (via DB trigger); folds into Contribution trust |
+
+Trust is recorded by `record_tip_submit_trust(author_id, tip_id)` and a `useful_marks` trigger on `target_type='tip'`. Both are `SECURITY DEFINER` and cannot be called directly from the browser.
+
+### Safety layers
+1. **Regex pre-gate** — deterministic input check (`reviewTextSafety`) runs before any DB insert.
+2. **AI moderation** — OpenAI `gpt-4o-mini` content check (graceful: fails open to mock on any error).
+3. **Member report → admin** — any authenticated member can flag a tip; reports surface in `/admin/beta` under "Reported tips" (read-only, no auto-action).
+
+### Verification
+```bash
+npx tsx scripts/check-tips.ts
+```
+Expected output: `tips checks passed`
+
+## 11. AI layer (real model)
 
 - Provider: OpenAI `gpt-4o-mini` via the `openai` SDK, server-only (`OPENAI_API_KEY`).
 - No key set → mock mode (identical to today). Key set → 5 agents return real,

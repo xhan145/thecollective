@@ -73,6 +73,15 @@ export async function GET(req: Request) {
     id: r.id, name: r.display_name || r.username || r.id, spamSignal: r.spam_signal ?? 0, isDemo: !!r.is_demo,
   }));
 
+  const { data: reportRows } = await service
+    .from("tip_reports")
+    .select("id, reason, created_at, practice_tips(id, body, author_id)")
+    .order("created_at", { ascending: false })
+    .limit(25);
+  const reportedTips = (reportRows ?? []).map((r: any) => ({
+    id: r.id, reason: r.reason ?? null, body: r.practice_tips?.body ?? "(deleted)", tipId: r.practice_tips?.id ?? null,
+  }));
+
   return NextResponse.json({
     stats: {
       totalUsers, demoUsers, onboardedUsers, betaUsers,
@@ -90,5 +99,6 @@ export async function GET(req: Request) {
     onboardingIncomplete,
     noProof,
     spamReview,
+    reportedTips,
   });
 }

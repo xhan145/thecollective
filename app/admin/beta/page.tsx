@@ -13,7 +13,8 @@ type AppFeedbackRow = { id: string; name: string; category: string; rating: numb
 type ProofRow = { id: string; name?: string; title: string; mediaType: string; createdAt: string };
 type Person = { id: string; name?: string; createdAt: string };
 type SpamRow = { id: string; name: string; spamSignal: number; isDemo: boolean };
-type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[] };
+type ReportedTipRow = { id: string; reason: string | null; body: string; tipId: string | null };
+type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[]; reportedTips?: ReportedTipRow[] };
 
 const STATUSES = ["new", "reviewing", "planned", "resolved", "dismissed"];
 
@@ -125,6 +126,20 @@ export default function AdminBetaPage() {
                   <li key={s.id} className="flex items-center justify-between rounded-xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2 text-sm">
                     <span className="text-[#111111]">{s.name}{s.isDemo ? " (demo)" : ""}</span>
                     <span className="font-extrabold text-[#7A5300]">signal {s.spamSignal}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {data.reportedTips && data.reportedTips.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-extrabold text-[#111111]">Reported tips (read-only — no auto-action)</h2>
+              <ul className="space-y-1">
+                {data.reportedTips.map((r: ReportedTipRow) => (
+                  <li key={r.id} className="rounded-xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2 text-sm">
+                    <p className="text-[#38322A] leading-6">{r.body}</p>
+                    {r.reason && <p className="mt-1 font-extrabold text-[#7A5300]">Reason: {r.reason}</p>}
                   </li>
                 ))}
               </ul>
