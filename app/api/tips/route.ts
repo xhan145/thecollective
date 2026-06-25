@@ -38,10 +38,7 @@ export async function POST(req: Request) {
   try { assertBrandSafe([text]); } catch { return NextResponse.json({ error: "Let's keep tips practical and kind." }, { status: 400 }); }
   if (await aiFlagged(text)) return NextResponse.json({ error: "That tip didn't pass our safety check. Try rephrasing." }, { status: 400 });
 
-  // submit_tip enforces the author gate + credits; call it as the user (RLS-respecting) via a user-scoped client
-  // is not available here, so use service role but pass the user id through the SECURITY DEFINER fn which reads auth.uid().
-  // The fn uses auth.uid(); with the service client there is no auth.uid(), so insert directly here as service role,
-  // replicating the author-gate check, then credit via RPC-less path:
+  // Service role has no auth.uid(): re-check the author gate here, insert, then credit via RPC.
   const { data: done } = await service.from("practice_completions").select("user_id").eq("user_id", user.id).eq("prompt_id", promptId).limit(1);
   const { data: pf } = done?.length ? { data: done } : await service.from("proofs").select("user_id").eq("user_id", user.id).eq("prompt_id", promptId).limit(1);
   if (!pf?.length) return NextResponse.json({ error: "Complete the practice before sharing a tip." }, { status: 403 });

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { PracticeTip } from "@/lib/betaTypes";
 import { levelRank } from "@/lib/betaTrust";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
+import { getSupabaseClient } from "@/lib/supabase/client";
 import { Card } from "@/components/beta/ui";
 
 function timeAgo(iso: string): string {
@@ -42,10 +43,12 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
 
   async function handleReport() {
     if (reported) return;
-    // Fire-and-forget
+    // Fire-and-forget — attach bearer so the route can identify the reporter.
+    const supabase = getSupabaseClient();
+    const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token : undefined;
     fetch("/api/tips/report", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({ tipId: tip.id, reason: "reported" }),
     }).catch(() => {});
     setReported(true);

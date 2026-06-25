@@ -948,22 +948,28 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         // Demo mode: optimistic tip is the source of truth.
         if (!writesEnabled || !uid) return { tip: optimistic, error: null };
         try {
+          const token = (await supabase!.auth.getSession()).data.session?.access_token;
           const res = await fetch("/api/tips", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
             body: JSON.stringify({ promptId, body: body.trim() }),
           });
           if (!res.ok) {
-            const msg = await res.text().catch(() => "");
+            const j = await res.json().catch(() => ({}));
             setSnapshot((current) => ({ ...current, practiceTips: current.practiceTips.filter((t) => t.id !== optimistic.id) }));
-            return { tip: null, error: msg || "We couldn't save your tip — try again." };
+            return { tip: null, error: (j && j.error) || "We couldn't save your tip — try again." };
           }
-          const serverTip: PracticeTip = await res.json();
-          setSnapshot((current) => ({
-            ...current,
-            practiceTips: current.practiceTips.map((t) => (t.id === optimistic.id ? serverTip : t)),
-          }));
-          return { tip: serverTip, error: null };
+          const json = await res.json();
+          const serverTip: PracticeTip | undefined = json?.tip;
+          if (serverTip?.id) {
+            setSnapshot((current) => ({
+              ...current,
+              practiceTips: current.practiceTips.map((t) => (t.id === optimistic.id ? serverTip : t)),
+            }));
+            return { tip: serverTip, error: null };
+          }
+          // Fallback: keep optimistic row if server response is missing the tip wrapper.
+          return { tip: optimistic, error: null };
         } catch {
           setSnapshot((current) => ({ ...current, practiceTips: current.practiceTips.filter((t) => t.id !== optimistic.id) }));
           return { tip: null, error: "We couldn't save your tip — try again." };
