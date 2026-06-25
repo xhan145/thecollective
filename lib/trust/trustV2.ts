@@ -32,3 +32,17 @@ export function consistencyScore(activeWeeksInLast8: number): number {
 export function weightedTrustScore(d: { practice: number; feedback: number; consistency: number; contribution: number }): number {
   return Math.round(d.practice * 1 + d.feedback * 1.5 + d.consistency * 1 + d.contribution * 2);
 }
+
+// Spam enforcement thresholds. Mirror the SQL trigger (>=70 holds) + recompute (<40 releases).
+export const SPAM_FLAG = 40;
+export const SPAM_QUARANTINE = 70;
+
+export function isFlagged(signal: number): boolean {
+  return signal >= SPAM_FLAG;
+}
+export function isQuarantined(signal: number): boolean {
+  return signal >= SPAM_QUARANTINE;
+}
+export function shouldAutoRelease(signal: number): boolean {
+  return signal < SPAM_FLAG;
+}

@@ -14,7 +14,8 @@ type ProofRow = { id: string; name?: string; title: string; mediaType: string; c
 type Person = { id: string; name?: string; createdAt: string };
 type SpamRow = { id: string; name: string; spamSignal: number; isDemo: boolean };
 type ReportedTipRow = { id: string; reason: string | null; body: string; tipId: string | null };
-type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[]; reportedTips?: ReportedTipRow[] };
+type HeldContentRow = { kind: string; id: string; authorId: string; body: string; createdAt: string };
+type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[]; reportedTips?: ReportedTipRow[]; heldContent?: HeldContentRow[] };
 
 const STATUSES = ["new", "reviewing", "planned", "resolved", "dismissed"];
 
@@ -48,6 +49,11 @@ export default function AdminBetaPage() {
   async function setStatus(id: string, status: string) {
     setData((d) => (d ? { ...d, appFeedback: d.appFeedback.map((f) => (f.id === id ? { ...f, status } : f)) } : d));
     await authedFetch("/api/admin/app-feedback", { method: "POST", body: JSON.stringify({ id, status }) }).catch(() => {});
+  }
+
+  async function moderateContent(action: "clear" | "remove", kind: string, id: string) {
+    await authedFetch("/api/admin/moderation", { method: "POST", body: JSON.stringify({ action, kind, id }) }).catch(() => {});
+    await load();
   }
 
   return (
@@ -140,6 +146,38 @@ export default function AdminBetaPage() {
                   <li key={r.id} className="rounded-xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2 text-sm">
                     <p className="text-[#38322A] leading-6">{r.body}</p>
                     {r.reason && <p className="mt-1 font-extrabold text-[#7A5300]">Reason: {r.reason}</p>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {data.heldContent && data.heldContent.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-extrabold text-[#111111]">Held content (pending review)</h2>
+              <ul className="space-y-1">
+                {data.heldContent.map((h: HeldContentRow) => (
+                  <li key={h.id} className="rounded-xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2 text-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <span className="rounded-full bg-[#FFF1C7] px-2 py-0.5 text-xs font-bold text-[#7A5300]">{h.kind}</span>
+                        <p className="mt-1 truncate text-[#38322A] leading-6">{h.body.slice(0, 120)}{h.body.length > 120 ? "…" : ""}</p>
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        <button
+                          onClick={() => moderateContent("clear", h.kind, h.id)}
+                          className="rounded-xl border border-[#EFE7D8] bg-white px-3 py-1 text-xs font-bold text-[#111111] hover:bg-[#F5EFE6]"
+                        >
+                          Clear
+                        </button>
+                        <button
+                          onClick={() => moderateContent("remove", h.kind, h.id)}
+                          className="rounded-xl bg-[#FFF1C7] px-3 py-1 text-xs font-bold text-[#7A5300] hover:bg-[#FFE8A0]"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>

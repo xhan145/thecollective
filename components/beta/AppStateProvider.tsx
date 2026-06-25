@@ -922,7 +922,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       async loadTips(promptId) {
         if (!supabaseEnabled || !supabase) return;
         try {
-          const fetched = await listTips(supabase, promptId);
+          const fetched = await listTips(supabase, promptId, authUid() || snapshot.currentUserId || undefined);
           setSnapshot((current) => {
             const existingIds = new Set(current.practiceTips.map((t) => t.id));
             const merged = [...current.practiceTips, ...fetched.filter((t) => !existingIds.has(t.id))];
