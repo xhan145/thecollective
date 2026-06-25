@@ -1,19 +1,30 @@
 "use client";
 
+import { useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/beta/AppShell";
 import { AiSupportCard } from "@/components/beta/AiSupportCard";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { PracticePromptCard } from "@/components/beta/LoopCards";
+import { TipCard } from "@/components/beta/TipCard";
+import { TipComposer } from "@/components/beta/TipComposer";
 import { Button, Card, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { getCollectiveAiService } from "@/lib/aiService";
 import { getPersonalizedPractices, getNextPractice } from "@/lib/personalization";
 
 export default function PracticePage() {
-  const { snapshot, currentUser, trustSummary, completePractice } = useBetaApp();
+  const { snapshot, currentUser, trustSummary, completePractice, loadTips, getTipsForPractice } = useBetaApp();
   const persona = { currentDirectionId: currentUser?.currentDirectionId ?? null, startingLevel: currentUser?.startingLevel ?? null, contextTags: currentUser?.contextTags ?? [] };
   const nextPrompt = getNextPractice(persona, snapshot.prompts, snapshot.completedPracticeIds) || snapshot.prompts[0];
   const aiService = getCollectiveAiService();
+
+  // Load tips for the primary practice on mount and whenever it changes.
+  useEffect(() => {
+    if (nextPrompt?.id) void loadTips(nextPrompt.id);
+  }, [nextPrompt?.id, loadTips]);
+
+  const tips = nextPrompt ? getTipsForPractice(nextPrompt.id) : [];
+  const canShareTip = !!nextPrompt && snapshot.completedPracticeIds.includes(nextPrompt.id);
 
   return (
     <AppShell>
@@ -46,6 +57,22 @@ export default function PracticePage() {
               })
             }
           />
+        )}
+
+        {nextPrompt && (
+          <section className="space-y-3">
+            <SectionLabel title="Tips from people who've done this" />
+            {tips.length > 0 ? (
+              tips.map((tip) => <TipCard key={tip.id} tip={tip} />)
+            ) : (
+              <p className="text-sm leading-6 text-[#6E6E6E]">
+                {canShareTip
+                  ? "No tips yet — be the first to share what helped."
+                  : "No tips yet."}
+              </p>
+            )}
+            <TipComposer promptId={nextPrompt.id} canShare={canShareTip} />
+          </section>
         )}
 
         <section className="space-y-3">

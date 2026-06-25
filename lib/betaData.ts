@@ -345,7 +345,9 @@ export const seedSnapshot: BetaAppSnapshot = {
   conversations: [],
   messagesByConversation: {},
   notifications: [],
-  contributions: seedContributions
+  contributions: seedContributions,
+  practiceTips: [],
+  usefulCountByTip: {}
 };
 
 /** Demo seed status, for badges / debug. */
