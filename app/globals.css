@@ -277,7 +277,9 @@ button, input, textarea, select { font: inherit; }
   --c-line: #352D20;
   --c-input: #1C1710;
 }
-.dark body { background: var(--c-bg); color: var(--c-ink); }
+/* .dark sits on <html>; paint both so the area around the phone frame is never light. */
+.dark, .dark body { background-color: var(--c-bg); }
+.dark body { color: var(--c-ink); }
 
 /* Backgrounds */
 .dark .bg-\[\#FFF8EE\],
@@ -299,11 +301,6 @@ button, input, textarea, select { font: inherit; }
 .dark .border-\[\#EFE7D8\],
 .dark .border-\[\#EFE7D8\]\/70 { border-color: var(--c-line) !important; }
 .dark .border-\[\#F6E7C8\] { border-color: var(--c-line) !important; }
-
-/* Bottom-nav gradient edge */
-.dark .from-\[\#FFF8EE\] { --tw-gradient-from: var(--c-bg) var(--tw-gradient-from-position) !important; }
-.dark .via-\[\#FFF8EE\] { --tw-gradient-via: var(--c-bg) var(--tw-gradient-via-position) !important; }
-.dark .to-\[\#FFF8EE\]\/70 { --tw-gradient-to: color-mix(in srgb, var(--c-bg) 70%, transparent) var(--tw-gradient-to-position) !important; }
 
 /* HeroCard gradient (Slice-1 redesign) — keep it a warm-dark surface in dark mode
    so remapped near-white text stays legible (not light-on-cream). */
