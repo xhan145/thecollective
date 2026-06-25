@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { rankTips } from "../lib/tips/rankTips";
-import { coachSafetyPrecheck } from "../lib/coach/coachPolicy";
+import { contentSafetyPrecheck } from "../lib/safety/contentSafety";
 import type { UserProfile } from "../lib/betaTypes";
 import type { PracticeTip } from "../lib/tips/types";
 
@@ -23,7 +23,8 @@ assert.ok(ranked.findIndex((t) => t.id === "tDemo") > ranked.findIndex((t) => t.
 const ranked2 = rankTips(viewer, [T("a", "lo"), T("b", "lo")], authors, { a: 5, b: 0 });
 assert.equal(ranked2[0].id, "a", "useful boost within tier");
 // safety reuse
-assert.equal(coachSafetyPrecheck("my email is a@b.com").ok, false, "regex blocks private info in tips");
-assert.equal(coachSafetyPrecheck("breathe before you start").ok, true, "clean tip passes");
+assert.equal(contentSafetyPrecheck("my email is a@b.com").ok, false, "blocks private info in tips");
+assert.equal(contentSafetyPrecheck("you are worthless").ok, false, "blocks harassment in tips");
+assert.equal(contentSafetyPrecheck("breathe before you start").ok, true, "clean tip passes");
 
 console.log("tips checks passed");
