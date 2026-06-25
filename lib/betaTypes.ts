@@ -180,7 +180,8 @@ export type UsefulReason = "clear" | "actionable" | "encouraging" | "worth_pract
 export type UsefulMark = {
   id: string;
   userId: string;
-  targetId: string; // proof id
+  targetId: string; // proof id or tip id
+  targetType: "proof" | "tip";
   reason: UsefulReason;
   createdAt: string;
   isDemo?: boolean;
@@ -275,6 +276,9 @@ export type BetaAppSnapshot = {
   messagesByConversation: Record<string, Message[]>;
   notifications: AppNotification[];
   contributions: Contribution[];
+  // Knowledge tips.
+  practiceTips: PracticeTip[];
+  usefulCountByTip: Record<string, number>;
 };
 
 export type ProofDraftInput = {
@@ -301,3 +305,5 @@ export type AppFeedbackDraftInput = {
   rating?: number;
 };
 import type { AiInteraction, AiUserFeedback } from "./aiTypes";
+import type { PracticeTip } from "./tips/types";
+export type { PracticeTip };

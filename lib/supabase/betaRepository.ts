@@ -131,6 +131,7 @@ function mapUsefulMark(row: any): UsefulMark {
     id: row.id,
     userId: row.user_id,
     targetId: row.target_id,
+    targetType: row.target_type ?? "proof",
     reason: row.reason,
     createdAt: row.created_at,
     isDemo: row.is_demo ?? false,
@@ -542,13 +543,14 @@ export async function persistMarkHelpful(
 export async function persistUsefulMark(
   client: SupabaseClient,
   userId: string,
-  proofId: string,
+  targetId: string,
   reason: UsefulReason = "clear",
+  targetType: "proof" | "tip" = "proof",
 ): Promise<void> {
   await client
     .from("useful_marks")
     .upsert(
-      { user_id: userId, target_type: "proof", target_id: proofId, reason },
+      { user_id: userId, target_type: targetType, target_id: targetId, reason },
       { onConflict: "user_id,target_id" },
     );
 }

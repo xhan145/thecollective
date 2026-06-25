@@ -13,6 +13,7 @@ import type {
   FeedbackDraftInput,
   Message,
   PracticePrompt,
+  PracticeTip,
   Proof,
   ProofDraftInput,
   SavedTargetType,
@@ -20,6 +21,8 @@ import type {
   UsefulReason,
   UserProfile
 } from "@/lib/betaTypes";
+import { rankTips } from "@/lib/tips/rankTips";
+import { listTips } from "@/lib/supabase/tipsRepository";
 import { firebaseModeLabel, isFirebaseConfigured, proofStoragePath } from "@/lib/firebase";
 import { makeTrustEvent, summarizeTrust, trustLevelForPoints } from "@/lib/betaTrust";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -86,7 +89,7 @@ type BetaAppContextValue = {
   addFeedback: (input: FeedbackDraftInput) => Feedback | null;
   markFeedbackHelpful: (feedbackId: string) => void;
   submitAppFeedback: (input: AppFeedbackDraftInput) => void;
-  toggleUseful: (proofId: string, reason?: UsefulReason) => void;
+  toggleUseful: (targetId: string, reason?: UsefulReason, targetType?: "proof" | "tip") => void;
   toggleSaved: (targetType: SavedTargetType, targetId: string) => void;
   toggleLearnFrom: (teacherId: string) => void;
   isUseful: (proofId: string) => boolean;
@@ -130,6 +133,9 @@ type BetaAppContextValue = {
   getProofById: (proofId: string) => Proof | undefined;
   getFeedbackForProof: (proofId: string) => Feedback[];
   getTrustSummaryForUser: (userId: string) => TrustSummary;
+  getTipsForPractice: (promptId: string) => PracticeTip[];
+  loadTips: (promptId: string) => Promise<void>;
+  submitTip: (promptId: string, body: string) => Promise<{ tip: PracticeTip | null; error: string | null }>;
 };
 
 const BetaAppContext = createContext<BetaAppContextValue | undefined>(undefined);
@@ -145,7 +151,9 @@ function readSnapshot(): BetaAppSnapshot {
       ...parsed,
       aiInteractions: parsed.aiInteractions || [],
       aiUserFeedback: parsed.aiUserFeedback || [],
-      contributions: parsed.contributions || []
+      contributions: parsed.contributions || [],
+      practiceTips: parsed.practiceTips || [],
+      usefulCountByTip: parsed.usefulCountByTip || {}
     };
   } catch {
     return seedSnapshot;
@@ -189,6 +197,8 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     aiInteractions: [],
     aiUserFeedback: [],
     contributions: bundle.contributions,
+    practiceTips: [],
+    usefulCountByTip: {},
   };
 }
 
@@ -694,21 +704,29 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         }
         return created;
       },
-      toggleUseful(proofId, reason = "clear") {
+      toggleUseful(targetId, reason = "clear", targetType = "proof") {
         const me = authUid() || snapshot.currentUserId;
         if (!me) return;
-        const has = snapshot.usefulMarks.some((m) => m.targetId === proofId && m.userId === me);
+        const has = snapshot.usefulMarks.some((m) => m.targetId === targetId && m.userId === me);
         setSnapshot((current) => {
           const marks = has
-            ? current.usefulMarks.filter((m) => !(m.targetId === proofId && m.userId === me))
-            : [{ id: makeId("um"), userId: me, targetId: proofId, reason, createdAt: new Date().toISOString() }, ...current.usefulMarks];
-          const counts = { ...current.usefulCountByProof };
-          counts[proofId] = Math.max(0, (counts[proofId] ?? 0) + (has ? -1 : 1));
-          return { ...current, usefulMarks: marks, usefulCountByProof: counts };
+            ? current.usefulMarks.filter((m) => !(m.targetId === targetId && m.userId === me))
+            : [{ id: makeId("um"), userId: me, targetId, targetType, reason, createdAt: new Date().toISOString() }, ...current.usefulMarks];
+          // Recompute both count maps from the updated marks list.
+          const newCountsByProof: Record<string, number> = {};
+          const newCountsByTip: Record<string, number> = {};
+          for (const m of marks) {
+            if (m.targetType === "tip") {
+              newCountsByTip[m.targetId] = (newCountsByTip[m.targetId] ?? 0) + 1;
+            } else {
+              newCountsByProof[m.targetId] = (newCountsByProof[m.targetId] ?? 0) + 1;
+            }
+          }
+          return { ...current, usefulMarks: marks, usefulCountByProof: newCountsByProof, usefulCountByTip: newCountsByTip };
         });
         const uid = authUid();
         if (writesEnabled && uid) {
-          void (has ? removeUsefulMark(supabase!, uid, proofId) : persistUsefulMark(supabase!, uid, proofId, reason)).catch(() => {});
+          void (has ? removeUsefulMark(supabase!, uid, targetId) : persistUsefulMark(supabase!, uid, targetId, reason, targetType)).catch(() => {});
         }
       },
       toggleSaved(targetType, targetId) {
@@ -894,7 +912,63 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       getPromptById,
       getProofById,
       getFeedbackForProof,
-      getTrustSummaryForUser
+      getTrustSummaryForUser,
+      getTipsForPractice(promptId) {
+        const authorsById: Record<string, UserProfile> = {};
+        for (const u of snapshot.users) authorsById[u.id] = u;
+        const tips = snapshot.practiceTips.filter((t) => t.promptId === promptId);
+        return rankTips(currentUser, tips, authorsById, snapshot.usefulCountByTip);
+      },
+      async loadTips(promptId) {
+        if (!supabaseEnabled || !supabase) return;
+        try {
+          const fetched = await listTips(supabase, promptId);
+          setSnapshot((current) => {
+            const existingIds = new Set(current.practiceTips.map((t) => t.id));
+            const merged = [...current.practiceTips, ...fetched.filter((t) => !existingIds.has(t.id))];
+            return { ...current, practiceTips: merged };
+          });
+        } catch {
+          // non-fatal; tips will show on next attempt
+        }
+      },
+      async submitTip(promptId, body) {
+        const uid = authUid();
+        const me = uid || snapshot.currentUserId;
+        if (!me || !body.trim()) return { tip: null, error: "A tip body is required." };
+        const optimistic: PracticeTip = {
+          id: makeId("tip"),
+          promptId,
+          authorId: me,
+          body: body.trim(),
+          isDemo: false,
+          createdAt: new Date().toISOString(),
+        };
+        setSnapshot((current) => ({ ...current, practiceTips: [optimistic, ...current.practiceTips] }));
+        // Demo mode: optimistic tip is the source of truth.
+        if (!writesEnabled || !uid) return { tip: optimistic, error: null };
+        try {
+          const res = await fetch("/api/tips", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ promptId, body: body.trim() }),
+          });
+          if (!res.ok) {
+            const msg = await res.text().catch(() => "");
+            setSnapshot((current) => ({ ...current, practiceTips: current.practiceTips.filter((t) => t.id !== optimistic.id) }));
+            return { tip: null, error: msg || "We couldn't save your tip — try again." };
+          }
+          const serverTip: PracticeTip = await res.json();
+          setSnapshot((current) => ({
+            ...current,
+            practiceTips: current.practiceTips.map((t) => (t.id === optimistic.id ? serverTip : t)),
+          }));
+          return { tip: serverTip, error: null };
+        } catch {
+          setSnapshot((current) => ({ ...current, practiceTips: current.practiceTips.filter((t) => t.id !== optimistic.id) }));
+          return { tip: null, error: "We couldn't save your tip — try again." };
+        }
+      },
     };
   }, [currentUser, firebaseMode, isMockMode, snapshot, trustSummary, supabaseEnabled, supabase, authReady]);
 
