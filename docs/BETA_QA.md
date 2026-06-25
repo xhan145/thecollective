@@ -196,3 +196,60 @@ Expected output: `tips checks passed`
   validation (`assertBrandSafe` + zod). Off-brand/malformed output never reaches a user.
 - `COLLECTIVE_PANEL`/demo panel stays mock by design.
 - Verify pure layer: `npx tsx scripts/check-ai-output-policy.ts`.
+
+## 12. Spam enforcement (migration 029)
+
+### Columns
+
+`proofs`, `practice_tips`, and `feedback` each have two new boolean columns (both default `false`):
+
+- **`held`** — content is quarantined; hidden from other members' read paths until cleared.
+- **`removed`** — content has been permanently removed by an admin; not shown to anyone.
+
+### How held is stamped
+
+A `BEFORE INSERT` trigger (`trg_stamp_held`) runs on all three tables. If the inserting
+author's `profiles.spam_signal >= 70` at insert time, the row is inserted with `held = true`
+automatically. The trigger runs as `SECURITY DEFINER`; clients cannot bypass it.
+
+### Self-heal (auto-release)
+
+When `_recompute_profile_counts(uid)` recalculates a user's spam signal and the result
+drops below 40, all non-removed held rows for that author are released (`held = false`)
+automatically. This means good behavior over time restores content visibility without
+admin action.
+
+### Admin actions
+
+Admins can act on held content via **`POST /api/admin/moderation`** (admin-only route,
+service-role only):
+
+| Action   | Effect                                      |
+|----------|---------------------------------------------|
+| `clear`  | Sets `held = false, removed = false` (visible again) |
+| `remove` | Sets `held = true, removed = true` (permanently removed) |
+
+Request body: `{ action: "clear" | "remove", kind: "proof" | "tip" | "feedback", id: "<uuid>" }`
+
+The held-content list is visible at **`/admin/beta`** under "Held content (pending review)".
+Each row shows the content kind, a truncated preview, and Clear / Remove buttons.
+The listing only shows items with `held = true`; removed items remain held and drop off
+automatically once an admin marks them removed (they won't appear again).
+
+### Read-path hiding
+
+- **Proofs / feedback bundle**: server routes exclude `held = true` rows from other
+  members' feeds. Authors always see their own content regardless of held status.
+- **Practice tips**: the `listTips` function filters out `held = true` rows for non-authors.
+
+### Beginner-safe framing
+
+Content held by the system is described to the author as "being reviewed" rather than
+"flagged as spam." No public shaming; no permanent ban without admin review.
+
+### Verification
+
+```bash
+npx tsx scripts/check-spam-enforcement.ts
+```
+Expected output: `spam-enforcement checks passed`
