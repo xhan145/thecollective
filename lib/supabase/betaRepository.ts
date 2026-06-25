@@ -269,7 +269,7 @@ export async function loadUserBundle(
       client.from("practice_completions").select("prompt_id").eq("user_id", userId),
       client.from("profiles").select("*"),
       client.from("useful_marks").select("*").eq("user_id", userId),
-      client.from("useful_marks").select("target_id"),
+      client.from("useful_marks").select("target_id").eq("target_type", "proof"),
       client.from("saved_items").select("*").eq("user_id", userId),
       client.from("member_connections").select("*").eq("learner_id", userId).eq("status", "active"),
       client.from("conversations").select("*").or(`initiator_id.eq.${userId},recipient_id.eq.${userId}`).order("last_message_at", { ascending: false }),
