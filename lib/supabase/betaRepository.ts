@@ -261,9 +261,9 @@ export async function loadUserBundle(
 
   const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes] =
     await Promise.all([
-      client.from("proofs").select("*").order("created_at", { ascending: false }),
+      client.from("proofs").select("*").or(`held.eq.false,user_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
-      client.from("feedback").select("*").order("created_at", { ascending: false }),
+      client.from("feedback").select("*").or(`held.eq.false,author_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("trust_events").select("*").eq("user_id", userId),
       client.from("app_feedback").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       client.from("practice_completions").select("prompt_id").eq("user_id", userId),
