@@ -1,93 +1,76 @@
-# Collective Web Beta + Android Prototype
+# Collective
 
-A mobile-first Collective prototype for the core loop: discover, practice, prove, feedback, trust, and contribution.
+> **Small steps. Real progress.** A calm, beginner-safe, anti-clout PWA where people stop *watching* self-improvement content and start *practicing* — and submitting proof.
 
-The current web beta is a warm cream/gold PWA shell for iPhone Safari and mobile browsers. It works in demo mode without backend credentials and keeps proof, feedback, trust, and app feedback local until Firebase is connected.
+Collective is a mobile-first progress-and-contribution app: pick a direction, do a small practice, post **proof**, get **useful feedback**, and earn **trust** by helping others. No likes, no follower counts, no leaderboards — energy lives in the work, not the clout.
 
-> **Running a closed beta on live Supabase?** Start with **[docs/BETA_QA.md](docs/BETA_QA.md)** — required env vars, migration order (010–022), invite-code setup, the `/admin/beta` dashboard, storage notes, proof upload limits, the full manual QA checklist, and known limitations.
+**Live:** [thecollective-gh1a.vercel.app](https://thecollective-gh1a.vercel.app) (closed beta, invite-gated) · auto-deployed from `main` via Vercel.
 
-## Run in Replit
+---
 
-Paste Prompt 1 from `docs/REPLIT_AGENT_PROMPTS.md` into Replit Agent. Manual fallback:
+## What's inside
+
+The app runs the full loop on live Supabase (Postgres + RLS + SECURITY-DEFINER RPCs + Realtime + Storage):
+
+- **Personalized onboarding → practice** — a short onboarding (direction, goal, starting level, why-now, cadence) tailors which practices and proof prompts you see.
+- **Multimodal proof** — text, image, video, audio, docs/PDF, links, and checklist/reflection proofs, with beginner-safe visibility.
+- **Level-matched feed** — ranks proofs by shared interest × *relative earned level* (same and slightly-ahead, plus some behind to help) — watching others learn feels productive, never doomscroll.
+- **Trust System V2** — four earned dimensions (Practice / Feedback / Consistency / Contribution) → tiers **New · Practicing · Reliable · Helpful · Contributor**. Trust is earned through SECURITY-DEFINER RPCs and can never be minted by a client.
+- **Contributions** — members help on open proofs; the owner accepts a contribution (which earns trust).
+- **Knowledge tips** — practice-anchored tips, gated to people who completed the practice, with layered safety + report-to-admin.
+- **Cohorts** — focused practice groups (public / request-to-join / invite-only) with a per-cohort feed and owner moderation.
+- **Spam enforcement** — reversible, server-stamped content quarantine that self-heals; nothing shames a misfiring beginner.
+- **AI support layer** — real OpenAI-backed help (practice prep, reflection, peer-feedback coaching, summaries) behind a deterministic safety gate. AI is a *helper, not an authority* — it never grades users, decides trust, or auto-submits anything. Falls back to a safe mock with no key.
+- **Engagement** — Useful, Save for practice, Learn-from, peer notes, notifications (Realtime), light + dark mode.
+
+Design language: **Warm Proof-Based Growth** — 80% calm/trustworthy, 15% expressive user content, 5% playful-nostalgia. No leaderboards, no follower counts, no shame-streaks.
+
+## Stack
+
+Next.js (App Router) · TypeScript · Tailwind · Supabase · OpenAI · deployed on Vercel. Mobile-first PWA in a max-`430px` phone frame; bottom nav is **Home · Practice · Feed · Profile** with a center proof button.
+
+## Run locally
 
 ```bash
 npm install
-npm run dev
-```
-
-## Local validation
-
-The project has been validated from the repository root with:
-
-```bash
-npm install
+npm run dev          # http://localhost:3000
 npm run typecheck
 npm run build
 ```
 
-Demo mode renders without Supabase, OpenAI, or Firebase keys. Connect Firebase later when you are ready to move beyond local browser persistence.
+The app runs in **demo mode** with no keys (seeded demo data, local persistence). Connect Supabase + OpenAI for the full experience.
 
-If local Windows builds fail with `Failed to load SWC binary for win32/x64`, see `docs/WEB_DEPLOYMENT.md`. In this workspace, TypeScript passes and the remaining blocker is the local Next compiler binary/package environment.
+## Configuration
 
-## Web beta routes
+Copy `.env.example` to `.env.local` (UTF-8 **without** a BOM) and fill in Supabase + OpenAI values. The full reference — which vars are public vs server-only secrets — is in **[docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)**.
 
-`/`, `/auth`, `/home`, `/directions`, `/practice`, `/proof/new/:promptId`, `/proof/:proofId`, `/proof/:proofId/feedback`, `/feed`, `/profile`, `/app-feedback`, `/install`, `/beta-feedback-review`.
+Key points: `NEXT_PUBLIC_SUPABASE_*` are public; `SUPABASE_SERVICE_ROLE_KEY` and `OPENAI_API_KEY` are **server-only** (never `NEXT_PUBLIC_`). With no `OPENAI_API_KEY`, the AI layer and tip moderation degrade to a safe regex-only mock.
 
-## iPhone PWA install
+## Database
 
-Open `/install` in Safari, tap Share, choose Add to Home Screen, then tap Add.
+Additive SQL migrations live in `supabase/migrations/` (**010 → 030**). Apply them in order. Highlights: `023` trust integrity RPCs · `024` contributions · `025` personalization · `027` Trust V2 · `028` knowledge tips · `029` spam enforcement · `030` cohorts. Earlier migrations (010–029) are never edited — only added to.
 
-## Firebase setup
+Running the closed beta? Start with **[docs/BETA_QA.md](docs/BETA_QA.md)** for env vars, migration order, invite-code setup, the `/admin/beta` dashboard, storage notes, and the manual QA checklist.
 
-Copy `.env.example` to `.env.local` and fill:
+## Routes
 
-```bash
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
-```
+Core: `/` · `/auth` · `/access` (invite gate) · `/onboarding` · `/home` · `/directions` · `/practice` · `/proof/new/[promptId]` · `/proof/[id]` · `/proof/[id]/feedback` · `/feed` · `/profile` (+ `/profile/saved`, `/profile/learning`) · `/notes` · `/notifications` · `/settings` · `/account`.
 
-Leaving these blank keeps the app in demo mode.
+Features: `/contribute` · `/cohorts` (+ `/cohorts/new`, `/cohorts/[id]`). Admin: `/admin/beta`, `/beta-feedback-review`.
 
-See `docs/WEB_DEPLOYMENT.md` for deployment notes.
+## PWA install (iPhone)
 
-## AI support layer
+Open `/install` in Safari → Share → **Add to Home Screen** → Add.
 
-The web beta includes mock-safe AI support for:
+## Documentation
 
-- Practice prep
-- Reflection help
-- Peer feedback coaching
-- Feedback summaries
-- AI helpfulness feedback
+- [docs/BETA_QA.md](docs/BETA_QA.md) — beta operations + manual QA
+- [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) — environment variables
+- [docs/FEED_ALGORITHM.md](docs/FEED_ALGORITHM.md) — feed ranking
+- [docs/AI_SUPPORT_LAYER.md](docs/AI_SUPPORT_LAYER.md) — AI design + safety
+- [docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md) — product spec
+- [docs/superpowers/specs/](docs/superpowers/specs/) — per-feature design specs
 
-AI is support, not authority. It does not decide trust, generate proof, submit feedback automatically, or grade users.
+## Guardrails
 
-See `docs/AI_SUPPORT_LAYER.md`.
-
-## Important
-
-This version runs in demo mode before Supabase/OpenAI keys are connected. V8 added multimodal proof submission for text, images, videos, audio, documents/PDFs, screenshots, links, and checklist/reflection proof. V9 adds Collective-style engagement actions, separate mobile swipe lanes for photo proof and video proof, and a buildable image/video media proof MVP.
-
-## V9 engagement
-
-Collective does not use generic like buttons in this prototype. Engagement is based on useful intent: reflect, ask context, try the practice, save a prompt, give feedback, review, and suggest a next step.
-
-## Media proof MVP
-
-The media proof MVP supports image and video selection, preview, removal, draft saving, mock upload progress, beginner-safe visibility settings, proof feed cards, feedback composer UI, AI support helpers, and trust-score helpers.
-
-See `docs/MEDIA_PROOF_MVP.md` and `supabase/media_proof_mvp.sql`.
-
-## Native Android MVP
-
-This repo now also includes an Android Studio-ready native MVP foundation in `android-native/`.
-
-Open `android-native/` in Android Studio to run the Kotlin + Jetpack Compose app. See `README_ANDROID.md` for setup, testing, and current limitations.
-
-## Test pages
-
-`/`, `/feed-system`, `/onboarding`, `/paths`, `/paths/speak-up`, `/practice/speak-up-1`, `/proof/new`, `/feedback`, `/dashboard`, `/contribute`, `/admin`, `/setup`.
+Beginner-safe, contribution over popularity. **No** likes, followers, leaderboards, certificates, or shame-streaks. The only social actions are Useful, Feedback, and Learn-from. Trust is earned, never bought or minted. AI helps; it never judges.
