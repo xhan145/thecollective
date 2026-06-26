@@ -13,7 +13,7 @@ import { useBetaApp } from "./AppStateProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts"];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();

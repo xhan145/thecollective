@@ -76,7 +76,7 @@ import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
 export type AuthResult = { error: string | null; needsConfirmation?: boolean };
-export type CohortActionResult = { error: string | null };
+export type CohortActionResult = { error: string | null; id?: string | null };
 
 export type OnboardingPayload = {
   directionId: string;
@@ -1035,14 +1035,15 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       },
       async createCohortAction(a) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
-        const { error } = await createCohortRpc(supabase, a);
+        const { data, error } = await createCohortRpc(supabase, a);
         if (error) return { error: error.message };
+        const newId: string | null = typeof data === "string" ? data : null;
         const uid = authUid();
         if (uid) {
           const fresh = await listMyCohorts(supabase, uid).catch(() => null);
           if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
         }
-        return { error: null };
+        return { error: null, id: newId };
       },
       async joinCohortAction(id) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
@@ -1072,14 +1073,16 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
       },
       async redeemCohortInviteAction(code) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
-        const { error } = await redeemCohortInviteRpc(supabase, code);
+        const { data, error } = await redeemCohortInviteRpc(supabase, code);
         if (error) return { error: error.message };
+        // redeem_cohort_invite RPC returns the cohort_id as data
+        const cohortId: string | null = typeof data === "string" ? data : null;
         const uid = authUid();
         if (uid) {
           const fresh = await listMyCohorts(supabase, uid).catch(() => null);
           if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
         }
-        return { error: null };
+        return { error: null, id: cohortId };
       },
       async leaveCohortAction(id) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
