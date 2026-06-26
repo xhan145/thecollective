@@ -23,6 +23,23 @@ import type {
 } from "@/lib/betaTypes";
 import { rankTips } from "@/lib/tips/rankTips";
 import { listTips } from "@/lib/supabase/tipsRepository";
+import type { Cohort, CohortMember, CohortJoinRequest } from "@/lib/cohorts/types";
+import { rankFeed, type RankedProof } from "@/lib/feed/rankProofFeed";
+import {
+  listMyCohorts,
+  getCohort,
+  listMembers,
+  listOwnerRequests,
+  listCohortProofs,
+  createCohort as createCohortRpc,
+  joinCohort as joinCohortRpc,
+  requestJoin as requestJoinRpc,
+  approveRequest as approveRequestRpc,
+  declineRequest as declineRequestRpc,
+  redeemCohortInvite as redeemCohortInviteRpc,
+  leaveCohort as leaveCohortRpc,
+  removeMember as removeMemberRpc,
+} from "@/lib/supabase/cohortsRepository";
 import { firebaseModeLabel, isFirebaseConfigured, proofStoragePath } from "@/lib/firebase";
 import { makeTrustEvent, summarizeTrust, trustLevelForPoints } from "@/lib/betaTrust";
 import { getSupabaseClient, isSupabaseConfigured } from "@/lib/supabase/client";
@@ -59,6 +76,7 @@ import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
 export type AuthResult = { error: string | null; needsConfirmation?: boolean };
+export type CohortActionResult = { error: string | null; id?: string | null };
 
 export type OnboardingPayload = {
   directionId: string;
@@ -136,6 +154,18 @@ type BetaAppContextValue = {
   getTipsForPractice: (promptId: string) => PracticeTip[];
   loadTips: (promptId: string) => Promise<void>;
   submitTip: (promptId: string, body: string) => Promise<{ tip: PracticeTip | null; error: string | null }>;
+  // Cohorts
+  getMyCohorts: () => Cohort[];
+  loadCohort: (id: string) => Promise<{ cohort: Cohort | null; members: CohortMember[]; requests: CohortJoinRequest[]; feedProofs: Proof[] }>;
+  getCohortFeed: (cohortId: string, proofs: Proof[]) => RankedProof[];
+  createCohortAction: (a: { name: string; description?: string; directionId?: string; visibility: string; accent?: string }) => Promise<CohortActionResult>;
+  joinCohortAction: (id: string) => Promise<CohortActionResult>;
+  requestJoinAction: (id: string) => Promise<CohortActionResult>;
+  approveRequestAction: (id: string) => Promise<CohortActionResult>;
+  declineRequestAction: (id: string) => Promise<CohortActionResult>;
+  redeemCohortInviteAction: (code: string) => Promise<CohortActionResult>;
+  leaveCohortAction: (id: string) => Promise<CohortActionResult>;
+  removeMemberAction: (cohortId: string, userId: string) => Promise<CohortActionResult>;
 };
 
 const BetaAppContext = createContext<BetaAppContextValue | undefined>(undefined);
@@ -153,7 +183,8 @@ function readSnapshot(): BetaAppSnapshot {
       aiUserFeedback: parsed.aiUserFeedback || [],
       contributions: parsed.contributions || [],
       practiceTips: parsed.practiceTips || [],
-      usefulCountByTip: parsed.usefulCountByTip || {}
+      usefulCountByTip: parsed.usefulCountByTip || {},
+      myCohorts: parsed.myCohorts || []
     };
   } catch {
     return seedSnapshot;
@@ -199,6 +230,7 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     contributions: bundle.contributions,
     practiceTips: [],
     usefulCountByTip: {},
+    myCohorts: [],
   };
 }
 
@@ -231,14 +263,16 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
 
     async function loadFor(uid: string, email: string | null) {
       try {
-        const [bundle, content] = await Promise.all([
+        const [bundle, content, myCohorts] = await Promise.all([
           loadUserBundle(supabase!, uid, email),
-          contentRef.current ? Promise.resolve(contentRef.current) : loadContent(supabase!)
+          contentRef.current ? Promise.resolve(contentRef.current) : loadContent(supabase!),
+          listMyCohorts(supabase!, uid).catch(() => [] as Cohort[])
         ]);
         if (!active) return;
         contentRef.current = content;
         authUserIdRef.current = uid;
-        setSnapshot(applyBundle(bundle, uid, content));
+        const base = applyBundle(bundle, uid, content);
+        setSnapshot({ ...base, myCohorts });
       } catch {
         if (active) setSnapshot({ ...seedSnapshot, currentUserId: uid });
       } finally {
@@ -974,6 +1008,97 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           setSnapshot((current) => ({ ...current, practiceTips: current.practiceTips.filter((t) => t.id !== optimistic.id) }));
           return { tip: null, error: "We couldn't save your tip — try again." };
         }
+      },
+      // ---- Cohort methods ----
+      getMyCohorts() {
+        return snapshot.myCohorts;
+      },
+      async loadCohort(id) {
+        if (!supabaseEnabled || !supabase) {
+          return { cohort: null, members: [], requests: [], feedProofs: [] };
+        }
+        const cohort = await getCohort(supabase, id).catch(() => null);
+        const uid = authUid();
+        const isOwner = !!cohort && !!uid && cohort.ownerId === uid;
+        const [members, requests, feedProofs] = await Promise.all([
+          listMembers(supabase, id).catch(() => [] as CohortMember[]),
+          isOwner ? listOwnerRequests(supabase, id).catch(() => [] as CohortJoinRequest[]) : Promise.resolve([] as CohortJoinRequest[]),
+          listCohortProofs(supabase, id).catch(() => [] as Proof[]),
+        ]);
+        return { cohort, members, requests, feedProofs };
+      },
+      getCohortFeed(_cohortId, proofs) {
+        if (!currentUser) return [];
+        const authorsById: Record<string, UserProfile> = {};
+        for (const u of snapshot.users) authorsById[u.id] = u;
+        return rankFeed(currentUser, proofs, authorsById, snapshot.usefulCountByProof);
+      },
+      async createCohortAction(a) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { data, error } = await createCohortRpc(supabase, a);
+        if (error) return { error: error.message };
+        const newId: string | null = typeof data === "string" ? data : null;
+        const uid = authUid();
+        if (uid) {
+          const fresh = await listMyCohorts(supabase, uid).catch(() => null);
+          if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
+        }
+        return { error: null, id: newId };
+      },
+      async joinCohortAction(id) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await joinCohortRpc(supabase, id);
+        if (error) return { error: error.message };
+        const uid = authUid();
+        if (uid) {
+          const fresh = await listMyCohorts(supabase, uid).catch(() => null);
+          if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
+        }
+        return { error: null };
+      },
+      async requestJoinAction(id) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await requestJoinRpc(supabase, id);
+        return { error: error ? error.message : null };
+      },
+      async approveRequestAction(id) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await approveRequestRpc(supabase, id);
+        return { error: error ? error.message : null };
+      },
+      async declineRequestAction(id) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await declineRequestRpc(supabase, id);
+        return { error: error ? error.message : null };
+      },
+      async redeemCohortInviteAction(code) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { data, error } = await redeemCohortInviteRpc(supabase, code);
+        if (error) return { error: error.message };
+        // redeem_cohort_invite RPC returns the cohort_id as data
+        const cohortId: string | null = typeof data === "string" ? data : null;
+        const uid = authUid();
+        if (uid) {
+          const fresh = await listMyCohorts(supabase, uid).catch(() => null);
+          if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
+        }
+        return { error: null, id: cohortId };
+      },
+      async leaveCohortAction(id) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await leaveCohortRpc(supabase, id);
+        if (error) return { error: error.message };
+        const uid = authUid();
+        if (uid) {
+          const fresh = await listMyCohorts(supabase, uid).catch(() => null);
+          if (fresh) setSnapshot((current) => ({ ...current, myCohorts: fresh }));
+        }
+        return { error: null };
+      },
+      async removeMemberAction(cohortId, userId) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        const { error } = await removeMemberRpc(supabase, cohortId, userId);
+        return { error: error ? error.message : null };
       },
     };
   }, [currentUser, firebaseMode, isMockMode, snapshot, trustSummary, supabaseEnabled, supabase, authReady]);
