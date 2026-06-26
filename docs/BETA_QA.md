@@ -253,3 +253,72 @@ Content held by the system is described to the author as "being reviewed" rather
 npx tsx scripts/check-spam-enforcement.ts
 ```
 Expected output: `spam-enforcement checks passed`
+
+## 13. Cohorts
+
+Cohorts let members practice together in scoped groups. Added by migration 030.
+
+### Database tables
+
+| Table | Purpose |
+|---|---|
+| `cohorts` | Group metadata (name, description, direction, visibility, accent) |
+| `cohort_members` | Membership rows with `role` (`owner` / `member`) |
+| `cohort_join_requests` | Pending join requests for `request`-visibility cohorts |
+| `cohort_invites` | Single-use invite codes for `invite`-visibility cohorts |
+
+### Create gate
+
+A user must have `trust_score >= 50` (the "Reliable" level) to create a cohort. Enforced client-side by `canCreateCohort(profile)` in `lib/cohorts/access.ts` and server-side by the `create_cohort` RPC (`SECURITY DEFINER`).
+
+### Visibility join paths
+
+| Visibility | How to join |
+|---|---|
+| `public` | Click "Join cohort" — immediate via `join_cohort` RPC |
+| `request` | Click "Request to join" — creates a `cohort_join_requests` row; owner approves or declines via `approve_join_request` / `decline_join_request` RPCs |
+| `invite` | Redeem a code at `/cohorts` invite field — `redeem_cohort_invite` RPC validates and admits |
+
+### RPC-only writes
+
+All cohort mutations go through `SECURITY DEFINER` RPCs. Clients cannot insert/update/delete `cohort_members` or `cohort_join_requests` directly; RLS policies deny direct writes to those tables.
+
+### Scoped feed
+
+`getCohortFeed(cohortId, proofs)` in the provider receives only proofs belonging to current cohort members. The caller pre-filters before passing to `rankFeed`:
+
+```ts
+const memberIds = new Set(members.map((m) => m.userId));
+const scopedProofs = feedProofs.filter((p) => memberIds.has(p.userId));
+```
+
+- **Held proofs excluded**: `listCohortProofs` (server) omits rows where `held = true` for non-authors, matching the global feed hiding rule.
+- **Non-member proofs excluded**: only `cohort_members` rows contribute.
+
+### Founding-circle backfill
+
+Migration 030 seeds a "Founding Circle" cohort (`id = 00000000-0000-0000-0000-0000000f0001`, `visibility = invite`) and backfills existing beta members as `member` rows, with the earliest member promoted to `owner`. This ensures no cohort is left ownerless on first deploy.
+
+### QA checklist (cohorts)
+
+- [ ] Apply migration 030 (idempotent)
+- [ ] Confirm `cohorts`, `cohort_members`, `cohort_join_requests`, `cohort_invites` tables exist
+- [ ] As a user with `trust_score < 50`: "Create" button should NOT appear on `/cohorts`
+- [ ] As a user with `trust_score >= 50`: "Create" button appears; filling the form calls `create_cohort` RPC
+- [ ] Public cohort: "Join cohort" → immediate membership, scoped feed shows member proofs
+- [ ] Request cohort: "Request to join" → calm "Request sent" message; owner inbox shows the request
+- [ ] Owner approves request → member appears in members list, feed updates
+- [ ] Owner declines request → request disappears
+- [ ] Owner removes a member → member removed, not in members list
+- [ ] Invite cohort: no join button shown, only "Invite only" note; redeeming a valid code at `/cohorts` joins the cohort
+- [ ] Owner sees no "Leave" control; member sees quiet "Leave" button; non-member sees join control
+- [ ] Scoped feed shows only members' proofs (not outsiders')
+- [ ] Milestone stamp appears when `feedProofs.length >= 25`
+- [ ] No member counts used as status signals; no leaderboard
+
+### Verification
+
+```bash
+npx tsx scripts/check-cohorts.ts
+```
+Expected output: `cohorts checks passed`
