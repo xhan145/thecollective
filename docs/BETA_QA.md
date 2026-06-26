@@ -297,7 +297,7 @@ const scopedProofs = feedProofs.filter((p) => memberIds.has(p.userId));
 
 ### Founding-circle backfill
 
-Migration 030 seeds a "Founding Circle" cohort (`id = 00000000-0000-0000-0000-0000000f0001`, `visibility = invite`) and backfills existing beta members as `member` rows, with the earliest member promoted to `owner`. This ensures no cohort is left ownerless on first deploy.
+Migration 030 seeds a **public** "Founding Circle" cohort (`id = 00000000-0000-0000-0000-0000000f0001`, `visibility = 'public'`) and backfills every existing beta member (`profiles.cohort_id = 'founding-circle'`) as a `member` row. Ownership is assigned to the first profile whose `role` is `founder`/`admin`; if no such profile exists (as on the current prod instance, where access is governed by `ADMIN_EMAILS` rather than a profile role), the Founding Circle is intentionally **ownerless** — it is a system "everyone" cohort, not a user-moderated group, and being public it needs no owner to function (members join/leave freely). User-created cohorts always have an owner (the creator, set by `create_cohort`).
 
 ### QA checklist (cohorts)
 
