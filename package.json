@@ -21,7 +21,8 @@
     "gitnexus:serve": "node .tools/gitnexus.mjs serve",
     "gitnexus:mcp": "node .tools/gitnexus.mjs mcp",
     "gitnexus:status": "node .tools/gitnexus.mjs status",
-    "gitnexus:list": "node .tools/gitnexus.mjs list"
+    "gitnexus:list": "node .tools/gitnexus.mjs list",
+    "content:check": "tsx scripts/check-content-seed.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.105.4",
