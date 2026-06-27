@@ -322,3 +322,70 @@ Migration 030 seeds a **public** "Founding Circle" cohort (`id = 00000000-0000-0
 npx tsx scripts/check-cohorts.ts
 ```
 Expected output: `cohorts checks passed`
+
+## 14. Contributor roles
+
+### Capability ladder
+
+The single source of truth is **`lib/roles.ts`** (`hasCapability`, `tierForProfile`, `TIER_CAPABILITIES`). Tier is derived purely from `trust_score` — never written directly. Existing thresholds are unchanged.
+
+| Tier | Trust score | Capabilities unlocked at this tier |
+|---|---|---|
+| New | 0–9 | — |
+| Practicing | 10–29 | — |
+| Reliable | 30–59 | `give_feedback`, `host_cohort` |
+| Helpful | 60–99 | `mentor_visibility`, `cohort_guide` |
+| Contributor | 100+ | `welcome_newcomers`, `steward` |
+
+Capabilities are cumulative: a Contributor has all of the above.
+
+### Mentor opt-in
+
+- Column: `profiles.mentor_opt_in` (boolean, default `false`)
+- Effective at: **Helpful+** (requires `mentor_visibility` capability)
+- UI: quiet toggle on own profile card (visible only to the profile owner)
+- Effect: the member appears in the "Learn from someone" discovery strip on the home/directions screen for members in the same direction who have the same or lower tier
+- Guard: `canShowAsMentor(profile)` in `lib/roles.ts` checks both `mentor_opt_in` and `mentor_visibility`; listing route re-checks server-side
+
+### Guide role (service-only, no moderation)
+
+- Role value: `"guide"` in `cohort_members.role` (alongside `"owner"` / `"member"`)
+- Purpose: a calm service signal — guides are listed as someone to learn from inside a cohort; they have **no moderation powers** (cannot approve/decline requests, remove members, or perform any owner-only action)
+- Set by: RPC `set_cohort_guide(p_cohort_id, p_user_id, p_is_guide)` — owner-only; enforced `SECURITY DEFINER`
+- Target: the target member must be **Helpful+** (`cohort_guide` capability) to become a guide; if they later drop below Helpful, they retain the role until the owner changes it
+- UI: on the cohort detail page (owner-only members list), a quiet "Make guide" / "Remove guide" button appears next to any member who is guide-eligible or already a guide; a `Guide` badge renders next to that member's name
+
+### Welcome-newcomers (derived, Contributor)
+
+- Capability `welcome_newcomers` is unlocked at **Contributor** (100+ trust)
+- It is derived automatically from trust score — no opt-in required
+- Effect: the member's profile shows a "Steward" badge and they appear in the welcome strip for newcomers in their direction (within the first 7 days of joining)
+- No extra column; no write; purely computed in `lib/roles.ts`
+
+### Anti-clout guardrails
+
+- No trust counts, tier labels, or capability names are shown in social feeds or other members' views
+- Badges (Guide, Steward) describe a service function, not a status rank
+- Mentor and guide listings are framed as "someone to learn from" / "cohort guide" — not leaderboard positions
+- No notification is sent when a user's tier changes; tier is only surfaced in the user's own profile card
+- The admin panel (`/admin/beta`) is the only place where trust scores are visible to non-owners
+
+### QA checklist (contributor roles)
+
+- [ ] Apply migrations 031 (mentor_opt_in column + guide role + set_cohort_guide RPC)
+- [ ] As a Helpful+ member, opt in as mentor → appears in discovery strip for same-direction members at same/lower tier
+- [ ] As a non-Helpful+ member, mentor toggle should NOT appear
+- [ ] As a cohort owner, open the members list; a Helpful+ member shows "Make guide" button
+- [ ] As a cohort owner, click "Make guide" → member's row gains a quiet "Guide" badge; button changes to "Remove guide"
+- [ ] As a cohort owner, click "Remove guide" → badge disappears; button reverts to "Make guide"
+- [ ] A guide member has no approve/decline/remove controls — only the owner does
+- [ ] A non-Helpful+ member in the cohort shows no guide toggle
+- [ ] As a Contributor, "Steward" badge appears on own profile card; welcome strip visible to newcomers in same direction
+- [ ] No tier labels or trust counts appear in any social feed or other member's view
+
+### Verification
+
+```bash
+npx tsx scripts/check-roles.ts
+```
+Expected output: `roles checks passed`

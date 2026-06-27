@@ -59,6 +59,7 @@ export default function CohortDetailPage() {
     approveRequestAction,
     declineRequestAction,
     removeMemberAction,
+    setCohortGuideAction,
   } = useBetaApp();
 
   const [pageState, setPageState] = useState<PageState>({ status: "loading" });
@@ -361,20 +362,45 @@ export default function CohortDetailPage() {
                           {isThisOwner && (
                             <Badge tone="gold">Host</Badge>
                           )}
+                          {!isThisOwner && m.role === "guide" && (
+                            <Badge tone="muted">Guide</Badge>
+                          )}
                         </div>
                         {!isThisOwner && (
-                          <Button
-                            variant="quiet"
-                            className="min-h-9 px-3 text-xs text-[#9B958B]"
-                            disabled={busy === `remove-${m.userId}`}
-                            onClick={() =>
-                              doAction(`remove-${m.userId}`, () =>
-                                removeMemberAction(cohort.id, m.userId)
-                              )
-                            }
-                          >
-                            {busy === `remove-${m.userId}` ? "…" : "Remove"}
-                          </Button>
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              const memberProfile = userFor(m.userId);
+                              const guideEligible = hasCapability(memberProfile, "cohort_guide");
+                              const isGuide = m.role === "guide";
+                              if (!guideEligible && !isGuide) return null;
+                              return (
+                                <Button
+                                  variant="quiet"
+                                  className="min-h-9 px-3 text-xs text-[#9B958B]"
+                                  disabled={busy === `guide-${m.userId}`}
+                                  onClick={() =>
+                                    doAction(`guide-${m.userId}`, () =>
+                                      setCohortGuideAction(cohort.id, m.userId, !isGuide)
+                                    )
+                                  }
+                                >
+                                  {busy === `guide-${m.userId}` ? "…" : isGuide ? "Remove guide" : "Make guide"}
+                                </Button>
+                              );
+                            })()}
+                            <Button
+                              variant="quiet"
+                              className="min-h-9 px-3 text-xs text-[#9B958B]"
+                              disabled={busy === `remove-${m.userId}`}
+                              onClick={() =>
+                                doAction(`remove-${m.userId}`, () =>
+                                  removeMemberAction(cohort.id, m.userId)
+                                )
+                              }
+                            >
+                              {busy === `remove-${m.userId}` ? "…" : "Remove"}
+                            </Button>
+                          </div>
                         )}
                       </Card>
                     );
