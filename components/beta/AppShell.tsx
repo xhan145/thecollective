@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, BookOpen, Home, MessageSquare, Plus, User } from "lucide-react";
+import { Bell, BookOpen, Home, MessageSquare, Moon, Plus, Sun, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
@@ -10,6 +10,7 @@ import { CollectiveWordmark } from "./Brand";
 import { Badge } from "./ui";
 import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
+import { useTheme } from "./ThemeProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 
@@ -18,6 +19,7 @@ const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { resolved, setTheme } = useTheme();
   const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount } = useBetaApp();
   const unread = unreadNotificationCount();
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
@@ -68,6 +70,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
           <div className="flex items-center gap-2">
             {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
+            <button
+              type="button"
+              onClick={() => setTheme(resolved === "dark" ? "light" : "dark")}
+              aria-label={resolved === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="grid h-10 w-10 place-items-center rounded-full bg-[var(--surface,#FFFDF8)] text-[var(--ink,#111111)] shadow-[0_6px_16px_rgba(71,52,18,0.08)]"
+            >
+              {resolved === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <Link
               href="/notifications"
               aria-label={unread > 0 ? `Notifications, ${unread} unread` : "Notifications"}
