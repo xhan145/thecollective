@@ -14,11 +14,14 @@ import { getGreeting } from "@/lib/greeting";
 
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
-  // Start from a stable value so SSR and the first client render match (the
-  // server's clock/timezone may differ from the user's), then swap to the
-  // device-local greeting after mount.
-  const [greeting, setGreeting] = useState("Good morning");
-  useEffect(() => setGreeting(getGreeting()), []);
+  // Compute the greeting from the user's device clock on the first client render
+  // (lazy init), and re-sync on mount so a tab left open across a boundary still
+  // updates. getGreeting() reads local time, so the value is always correct for
+  // the viewer's timezone.
+  const [greeting, setGreeting] = useState(() => getGreeting());
+  useEffect(() => {
+    setGreeting(getGreeting());
+  }, []);
   const latestProof = snapshot.proofs.find((proof) => proof.userId === (currentUser?.id || "user-alex")) || snapshot.proofs[0];
   const featuredDirection =
     snapshot.directions.find((direction) => direction.id === currentUser?.currentDirectionId) ||
