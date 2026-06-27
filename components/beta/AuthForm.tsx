@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CollectiveMark } from "@/components/beta/Brand";
@@ -10,6 +10,22 @@ import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 
 const field =
   "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
+
+const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
+  google_not_configured: "Google sign-in is not configured yet.",
+  google_denied: "Google sign-in was cancelled.",
+  google_state_invalid: "Google sign-in expired. Please try again.",
+  google_token_failed: "Google sign-in failed. Please try again.",
+  google_signin_failed: "Could not sign in with Google. Confirm Google is enabled in Supabase Auth.",
+  google_session_failed: "Google sign-in almost worked, but the session could not be saved.",
+};
+
+function googleErrorMessage(code: string | null, detail: string | null): string | null {
+  if (!code) return null;
+  if (code === "google_signin_failed" && detail) return detail;
+  if (code === "google_token_failed" && detail) return detail;
+  return GOOGLE_ERROR_MESSAGES[code] || "Google sign-in failed. Please try again.";
+}
 
 export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   const router = useRouter();
@@ -24,6 +40,28 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const oauthError = googleErrorMessage(params.get("error"), params.get("detail"));
+    if (oauthError) setError(oauthError);
+  }, []);
+
+  function startGoogleAuth() {
+    setError(null);
+    setNotice(null);
+    if (mode === "signup" && REQUIRE_INVITE && !inviteCode.trim()) {
+      setError("An invite code is required to join the closed beta.");
+      return;
+    }
+    setGoogleLoading(true);
+    const params = new URLSearchParams({ mode });
+    if (mode === "signup" && inviteCode.trim()) {
+      params.set("invite", inviteCode.trim());
+    }
+    window.location.assign(`/api/google/start?${params.toString()}`);
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -101,10 +139,19 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             )}
             {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
             {notice && <p className="rounded-2xl bg-[#FFF8EE] p-3 text-sm font-bold leading-6 text-[#38322A]">{notice}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading || googleLoading}>
               {loading ? "One moment..." : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
           </form>
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            disabled={loading || googleLoading}
+            onClick={startGoogleAuth}
+          >
+            {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
+          </Button>
           <button
             type="button"
             className="w-full py-2 text-sm font-extrabold text-[#6E6E6E]"
