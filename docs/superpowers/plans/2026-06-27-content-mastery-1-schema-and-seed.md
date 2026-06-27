@@ -514,6 +514,10 @@ git commit -m "feat(content): idempotent content-mastery seed + reconciliation +
 
 ---
 
+## Execution Note (migration 031)
+
+During execution, the seed failed with Postgres `42P10` because the slug unique index in Task 2 was created **partial** (`... where slug is not null`), and the seed's `upsert({ onConflict: "slug" })` goes through PostgREST, which cannot express a partial index's predicate for `ON CONFLICT` inference. Fix: a follow-up migration `supabase/migrations/031_content_mastery_slug_index_fix.sql` drops the partial index and recreates `practices_slug_uidx` as a **full** unique index on `slug` (a full unique index on a nullable column still allows the legacy NULL-slug rows, since NULLs are distinct). After 031, the seed and verify pass. On a fresh database, apply `030` then `031`.
+
 ## Self-Review
 
 **Spec coverage (Plan 1 portion):** §3.1 skills table ✓ (Task 2). §3.1 practices columns ✓ (Task 2). §3.1 feedback.rubric + proofs.tags ✓ (Task 2). §3.2 stable slug addressing ✓ (Task 3 composes `<dir>.<skill>.<level>`). §3.3 direction reconciliation ✓ (Task 3 deactivates non-seed directions). §3.4 seed from one source of truth ✓ (Tasks 1+3). Title-uniqueness constraint ✓ (Task 3 composes `"<skill_name> — <level_name>"`). Read layer, betaData regeneration, progression/unlock, trust, AI, feed — intentionally **deferred to Plans 2–4** (they depend on `betaTypes` changes and runtime wiring).
