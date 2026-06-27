@@ -1104,7 +1104,6 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         return { error: error ? error.message : null };
       },
       async setCohortGuideAction(cohortId, userId, isGuide) {
-        const supabase = getSupabaseClient();
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
         return setCohortGuideRpc(supabase, cohortId, userId, isGuide);
       },
