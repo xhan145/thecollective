@@ -1,5 +1,5 @@
 export type CohortVisibility = "public" | "request" | "invite";
-export type CohortRole = "owner" | "member";
+export type CohortRole = "owner" | "member" | "guide";
 
 export type Cohort = {
   id: string;
