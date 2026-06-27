@@ -108,10 +108,16 @@ async function main() {
     }
   }
 
-  // Reconcile: deactivate directions not in the seed.
-  const inList = `(${dirSlugs.map((s) => `"${s}"`).join(",")})`;
-  const dDeact = await db.from("directions").update({ is_active: false }).not("slug", "in", inList);
-  if (dDeact.error) throw dDeact.error;
+  // Reconcile: deactivate directions not in the seed (mirror the practices pattern below;
+  // avoids fragile PostgREST in-list string building).
+  const allDirs = await db.from("directions").select("id,slug");
+  if (allDirs.error) throw allDirs.error;
+  const keepDirs = new Set(dirSlugs);
+  const staleDirs = (allDirs.data ?? []).filter((d) => !keepDirs.has(d.slug)).map((d) => d.id);
+  if (staleDirs.length) {
+    const dDeact = await db.from("directions").update({ is_active: false }).in("id", staleDirs);
+    if (dDeact.error) throw dDeact.error;
+  }
 
   // Reconcile: deactivate practices not in the seed (legacy flat practices have slug = null).
   const all = await db.from("practices").select("id,slug");
