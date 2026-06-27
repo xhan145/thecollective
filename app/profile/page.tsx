@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/beta/AppShell";
 import { Avatar } from "@/components/beta/Avatar";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
@@ -7,7 +8,18 @@ import { TrustSnapshotCard } from "@/components/beta/LoopCards";
 import { Badge, ButtonLink, Card, PageHeader, TrustPill } from "@/components/beta/ui";
 
 export default function ProfilePage() {
-  const { currentUser, trustSummary, signOutDemo } = useBetaApp();
+  const router = useRouter();
+  const { currentUser, trustSummary, signOut, signOutDemo, supabaseEnabled } = useBetaApp();
+
+  async function handleSignOut() {
+    await signOut();
+    router.replace("/auth");
+  }
+
+  function handleLeaveDemo() {
+    signOutDemo();
+    router.replace("/auth");
+  }
 
   return (
     <AppShell>
@@ -39,9 +51,23 @@ export default function ProfilePage() {
           <h2 className="mt-3 text-xl font-extrabold text-[#111111]">Not rushed</h2>
           <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">You will unlock more ways to help others as your proof and feedback history grows.</p>
           <ButtonLink href="/app-feedback" className="mt-4 w-full">Give app feedback</ButtonLink>
-          <button className="mt-3 w-full rounded-full px-4 py-3 text-sm font-extrabold text-[#6E6E6E]" onClick={signOutDemo}>
-            Leave demo beta
-          </button>
+          {supabaseEnabled ? (
+            <button
+              type="button"
+              className="mt-3 w-full rounded-full px-4 py-3 text-sm font-extrabold text-[#C2413F]"
+              onClick={() => void handleSignOut()}
+            >
+              Sign out
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="mt-3 w-full rounded-full px-4 py-3 text-sm font-extrabold text-[#6E6E6E]"
+              onClick={handleLeaveDemo}
+            >
+              Leave demo beta
+            </button>
+          )}
         </Card>
       </div>
     </AppShell>

@@ -11,6 +11,8 @@ import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 const field =
   "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
 
+const GOOGLE_LOGO_URL = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
+
 const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
   google_not_configured: "Google sign-in is not configured yet.",
   google_denied: "Google sign-in was cancelled.",
@@ -150,6 +152,9 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             disabled={loading || googleLoading}
             onClick={startGoogleAuth}
           >
+            {!googleLoading && (
+              <img src={GOOGLE_LOGO_URL} alt="" aria-hidden className="h-5 w-5 shrink-0" width={20} height={20} />
+            )}
             {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
           </Button>
           <button
