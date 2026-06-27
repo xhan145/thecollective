@@ -4,10 +4,12 @@ import { AppShell } from "@/components/beta/AppShell";
 import { Avatar } from "@/components/beta/Avatar";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { TrustSnapshotCard } from "@/components/beta/LoopCards";
-import { Badge, ButtonLink, Card, PageHeader, TrustPill } from "@/components/beta/ui";
+import { HelpWithCard } from "@/components/beta/HelpWithCard";
+import { Badge, ButtonLink, Card, PageHeader, SectionLabel, TrustPill } from "@/components/beta/ui";
+import { hasCapability } from "@/lib/roles";
 
 export default function ProfilePage() {
-  const { currentUser, trustSummary, signOutDemo } = useBetaApp();
+  const { currentUser, trustSummary, signOutDemo, updateProfile } = useBetaApp();
 
   return (
     <AppShell>
@@ -24,6 +26,23 @@ export default function ProfilePage() {
           </div>
         </Card>
         <TrustSnapshotCard trust={trustSummary} />
+        <HelpWithCard />
+        {currentUser && hasCapability(currentUser, "mentor_visibility") && (
+          <Card className="p-5">
+            <SectionLabel title="Mentoring" />
+            <label className="mt-2 flex items-center justify-between gap-3">
+              <span className="text-sm text-[#38322A]">List me as someone to learn from in my direction</span>
+              <input
+                type="checkbox"
+                checked={!!currentUser.mentorOptIn}
+                onChange={(e) => updateProfile({ mentorOptIn: e.target.checked })}
+                className="h-5 w-5 accent-[#F2A900]"
+                aria-label="List me as someone to learn from"
+              />
+            </label>
+            <p className="mt-1 text-xs text-[#6E6E6E]">Optional. Turn it off anytime.</p>
+          </Card>
+        )}
         <div className="grid grid-cols-2 gap-3">
           <ButtonLink href="/profile/saved" variant="secondary" className="w-full">Saved for practice</ButtonLink>
           <ButtonLink href="/profile/learning" variant="secondary" className="w-full">People you learn from</ButtonLink>

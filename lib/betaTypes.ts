@@ -42,6 +42,7 @@ export type UserProfile = {
   currentDirectionId?: string | null;
   onboardingCompleted?: boolean;
   trustScore?: number;
+  mentorOptIn?: boolean;
   practiceCount?: number;
   proofCount?: number;
   feedbackGivenCount?: number;

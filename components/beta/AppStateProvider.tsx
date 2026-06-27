@@ -39,6 +39,7 @@ import {
   redeemCohortInvite as redeemCohortInviteRpc,
   leaveCohort as leaveCohortRpc,
   removeMember as removeMemberRpc,
+  setCohortGuide as setCohortGuideRpc,
 } from "@/lib/supabase/cohortsRepository";
 import { firebaseModeLabel, isFirebaseConfigured, proofStoragePath } from "@/lib/firebase";
 import { makeTrustEvent, summarizeTrust, trustLevelForPoints } from "@/lib/betaTrust";
@@ -100,7 +101,7 @@ type BetaAppContextValue = {
   signInWithEmail: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   completeOnboarding: (payload: OnboardingPayload) => Promise<void>;
-  updateProfile: (fields: { displayName?: string; username?: string; bio?: string }) => Promise<void>;
+  updateProfile: (fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean }) => Promise<void>;
   completePractice: (promptId: string) => void;
   submitProof: (input: ProofDraftInput) => Promise<{ proof: Proof | null; error: string | null }>;
   logEvent: (eventType: BetaEventType, metadata?: Record<string, unknown>) => void;
@@ -166,6 +167,7 @@ type BetaAppContextValue = {
   redeemCohortInviteAction: (code: string) => Promise<CohortActionResult>;
   leaveCohortAction: (id: string) => Promise<CohortActionResult>;
   removeMemberAction: (cohortId: string, userId: string) => Promise<CohortActionResult>;
+  setCohortGuideAction: (cohortId: string, userId: string, isGuide: boolean) => Promise<CohortActionResult>;
 };
 
 const BetaAppContext = createContext<BetaAppContextValue | undefined>(undefined);
@@ -492,7 +494,8 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
                       ? { displayName: fields.displayName, initials: fields.displayName.slice(0, 2).toUpperCase() }
                       : {}),
                     ...(fields.username !== undefined ? { username: fields.username } : {}),
-                    ...(fields.bio !== undefined ? { bio: fields.bio } : {})
+                    ...(fields.bio !== undefined ? { bio: fields.bio } : {}),
+                    ...(fields.mentorOptIn !== undefined ? { mentorOptIn: fields.mentorOptIn } : {})
                   }
                 : u
             )
@@ -1099,6 +1102,10 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
         const { error } = await removeMemberRpc(supabase, cohortId, userId);
         return { error: error ? error.message : null };
+      },
+      async setCohortGuideAction(cohortId, userId, isGuide) {
+        if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
+        return setCohortGuideRpc(supabase, cohortId, userId, isGuide);
       },
     };
   }, [currentUser, firebaseMode, isMockMode, snapshot, trustSummary, supabaseEnabled, supabase, authReady]);

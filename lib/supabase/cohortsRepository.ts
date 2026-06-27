@@ -57,3 +57,16 @@ export const declineRequest = (c: SupabaseClient, id: string) => c.rpc("decline_
 export const redeemCohortInvite = (c: SupabaseClient, code: string) => c.rpc("redeem_cohort_invite", { p_code: code });
 export const leaveCohort = (c: SupabaseClient, id: string) => c.rpc("leave_cohort", { p_cohort_id: id });
 export const removeMember = (c: SupabaseClient, cohortId: string, userId: string) => c.rpc("remove_member", { p_cohort_id: cohortId, p_user_id: userId });
+export async function setCohortGuide(
+  client: SupabaseClient,
+  cohortId: string,
+  userId: string,
+  isGuide: boolean,
+): Promise<{ error: string | null }> {
+  const { error } = await client.rpc("set_cohort_guide", {
+    p_cohort_id: cohortId,
+    p_user_id: userId,
+    p_is_guide: isGuide,
+  });
+  return { error: error ? error.message : null };
+}
