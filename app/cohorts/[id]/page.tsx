@@ -14,7 +14,7 @@ import {
   SectionLabel,
 } from "@/components/beta/ui";
 import { MotionItem, MotionList, Reveal, ScreenSkeleton } from "@/components/beta/motion";
-import { levelRank } from "@/lib/betaTrust";
+import { hasCapability } from "@/lib/roles";
 import type { Cohort, CohortMember, CohortJoinRequest } from "@/lib/cohorts/types";
 import type { Proof } from "@/lib/betaTypes";
 
@@ -125,7 +125,7 @@ export default function CohortDetailPage() {
   const memberIds = new Set(members.map((m) => m.userId));
   const scopedProofs = feedProofs.filter((p) => memberIds.has(p.userId));
   const ranked = getCohortFeed(cohort.id, scopedProofs);
-  const canGiveFeedback = currentUser ? levelRank(currentUser) >= 2 : false;
+  const canGiveFeedback = hasCapability(currentUser, "give_feedback");
 
   function userFor(userId: string) {
     return snapshot.users.find((u) => u.id === userId);
