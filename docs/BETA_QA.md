@@ -331,11 +331,11 @@ The single source of truth is **`lib/roles.ts`** (`hasCapability`, `tierForProfi
 
 | Tier | Trust score | Capabilities unlocked at this tier |
 |---|---|---|
-| New | 0–9 | — |
-| Practicing | 10–29 | — |
-| Reliable | 30–59 | `give_feedback`, `host_cohort` |
-| Helpful | 60–99 | `mentor_visibility`, `cohort_guide` |
-| Contributor | 100+ | `welcome_newcomers`, `steward` |
+| New | `<20` | — |
+| Practicing | `≥20` | — |
+| Reliable | `≥50` | `give_feedback`, `host_cohort` |
+| Helpful | `≥100` | `mentor_visibility`, `cohort_guide` |
+| Contributor | `≥200` | `welcome_newcomers`, `steward` |
 
 Capabilities are cumulative: a Contributor has all of the above.
 
@@ -344,8 +344,8 @@ Capabilities are cumulative: a Contributor has all of the above.
 - Column: `profiles.mentor_opt_in` (boolean, default `false`)
 - Effective at: **Helpful+** (requires `mentor_visibility` capability)
 - UI: quiet toggle on own profile card (visible only to the profile owner)
-- Effect: the member appears in the "Learn from someone" discovery strip on the home/directions screen for members in the same direction who have the same or lower tier
-- Guard: `canShowAsMentor(profile)` in `lib/roles.ts` checks both `mentor_opt_in` and `mentor_visibility`; listing route re-checks server-side
+- Effect: the member appears in the "People to learn from in this direction" strip on `/directions` for other members who share their current direction
+- Guard: computed inline in `app/directions/page.tsx` — a candidate is listed when `mentorOptIn` is true AND `hasCapability(candidate, "mentor_visibility")` (Helpful+) AND they share the viewer's direction. Capability derives from `trust_score`, so it cannot be forged client-side
 
 ### Guide role (service-only, no moderation)
 
@@ -357,10 +357,10 @@ Capabilities are cumulative: a Contributor has all of the above.
 
 ### Welcome-newcomers (derived, Contributor)
 
-- Capability `welcome_newcomers` is unlocked at **Contributor** (100+ trust)
+- Capability `welcome_newcomers` is unlocked at **Contributor** (`≥200` trust)
 - It is derived automatically from trust score — no opt-in required
-- Effect: the member's profile shows a "Steward" badge and they appear in the welcome strip for newcomers in their direction (within the first 7 days of joining)
-- No extra column; no write; purely computed in `lib/roles.ts`
+- Effect: the Contributor's own profile card shows a quiet "Steward" stamp, and `/directions` shows them a "Say hi to someone new" strip listing New-tier members in their direction (a "Say hi" action opens a peer note). Newcomers are selected by `tierForProfile(u) === "New"` + shared direction — there is no time window
+- No extra column; no write; purely computed in `lib/roles.ts` from existing snapshot data
 
 ### Anti-clout guardrails
 
@@ -373,7 +373,7 @@ Capabilities are cumulative: a Contributor has all of the above.
 ### QA checklist (contributor roles)
 
 - [ ] Apply migrations 031 (mentor_opt_in column + guide role + set_cohort_guide RPC)
-- [ ] As a Helpful+ member, opt in as mentor → appears in discovery strip for same-direction members at same/lower tier
+- [ ] As a Helpful+ member, opt in as mentor → appears in the "People to learn from" strip on `/directions` for other members who share that direction
 - [ ] As a non-Helpful+ member, mentor toggle should NOT appear
 - [ ] As a cohort owner, open the members list; a Helpful+ member shows "Make guide" button
 - [ ] As a cohort owner, click "Make guide" → member's row gains a quiet "Guide" badge; button changes to "Remove guide"
