@@ -1,0 +1,59 @@
+----- page 1 -----
+Collective Website Review & Recommendations
+Overall Assessment
+The site is much stronger than a typical pre-seed landing page. The branding is cohesive and aligns
+well with the Collective vision of practice, proof, feedback, trust, and contribution. The next
+improvements should focus less on aesthetics and more on clarity, credibility, and conversion.
+1. Hero Section
+Replace the text-heavy hero with a split layout: logo, headline, short description, CTA on the left,
+and an animated phone mockup on the right showing the product in action.
+2. Simplify the Value Proposition
+Use a concise headline such as 'Build real confidence through practice—not likes.' Follow it with a
+clear explanation of what users actually do.
+3. Add Social Proof
+Display beta metrics, testimonials, or usage statistics to build credibility.
+4. Animated Product Flow
+Show Discover → Practice → Upload Proof → Receive Feedback → Build Trust → Contribute in a
+simple animation.
+5. Product Screenshots
+Add screenshots for Practice, Upload Proof, Receive Feedback, and Trust Profile.
+6. Explain the Mission
+Include a memorable comparison: 'Social media rewards attention. Collective rewards progress.'
+7. Highlight AI
+Dedicate a section explaining AI-assisted practice, reflection, feedback summaries, and
+preparation.
+8. Practice Examples
+Show concrete examples like interview practice, introductions, presentations, negotiations, and
+leadership exercises.
+9. Explain Trust
+Visually explain how trust is earned through consistent practice, proof, useful feedback, and
+contribution.
+10. Exclusive Beta
+Frame the beta as an invitation to help build the future of the platform.
+11. Founder Story
+Include a short founder story explaining why Collective exists.
+12. CTA Hierarchy
+Primary CTA: Join Closed Beta. Secondary CTA: Watch a 90-Second Demo.
+13. Testimonials
+Feature early user quotes as soon as available.
+
+----- page 2 -----
+14. Vision
+Show future directions such as Communication, Leadership, Career, Business, Relationships, and
+Fitness.
+15. Footer
+Expand with Mission, Privacy, Terms, Roadmap, Contact, Socials, and Founder.
+16. Mobile Polish
+Increase spacing, padding, typography scale, and section separation for a more premium feel.
+17. Motion
+Add subtle animations including logo glow, card transitions, button hover effects, and progress
+animations.
+18. Most Important Addition
+Create a dedicated section explaining that Collective rewards progress rather than attention and
+builds reputation through meaningful practice and contribution.
+Priority Roadmap
+1. Show the product visually with screenshots and mockups.
+2. Simplify the messaging.
+3. Add credibility through testimonials and metrics.
+4. Visualize the Practice → Proof → Feedback → Trust loop.
+5. Refine spacing, typography, and motion for a premium experience.
