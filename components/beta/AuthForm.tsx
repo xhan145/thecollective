@@ -27,6 +27,11 @@ function googleErrorMessage(code: string | null, detail: string | null): string 
   return GOOGLE_ERROR_MESSAGES[code] || "Google sign-in failed. Please try again.";
 }
 
+// Show the Google button only once Google sign-in is configured. Set
+// NEXT_PUBLIC_GOOGLE_ENABLED=true (alongside the GOOGLE_WEB_CLIENT_ID/SECRET
+// server vars + Supabase Google provider) to reveal it. Inlined at build time.
+const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
+
 export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   const router = useRouter();
   const { supabaseEnabled, signUpWithEmail, signInWithEmail, enterDemoBeta } = useBetaApp();
@@ -143,15 +148,17 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
               {loading ? "One moment..." : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
           </form>
-          <Button
-            type="button"
-            variant="secondary"
-            className="w-full"
-            disabled={loading || googleLoading}
-            onClick={startGoogleAuth}
-          >
-            {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
-          </Button>
+          {GOOGLE_ENABLED && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              disabled={loading || googleLoading}
+              onClick={startGoogleAuth}
+            >
+              {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
+            </Button>
+          )}
           <button
             type="button"
             className="w-full py-2 text-sm font-extrabold text-[#6E6E6E]"
