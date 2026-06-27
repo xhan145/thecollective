@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import {
   authErrorRedirect,
@@ -23,9 +24,11 @@ export async function GET(req: Request) {
   const url = buildGoogleAuthUrl({ mode, invite, nonce }, getGoogleRedirectUri(origin));
 
   const res = NextResponse.redirect(url);
+  const cookieStore = await cookies();
   // Set the CSRF nonce directly on the redirect response so it reliably rides
   // the 302 (mutating cookies() does not always attach to a custom NextResponse).
   res.cookies.set("google_oauth_nonce", nonce, {
+
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

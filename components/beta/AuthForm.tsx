@@ -11,6 +11,7 @@ import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 const field =
   "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
 
+const GOOGLE_LOGO_URL = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
 const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
   google_not_configured: "Google sign-in is not configured yet.",
   google_denied: "Google sign-in was cancelled.",
@@ -26,11 +27,6 @@ function googleErrorMessage(code: string | null, detail: string | null): string 
   if (code === "google_token_failed" && detail) return detail;
   return GOOGLE_ERROR_MESSAGES[code] || "Google sign-in failed. Please try again.";
 }
-
-// Show the Google button only once Google sign-in is configured. Set
-// NEXT_PUBLIC_GOOGLE_ENABLED=true (alongside the GOOGLE_WEB_CLIENT_ID/SECRET
-// server vars + Supabase Google provider) to reveal it. Inlined at build time.
-const GOOGLE_ENABLED = process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true";
 
 export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   const router = useRouter();
@@ -148,17 +144,19 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
               {loading ? "One moment..." : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
           </form>
-          {GOOGLE_ENABLED && (
-            <Button
-              type="button"
-              variant="secondary"
-              className="w-full"
-              disabled={loading || googleLoading}
-              onClick={startGoogleAuth}
-            >
-              {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
-            </Button>
-          )}
+
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full"
+            disabled={loading || googleLoading}
+            onClick={startGoogleAuth}
+          >
+            {!googleLoading && (
+              <img src={GOOGLE_LOGO_URL} alt="" aria-hidden className="h-5 w-5 shrink-0" width={20} height={20} />
+            )}
+            {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
+          </Button>
           <button
             type="button"
             className="w-full py-2 text-sm font-extrabold text-[#6E6E6E]"
