@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Bell, CheckCircle2 } from "lucide-react";
 import { AppShell } from "@/components/beta/AppShell";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
@@ -9,9 +10,18 @@ import { ProofCard } from "@/components/beta/ProofComponents";
 import { Badge, ButtonLink, Card, EmptyState, HeroCard, PageHeader, ProgressBar, SectionLabel } from "@/components/beta/ui";
 import { InstallPwaCard } from "@/components/beta/InstallPwaCard";
 import { getNextPractice } from "@/lib/personalization";
+import { getGreeting } from "@/lib/greeting";
 
 export default function HomePage() {
   const { currentUser, snapshot, trustSummary, getFeedbackForProof } = useBetaApp();
+  // Compute the greeting from the user's device clock on the first client render
+  // (lazy init), and re-sync on mount so a tab left open across a boundary still
+  // updates. getGreeting() reads local time, so the value is always correct for
+  // the viewer's timezone.
+  const [greeting, setGreeting] = useState(() => getGreeting());
+  useEffect(() => {
+    setGreeting(getGreeting());
+  }, []);
   const latestProof = snapshot.proofs.find((proof) => proof.userId === (currentUser?.id || "user-alex")) || snapshot.proofs[0];
   const featuredDirection =
     snapshot.directions.find((direction) => direction.id === currentUser?.currentDirectionId) ||
@@ -28,7 +38,7 @@ export default function HomePage() {
     <AppShell>
       <div className="space-y-6">
         <PageHeader
-          title={`Good morning${currentUser ? `, ${currentUser.displayName}` : ""}.`}
+          title={`${greeting}${currentUser ? `, ${currentUser.displayName}` : ""}.`}
           subtitle={currentUser?.goalText ? `Working toward: ${currentUser.goalText}` : "Small steps. Real progress."}
           action={
             <Link href="/feed" className="relative grid h-11 w-11 place-items-center rounded-full bg-[#FFFDF8] text-[#111111] shadow-[0_10px_30px_rgba(71,52,18,0.08)]" aria-label="Notifications">

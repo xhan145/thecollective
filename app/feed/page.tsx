@@ -6,7 +6,7 @@ import { ProofCard } from "@/components/beta/ProofComponents";
 import { ButtonLink, EmptyState, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { MotionItem, MotionList } from "@/components/beta/motion";
 import { rankFeed } from "@/lib/feed/rankProofFeed";
-import { levelRank } from "@/lib/betaTrust";
+import { hasCapability } from "@/lib/roles";
 
 export default function FeedPage() {
   const { snapshot, currentUser, getFeedbackForProof } = useBetaApp();
@@ -14,7 +14,7 @@ export default function FeedPage() {
   const authorsById = Object.fromEntries(snapshot.users.map((u) => [u.id, u]));
   const viewer = currentUser ?? snapshot.users.find((u) => u.id === snapshot.currentUserId) ?? snapshot.users[0];
   const ranked = viewer ? rankFeed(viewer, snapshot.proofs, authorsById, snapshot.usefulCountByProof) : [];
-  const canGiveFeedback = viewer ? levelRank(viewer) >= 2 : false;
+  const canGiveFeedback = hasCapability(viewer, "give_feedback");
   const realCount = snapshot.proofs.filter((p) => !p.isDemo && p.userId !== viewer?.id).length;
 
   return (

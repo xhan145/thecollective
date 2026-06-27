@@ -42,6 +42,7 @@ export type UserProfile = {
   currentDirectionId?: string | null;
   onboardingCompleted?: boolean;
   trustScore?: number;
+  mentorOptIn?: boolean;
   practiceCount?: number;
   proofCount?: number;
   feedbackGivenCount?: number;
@@ -279,6 +280,8 @@ export type BetaAppSnapshot = {
   // Knowledge tips.
   practiceTips: PracticeTip[];
   usefulCountByTip: Record<string, number>;
+  // Cohorts the current user belongs to.
+  myCohorts: CohortEntity[];
 };
 
 export type ProofDraftInput = {
@@ -307,3 +310,5 @@ export type AppFeedbackDraftInput = {
 import type { AiInteraction, AiUserFeedback } from "./aiTypes";
 import type { PracticeTip } from "./tips/types";
 export type { PracticeTip };
+import type { Cohort as CohortEntity } from "./cohorts/types";
+export type { CohortEntity };

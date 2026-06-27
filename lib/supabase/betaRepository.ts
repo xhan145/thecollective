@@ -66,6 +66,7 @@ function mapProfile(row: any): UserProfile {
     currentDirectionId: row.current_direction_id ?? null,
     onboardingCompleted: row.onboarding_completed ?? false,
     trustScore: row.trust_score ?? 0,
+    mentorOptIn: row.mentor_opt_in ?? false,
     practiceCount: row.practice_count ?? 0,
     proofCount: row.proof_count ?? 0,
     feedbackGivenCount: row.feedback_given_count ?? 0,
@@ -261,9 +262,9 @@ export async function loadUserBundle(
 
   const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes] =
     await Promise.all([
-      client.from("proofs").select("*").order("created_at", { ascending: false }),
+      client.from("proofs").select("*").or(`held.eq.false,user_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
-      client.from("feedback").select("*").order("created_at", { ascending: false }),
+      client.from("feedback").select("*").or(`held.eq.false,author_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("trust_events").select("*").eq("user_id", userId),
       client.from("app_feedback").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       client.from("practice_completions").select("prompt_id").eq("user_id", userId),
@@ -421,7 +422,7 @@ export async function updateOnboarding(
 export async function updateProfile(
   client: SupabaseClient,
   userId: string,
-  fields: { displayName?: string; username?: string; bio?: string },
+  fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean },
 ): Promise<void> {
   const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (fields.displayName !== undefined) {
@@ -430,6 +431,7 @@ export async function updateProfile(
   }
   if (fields.username !== undefined) patch.username = fields.username;
   if (fields.bio !== undefined) patch.bio = fields.bio;
+  if (fields.mentorOptIn !== undefined) patch.mentor_opt_in = fields.mentorOptIn;
   await client.from("profiles").update(patch).eq("id", userId);
 }
 

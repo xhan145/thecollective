@@ -196,3 +196,196 @@ Expected output: `tips checks passed`
   validation (`assertBrandSafe` + zod). Off-brand/malformed output never reaches a user.
 - `COLLECTIVE_PANEL`/demo panel stays mock by design.
 - Verify pure layer: `npx tsx scripts/check-ai-output-policy.ts`.
+
+## 12. Spam enforcement (migration 029)
+
+### Columns
+
+`proofs`, `practice_tips`, and `feedback` each have two new boolean columns (both default `false`):
+
+- **`held`** — content is quarantined; hidden from other members' read paths until cleared.
+- **`removed`** — content has been permanently removed by an admin; not shown to anyone.
+
+### How held is stamped
+
+A `BEFORE INSERT` trigger (`trg_stamp_held`) runs on all three tables. If the inserting
+author's `profiles.spam_signal >= 70` at insert time, the row is inserted with `held = true`
+automatically. The trigger runs as `SECURITY DEFINER`; clients cannot bypass it.
+
+### Self-heal (auto-release)
+
+When `_recompute_profile_counts(uid)` recalculates a user's spam signal and the result
+drops below 40, all non-removed held rows for that author are released (`held = false`)
+automatically. This means good behavior over time restores content visibility without
+admin action.
+
+### Admin actions
+
+Admins can act on held content via **`POST /api/admin/moderation`** (admin-only route,
+service-role only):
+
+| Action   | Effect                                      |
+|----------|---------------------------------------------|
+| `clear`  | Sets `held = false, removed = false` (visible again) |
+| `remove` | Sets `held = true, removed = true` (permanently removed) |
+
+Request body: `{ action: "clear" | "remove", kind: "proof" | "tip" | "feedback", id: "<uuid>" }`
+
+The held-content list is visible at **`/admin/beta`** under "Held content (pending review)".
+Each row shows the content kind, a truncated preview, and Clear / Remove buttons.
+The listing only shows items with `held = true`; removed items remain held and drop off
+automatically once an admin marks them removed (they won't appear again).
+
+### Read-path hiding
+
+- **Proofs / feedback bundle**: server routes exclude `held = true` rows from other
+  members' feeds. Authors always see their own content regardless of held status.
+- **Practice tips**: the `listTips` function filters out `held = true` rows for non-authors.
+
+### Beginner-safe framing
+
+Content held by the system is described to the author as "being reviewed" rather than
+"flagged as spam." No public shaming; no permanent ban without admin review.
+
+### Verification
+
+```bash
+npx tsx scripts/check-spam-enforcement.ts
+```
+Expected output: `spam-enforcement checks passed`
+
+## 13. Cohorts
+
+Cohorts let members practice together in scoped groups. Added by migration 030.
+
+### Database tables
+
+| Table | Purpose |
+|---|---|
+| `cohorts` | Group metadata (name, description, direction, visibility, accent) |
+| `cohort_members` | Membership rows with `role` (`owner` / `member`) |
+| `cohort_join_requests` | Pending join requests for `request`-visibility cohorts |
+| `cohort_invites` | Single-use invite codes for `invite`-visibility cohorts |
+
+### Create gate
+
+A user must have `trust_score >= 50` (the "Reliable" level) to create a cohort. Enforced client-side by `canCreateCohort(profile)` in `lib/cohorts/access.ts` and server-side by the `create_cohort` RPC (`SECURITY DEFINER`).
+
+### Visibility join paths
+
+| Visibility | How to join |
+|---|---|
+| `public` | Click "Join cohort" — immediate via `join_cohort` RPC |
+| `request` | Click "Request to join" — creates a `cohort_join_requests` row; owner approves or declines via `approve_join_request` / `decline_join_request` RPCs |
+| `invite` | Redeem a code at `/cohorts` invite field — `redeem_cohort_invite` RPC validates and admits |
+
+### RPC-only writes
+
+All cohort mutations go through `SECURITY DEFINER` RPCs. Clients cannot insert/update/delete `cohort_members` or `cohort_join_requests` directly; RLS policies deny direct writes to those tables.
+
+### Scoped feed
+
+`getCohortFeed(cohortId, proofs)` in the provider receives only proofs belonging to current cohort members. The caller pre-filters before passing to `rankFeed`:
+
+```ts
+const memberIds = new Set(members.map((m) => m.userId));
+const scopedProofs = feedProofs.filter((p) => memberIds.has(p.userId));
+```
+
+- **Held proofs excluded**: `listCohortProofs` (server) omits rows where `held = true` for non-authors, matching the global feed hiding rule.
+- **Non-member proofs excluded**: only `cohort_members` rows contribute.
+
+### Founding-circle backfill
+
+Migration 030 seeds a **public** "Founding Circle" cohort (`id = 00000000-0000-0000-0000-0000000f0001`, `visibility = 'public'`) and backfills every existing beta member (`profiles.cohort_id = 'founding-circle'`) as a `member` row. Ownership is assigned to the first profile whose `role` is `founder`/`admin`; if no such profile exists (as on the current prod instance, where access is governed by `ADMIN_EMAILS` rather than a profile role), the Founding Circle is intentionally **ownerless** — it is a system "everyone" cohort, not a user-moderated group, and being public it needs no owner to function (members join/leave freely). User-created cohorts always have an owner (the creator, set by `create_cohort`).
+
+### QA checklist (cohorts)
+
+- [ ] Apply migration 030 (idempotent)
+- [ ] Confirm `cohorts`, `cohort_members`, `cohort_join_requests`, `cohort_invites` tables exist
+- [ ] As a user with `trust_score < 50`: "Create" button should NOT appear on `/cohorts`
+- [ ] As a user with `trust_score >= 50`: "Create" button appears; filling the form calls `create_cohort` RPC
+- [ ] Public cohort: "Join cohort" → immediate membership, scoped feed shows member proofs
+- [ ] Request cohort: "Request to join" → calm "Request sent" message; owner inbox shows the request
+- [ ] Owner approves request → member appears in members list, feed updates
+- [ ] Owner declines request → request disappears
+- [ ] Owner removes a member → member removed, not in members list
+- [ ] Invite cohort: no join button shown, only "Invite only" note; redeeming a valid code at `/cohorts` joins the cohort
+- [ ] Owner sees no "Leave" control; member sees quiet "Leave" button; non-member sees join control
+- [ ] Scoped feed shows only members' proofs (not outsiders')
+- [ ] Milestone stamp appears when `feedProofs.length >= 25`
+- [ ] No member counts used as status signals; no leaderboard
+
+### Verification
+
+```bash
+npx tsx scripts/check-cohorts.ts
+```
+Expected output: `cohorts checks passed`
+
+## 14. Contributor roles
+
+### Capability ladder
+
+The single source of truth is **`lib/roles.ts`** (`hasCapability`, `tierForProfile`, `TIER_CAPABILITIES`). Tier is derived purely from `trust_score` — never written directly. Existing thresholds are unchanged.
+
+| Tier | Trust score | Capabilities unlocked at this tier |
+|---|---|---|
+| New | `<20` | — |
+| Practicing | `≥20` | — |
+| Reliable | `≥50` | `give_feedback`, `host_cohort` |
+| Helpful | `≥100` | `mentor_visibility`, `cohort_guide` |
+| Contributor | `≥200` | `welcome_newcomers`, `steward` |
+
+Capabilities are cumulative: a Contributor has all of the above.
+
+### Mentor opt-in
+
+- Column: `profiles.mentor_opt_in` (boolean, default `false`)
+- Effective at: **Helpful+** (requires `mentor_visibility` capability)
+- UI: quiet toggle on own profile card (visible only to the profile owner)
+- Effect: the member appears in the "People to learn from in this direction" strip on `/directions` for other members who share their current direction
+- Guard: computed inline in `app/directions/page.tsx` — a candidate is listed when `mentorOptIn` is true AND `hasCapability(candidate, "mentor_visibility")` (Helpful+) AND they share the viewer's direction. Capability derives from `trust_score`, so it cannot be forged client-side
+
+### Guide role (service-only, no moderation)
+
+- Role value: `"guide"` in `cohort_members.role` (alongside `"owner"` / `"member"`)
+- Purpose: a calm service signal — guides are listed as someone to learn from inside a cohort; they have **no moderation powers** (cannot approve/decline requests, remove members, or perform any owner-only action)
+- Set by: RPC `set_cohort_guide(p_cohort_id, p_user_id, p_is_guide)` — owner-only; enforced `SECURITY DEFINER`
+- Target: the target member must be **Helpful+** (`cohort_guide` capability) to become a guide; if they later drop below Helpful, they retain the role until the owner changes it
+- UI: on the cohort detail page (owner-only members list), a quiet "Make guide" / "Remove guide" button appears next to any member who is guide-eligible or already a guide; a `Guide` badge renders next to that member's name
+
+### Welcome-newcomers (derived, Contributor)
+
+- Capability `welcome_newcomers` is unlocked at **Contributor** (`≥200` trust)
+- It is derived automatically from trust score — no opt-in required
+- Effect: the Contributor's own profile card shows a quiet "Steward" stamp, and `/directions` shows them a "Say hi to someone new" strip listing New-tier members in their direction (a "Say hi" action opens a peer note). Newcomers are selected by `tierForProfile(u) === "New"` + shared direction — there is no time window
+- No extra column; no write; purely computed in `lib/roles.ts` from existing snapshot data
+
+### Anti-clout guardrails
+
+- No trust counts, tier labels, or capability names are shown in social feeds or other members' views
+- Badges (Guide, Steward) describe a service function, not a status rank
+- Mentor and guide listings are framed as "someone to learn from" / "cohort guide" — not leaderboard positions
+- No notification is sent when a user's tier changes; tier is only surfaced in the user's own profile card
+- The admin panel (`/admin/beta`) is the only place where trust scores are visible to non-owners
+
+### QA checklist (contributor roles)
+
+- [ ] Apply migrations 031 (mentor_opt_in column + guide role + set_cohort_guide RPC)
+- [ ] As a Helpful+ member, opt in as mentor → appears in the "People to learn from" strip on `/directions` for other members who share that direction
+- [ ] As a non-Helpful+ member, mentor toggle should NOT appear
+- [ ] As a cohort owner, open the members list; a Helpful+ member shows "Make guide" button
+- [ ] As a cohort owner, click "Make guide" → member's row gains a quiet "Guide" badge; button changes to "Remove guide"
+- [ ] As a cohort owner, click "Remove guide" → badge disappears; button reverts to "Make guide"
+- [ ] A guide member has no approve/decline/remove controls — only the owner does
+- [ ] A non-Helpful+ member in the cohort shows no guide toggle
+- [ ] As a Contributor, "Steward" badge appears on own profile card; welcome strip visible to newcomers in same direction
+- [ ] No tier labels or trust counts appear in any social feed or other member's view
+
+### Verification
+
+```bash
+npx tsx scripts/check-roles.ts
+```
+Expected output: `roles checks passed`

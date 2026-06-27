@@ -25,7 +25,10 @@ export async function GET(req: Request) {
 
   const res = NextResponse.redirect(url);
   const cookieStore = await cookies();
-  cookieStore.set("google_oauth_nonce", nonce, {
+  // Set the CSRF nonce directly on the redirect response so it reliably rides
+  // the 302 (mutating cookies() does not always attach to a custom NextResponse).
+  res.cookies.set("google_oauth_nonce", nonce, {
+
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

@@ -82,6 +82,17 @@ export async function GET(req: Request) {
     id: r.id, reason: r.reason ?? null, body: r.practice_tips?.body ?? "(deleted)", tipId: r.practice_tips?.id ?? null,
   }));
 
+  const heldQuery = (table: string, authorCol: string) =>
+    service.from(table).select(`id, ${authorCol}, body, created_at`).eq("held", true).order("created_at", { ascending: false }).limit(25);
+  const [heldProofs, heldTips, heldFeedback] = await Promise.all([
+    heldQuery("proofs", "user_id"), heldQuery("practice_tips", "author_id"), heldQuery("feedback", "author_id"),
+  ]);
+  const heldContent = [
+    ...(heldProofs.data ?? []).map((r: any) => ({ kind: "proof" as const, id: r.id, authorId: r.user_id, body: r.body ?? "", createdAt: r.created_at })),
+    ...(heldTips.data ?? []).map((r: any) => ({ kind: "tip" as const, id: r.id, authorId: r.author_id, body: r.body ?? "", createdAt: r.created_at })),
+    ...(heldFeedback.data ?? []).map((r: any) => ({ kind: "feedback" as const, id: r.id, authorId: r.author_id, body: r.body ?? "", createdAt: r.created_at })),
+  ];
+
   return NextResponse.json({
     stats: {
       totalUsers, demoUsers, onboardedUsers, betaUsers,
@@ -100,5 +111,6 @@ export async function GET(req: Request) {
     noProof,
     spamReview,
     reportedTips,
+    heldContent,
   });
 }

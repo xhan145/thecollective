@@ -12,7 +12,6 @@ const field =
   "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
 
 const GOOGLE_LOGO_URL = "https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg";
-
 const GOOGLE_ERROR_MESSAGES: Record<string, string> = {
   google_not_configured: "Google sign-in is not configured yet.",
   google_denied: "Google sign-in was cancelled.",
@@ -145,6 +144,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
               {loading ? "One moment..." : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
           </form>
+
           <Button
             type="button"
             variant="secondary"
