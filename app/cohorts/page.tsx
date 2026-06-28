@@ -130,7 +130,7 @@ export default function CohortsPage() {
         <section className="space-y-3">
           <SectionLabel title="Your cohorts" />
           {myCohorts.length > 0 ? (
-            <MotionList className="space-y-3">
+            <MotionList className="space-y-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
               {myCohorts.map((cohort) => (
                 <MotionItem key={cohort.id}>
                   <CohortCard cohort={cohort} />
@@ -149,7 +149,7 @@ export default function CohortsPage() {
         {forYourDirections.length > 0 && (
           <section className="space-y-3">
             <SectionLabel title="For your directions" />
-            <MotionList className="space-y-3">
+            <MotionList className="space-y-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
               {forYourDirections.map((cohort) => (
                 <MotionItem key={cohort.id}>
                   <CohortCard cohort={cohort} />
@@ -163,7 +163,7 @@ export default function CohortsPage() {
         {explore.length > 0 && (
           <section className="space-y-3">
             <SectionLabel title="Explore" />
-            <MotionList className="space-y-3">
+            <MotionList className="space-y-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
               {explore.map((cohort) => (
                 <MotionItem key={cohort.id}>
                   <CohortCard cohort={cohort} />

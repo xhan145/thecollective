@@ -16,8 +16,26 @@ export function isGoogleAuthConfigured(): boolean {
 }
 
 export function getAppOrigin(req?: Request): string {
+  // Prefer the host the request actually arrived on so the whole OAuth round-trip
+  // (start → Google → callback → google-complete) stays on a single origin. The
+  // CSRF nonce cookie is host-only, so pinning to NEXT_PUBLIC_APP_URL broke sign-in
+  // whenever the app is served from a different domain (e.g. joincollective.net)
+  // than the env value (the vercel.app URL): the nonce set on the user's domain
+  // never reached the cross-domain callback. NEXT_PUBLIC_APP_URL is only a fallback
+  // for contexts without a request (e.g. local scripts).
+  if (req) {
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    if (host) {
+      const proto = req.headers.get("x-forwarded-proto") || "https";
+      return `${proto}://${host}`;
+    }
+    try {
+      return new URL(req.url).origin;
+    } catch {
+      // fall through to the env/default below
+    }
+  }
   if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
-  if (req) return new URL(req.url).origin;
   return "http://localhost:3000";
 }
 
