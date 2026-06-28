@@ -64,6 +64,7 @@ export default function ProfilePage() {
               <ButtonLink href="/profile/saved" variant="secondary" className="w-full">Saved for practice</ButtonLink>
               <ButtonLink href="/profile/learning" variant="secondary" className="w-full">People you learn from</ButtonLink>
             </div>
+            <ButtonLink href="/badges" variant="secondary" className="w-full">Badges</ButtonLink>
             <ButtonLink href="/notes" variant="secondary" className="w-full">Peer notes &amp; requests</ButtonLink>
             <ButtonLink href="/contribute" variant="secondary" className="w-full">Contribute</ButtonLink>
             <div className="grid grid-cols-2 gap-3">

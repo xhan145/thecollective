@@ -14,7 +14,7 @@ import { useTheme } from "./ThemeProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges"];
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
