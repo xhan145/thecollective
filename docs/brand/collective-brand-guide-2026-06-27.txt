@@ -1,0 +1,126 @@
+--- page 1 ---
+Collective Brand Package
+ Small steps. Real progress.
+A warm, calm identity system for a progress-and-contribution platform where people discover meaningful directions, practice real growth, submit proof,
+receive feedback, build trust, and eventually help others.
+Core loop: Discover -> Practice -> Prove -> Get Feedback -> Build Trust -> Contribute
+Launch wedge: Confidence, communication, and momentum.
+
+--- page 2 ---
+1. Brand Foundation
+Product concept
+Collective is not a normal social media app, course app, or coaching marketplace. It is a place to practice useful
+growth, submit proof, receive feedback, and earn trust through contribution.
+Brand promise
+Progress you can build on.
+Personality
+Warm, calm, useful, trustworthy, beginner-safe, lightly premium, never performative.
+Principles
+Real progress over appearance. Practice over passive content. Usefulness over attention. Contribution over clout.
+Earned trust, not paid trust. AI support, not AI authority.
+
+--- page 3 ---
+2. Logo System
+The mark represents many small practices, proofs, feedback notes, and contributions forming a shared open center. It should feel communal and
+active, not like a generic sun, star, flower, or badge.
+Primary mark
+Horizontal lockup
+App icon direction
+Usage: Use the large mark on Home and onboarding. Use the mini mark in sheets, empty states, success states, and secondary screens. Keep it quiet
+and persistent without making the app feel like an advertisement.
+Do not: Stretch, rotate, recolor randomly, put on loud backgrounds, or use it as a clout badge.
+
+--- page 4 ---
+3. Color System
+The palette is warm, simple, and restrained. Gold is used for progress, primary actions, selected navigation, and positive completion moments. Cream
+and card colors keep the interface calm.
+Collective Gold
+#F2A900
+Use with restraint. Maintain contrast for text and action states.
+Collective Gold Bright
+#FFB000
+Use with restraint. Maintain contrast for text and action states.
+Collective Soft
+#FFF1C7
+Use with restraint. Maintain contrast for text and action states.
+Collective Cream
+#FFF8EE
+Use with restraint. Maintain contrast for text and action states.
+Collective Card
+#FFFDF8
+Use with restraint. Maintain contrast for text and action states.
+Collective Text
+#111111
+Use with restraint. Maintain contrast for text and action states.
+Collective Muted
+#6E6E6E
+Use with restraint. Maintain contrast for text and action states.
+Collective Success
+#22C55E
+Use with restraint. Maintain contrast for text and action states.
+Collective Line
+#EFE7D8
+Use with restraint. Maintain contrast for text and action states.
+Collective Warm Shadow
+#2D1A000F
+Use with restraint. Maintain contrast for text and action states.
+
+--- page 5 ---
+4. Typography and UI Shape
+Use the native system font stack. Do not package proprietary fonts. On Android, default Compose/Roboto is acceptable. On iOS, SF Pro is acceptable.
+On web, use Inter if available, then system sans.
+Screen background
+#FFF8EE warm cream
+Cards
+#FFFDF8, 18dp radius, subtle elevation, no heavy borders
+Sheets
+28dp top radius, small centered mini mark, calm title, direct CTA
+Buttons
+Gold fill for primary actions. Tonal cream/gold for secondary actions.
+Motion
+Subtle. Use progress and completion animations. Avoid confetti and pressure.
+
+--- page 6 ---
+5. UI Reference - 16 Screen System
+This reference establishes the visual source of truth: warm cream background, gold actions, soft cards, persistent logo, bottom navigation, proof
+sheets, feedback sheets, trust education, and beginner-safe product language.
+
+--- page 7 ---
+
+--- page 8 ---
+6. Voice and Product Language
+Use
+Avoid
+Small steps. Real progress.
+Choose a direction. Practice one small step.
+Show what you practiced. It does not need to be perfect.
+Feedback helps you improve. It does not define you.
+Trust is earned through practice, proof, useful feedback, and
+contribution.
+Go viral
+Followers
+Likes
+Influencer
+Leaderboard
+Crush it
+Dominate
+Elite
+Shame-based streak copy
+AI support rule: AI may help users reflect, practice, summarize, and organize feedback. AI should not become the final authority on trust, worth,
+confidence, skill, or identity.
+
+--- page 9 ---
+7. Implementation Handoff
+Use the included Android vector, Kotlin Compose snippets, colors XML, CSS tokens, and JSON tokens to keep the brand consistent across codebases.
+Android logo
+android/res/drawable/ic_collective_mark.xml
+Compose tokens
+android/kotlin/CollectiveTokens.kt
+Compose logo
+android/kotlin/CollectiveBrand.kt
+Design tokens
+design-tokens/collective_tokens.json and collective_tokens.css
+Reference
+ui-reference/collective_16_screen_ui_reference.png
+Next best product pass: Proof Capture v1 - real image/video/audio picker, local URI
+handling, preview cards, permission-safe media attachments, and saved draft proof.

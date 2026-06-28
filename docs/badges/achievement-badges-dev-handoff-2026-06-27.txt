@@ -1,0 +1,600 @@
+--- page 1 ---
+Collective Achievement Badge System - Developer Handoff
+1
+ Achievement Badge System
+ Developer handoff for meaningful, behavior-based achievements inside Collective.
+Core product rule: achievements should reward practice, proof, reflection, feedback, trust, and contribution - not
+passive time spent in the app.
+
+--- page 2 ---
+Collective Achievement Badge System - Developer Handoff
+2
+1. Product Intent
+Collective is a progress-and-contribution platform. The achievement system should push users through the core loop:
+Discover -> Practice -> Prove -> Get Feedback -> Build Trust -> Contribute. Badges should make users want the next
+meaningful action, not just the next streak.
+Reward this
+Do not reward this
+Completing practice reps Submitting proof Applying
+feedback Improving a skill Helping beginners
+Earning trust through usefulness
+Opening the app for X days Follower count Likes as
+status Leaderboards as identity Shame streaks
+Empty profile decoration
+2. Badge Categories
+Category
+Purpose
+Example behavior
+Direction
+Helps the user commit to a useful path.
+Choose direction, refine goal, align practice to
+skill.
+Practice
+Rewards reps that build skill.
+Complete prompts, repeat reps, finish practice
+sets.
+Proof
+Makes growth visible and reviewable.
+Submit video/audio/text proof with context.
+Feedback
+Creates the improvement loop.
+Ask for feedback, apply it, give useful feedback.
+Reflection
+Turns actions into self-awareness.
+Name friction, learning, and next step.
+Trust
+Measures reliability and usefulness.
+Earn trust through proof and helpful behavior.
+Contribution
+Moves members from growth to helping others.
+Help beginners, share prompts, improve the
+app.
+Communication
+Supports the launch wedge.
+Voice reps, intros, active listening, calm
+delivery.
+
+--- page 3 ---
+Collective Achievement Badge System - Developer Handoff
+3
+3. Badge Page UI Direction
+This page should feel like a calm progress archive, not a trophy wall. The user should understand what they earned, why
+they earned it, and what meaningful action unlocks the next badge.
+Surface
+Implementation requirement
+Badge Page
+Grid of earned and locked badges with category filters: All, Core Loop, Practice, Proof, Feedback,
+Trust, Communication, Contribution.
+Profile
+Show only 6 selected identity badges. Do not show every badge by default.
+Proof Detail
+Show badges only when relevant to the proof, such as Clear Proof, Before and After, Evidence of
+Growth.
+Unlock Modal
+Use subtle progress motion and one sentence explaining the behavior that earned the badge. Avoid
+confetti overload.
+Locked State
+Show badge silhouette, name, and one clear next action. Do not reveal hidden badges until unlocked.
+
+--- page 4 ---
+Collective Achievement Badge System - Developer Handoff
+4
+4. MVP Badge Set - 30 Meaningful Achievements
+Launch with 30 badges only. This is enough to create a progression system without overwhelming beginner users or dev
+scope.
+ Direction Chosen
+ First Practice
+ First Proof
+First Feedback Received
+ First Reflection
+ First Feedback Given
+ First Full Loop
+ Feedback Applied
+ Feedback Loop
+ Before and After
+ Practice Builder
+ Real Reps
+ Strong Foundation
+ Proof Builder
+ Proof Library
+ Clear Proof
+ Honest Proof
+ Repeat the Rep
+ Better Than Last Time
+ Evidence of Growth
+ First Voice Rep
+ Confident Intro
+ Better Question
+ Active Listener
+ Calm Delivery
+ Communication Builder
+ Trust Started
+ Useful Feedback
+ Beginner Helper
+ Trusted Contributor
+
+--- page 5 ---
+Collective Achievement Badge System - Developer Handoff
+5
+5.1 Stage: Started
+The goal is to get the user through their first complete loop.
+Direction Chosen
+Direction / Common
+User selects a growth direction for the first time.
+direction.selected
+First Practice
+Practice / Common
+User completes their first practice rep.
+practice.completed
+First Proof
+Proof / Common
+User submits their first proof artifact.
+proof.submitted
+First Feedback Received
+Feedback / Common
+User receives feedback on any proof.
+feedback.received
+First Reflection
+Reflection / Common
+User writes a post-practice reflection.
+reflection.created
+First Feedback Given
+Feedback / Common
+User gives feedback to another member.
+feedback.given
+First Full Loop
+Full Loop / Uncommon
+User completes Direction -> Practice -> Proof ->
+Feedback -> Reflection.
+loop.completed
+Honest Proof
+Proof / Common
+Submit proof marked imperfect or in-progress.
+proof.submitted
+First Voice Rep
+Communication / Common
+Complete a speaking or voice-based communication
+practice.
+practice.completed
+Confident Intro
+Communication / Uncommon
+Record and submit a self-introduction proof.
+proof.submitted
+
+--- page 6 ---
+Collective Achievement Badge System - Developer Handoff
+6
+5.2 Stage: Practicing
+The goal is to normalize repetition and reduce fear of proof.
+Practice Builder
+Practice / Common
+Complete 10 practice reps.
+practice.completed
+Real Reps
+Practice / Uncommon
+Complete 25 practice reps.
+practice.completed
+Proof Builder
+Proof / Uncommon
+Submit 10 proofs.
+proof.submitted
+Clear Proof
+Proof / Common
+Submit proof with title, context, and a focused feedback
+ask.
+proof.submitted
+Better Question
+Communication / Common
+Complete a practice focused on asking a stronger
+question.
+practice.completed
+Active Listener
+Communication / Common
+Complete a listening-focused practice.
+practice.completed
+
+--- page 7 ---
+Collective Achievement Badge System - Developer Handoff
+7
+5.3 Stage: Improving
+The goal is to show the product creates visible progress.
+Feedback Applied
+Feedback / Uncommon
+User marks feedback as applied to a later practice.
+feedback.applied
+Feedback Loop
+Full Loop / Rare
+User receives feedback, practices again, and submits
+improved proof.
+loop.feedback_completed
+Before and After
+Proof / Rare
+User links two proofs that show visible improvement.
+proof.comparison_created
+Repeat the Rep
+Practice / Uncommon
+Redo the same practice prompt and submit a new proof.
+practice.repeated
+Better Than Last Time
+Proof / Rare
+Submit a second attempt that improves on the first.
+proof.improvement_marked
+Evidence of Growth
+Proof / Rare
+Attach context explaining what changed between two
+proofs.
+proof.growth_context_added
+Calm Delivery
+Communication / Uncommon
+Submit proof focused on tone, pacing, and calmness.
+proof.submitted
+
+--- page 8 ---
+Collective Achievement Badge System - Developer Handoff
+8
+5.4 Stage: Trusted
+The goal is to make trust earned through usefulness and safe behavior.
+Trust Started
+Trust / Common
+Earn your first trust point through proof or useful
+feedback.
+trust.changed
+Useful Feedback
+Feedback / Common
+Another member marks your feedback as helpful.
+feedback.marked_helpful
+
+--- page 9 ---
+Collective Achievement Badge System - Developer Handoff
+9
+5.5 Stage: Contributing
+The goal is to move members from personal growth to helping others.
+Beginner Helper
+Contribution / Rare
+Give useful feedback to someone on their first proof.
+feedback.marked_helpful
+
+--- page 10 ---
+Collective Achievement Badge System - Developer Handoff
+10
+5.6 Stage: Identity
+The goal is to give users badges they are proud to display on profile.
+Strong Foundation
+Practice / Rare
+Complete 50 meaningful practice reps.
+practice.completed
+Proof Library
+Proof / Rare
+Submit 50 proofs into your progress archive.
+proof.submitted
+Communication Builder
+Communication / Rare
+Complete 25 communication practices.
+practice.completed
+Trusted Contributor
+Contribution / Epic
+Earn high trust through repeated helpful contributions.
+trust.changed
+
+--- page 11 ---
+Collective Achievement Badge System - Developer Handoff
+11
+6. Developer Implementation Spec
+Treat achievements as a rule-driven system backed by user events. Avoid hardcoding checks into screens. Screens should
+emit events; the achievement service should evaluate unlocks.
+Recommended Data Model
+-- Core achievement definition
+create table achievements (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  name text not null,
+  description text not null,
+  category text not null,
+  stage text not null,
+  rarity text not null default 'Common',
+  icon_url text,
+  xp_reward int not null default 0,
+  trust_reward int not null default 0,
+  is_hidden boolean not null default false,
+  is_active boolean not null default true,
+  unlock_event text not null,
+  unlock_condition jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+-- User achievement state
+create table user_achievements (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  achievement_id uuid not null references achievements(id) on delete cascade,
+  unlocked_at timestamptz not null default now(),
+  source_event_id uuid,
+  progress_snapshot jsonb not null default '{}',
+  primary key (user_id, achievement_id)
+);
+-- Generic activity/event ledger
+create table user_events (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  event_type text not null,
+  entity_type text,
+  entity_id uuid,
+  metadata jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+create index user_events_user_type_idx on user_events(user_id, event_type);
+create index achievements_unlock_event_idx on achievements(unlock_event);
+Event Evaluation Flow
+onUserEvent(event):
+  insert into user_events
+  candidateAchievements = achievements where unlock_event = event.type and is_active = true
+  for achievement in candidateAchievements:
+    if user already has achievement: continue
+    progress = buildProgressSnapshot(user_id, achievement, event)
+    if evaluate(achievement.unlock_condition, progress):
+      insert user_achievements
+      apply xp_reward
+      apply trust_reward if positive
+      create notification: achievement_unlocked
+
+--- page 12 ---
+Collective Achievement Badge System - Developer Handoff
+12
+Rule Evaluation Guidance
+Rule type
+Use for
+Implementation
+count_event
+Simple count thresholds
+COUNT(event_type WHERE user_id = current_user) >=
+threshold
+entity_quality
+Proof quality checks
+Validate fields such as title, context, feedback_prompt,
+attachment_count
+sequence
+Loops and improvement
+Check event order: feedback.received -> practice.completed
+-> proof.submitted
+relationship
+Helping beginners
+Check recipient state, such as recipient proof count = 1
+manual_review
+High trust and legendary badges
+Require admin or moderator confirmation before unlock
+
+--- page 13 ---
+Collective Achievement Badge System - Developer Handoff
+13
+7. Seed Data for MVP Badges
+Use this table to seed the achievements table. The icon files should be replaced by final app vector/SVG assets later; the
+current visual direction is included for design alignment.
+Slug
+Name
+Category
+Event
+XP
+Trust
+direction_chosen
+Direction Chosen
+Direction
+direction.selected
+10
+0
+first_practice
+First Practice
+Practice
+practice.completed
+10
+0
+first_proof
+First Proof
+Proof
+proof.submitted
+15
+1
+first_feedback_received
+First Feedback Received
+Feedback
+feedback.received
+10
+0
+first_reflection
+First Reflection
+Reflection
+reflection.created
+10
+0
+first_feedback_given
+First Feedback Given
+Feedback
+feedback.given
+15
+1
+first_full_loop
+First Full Loop
+Full Loop
+loop.completed
+30
+2
+feedback_applied
+Feedback Applied
+Feedback
+feedback.applied
+25
+2
+feedback_loop
+Feedback Loop
+Full Loop
+loop.feedback_completed
+40
+3
+before_and_after
+Before and After
+Proof
+proof.comparison_created
+35
+2
+practice_builder
+Practice Builder
+Practice
+practice.completed
+25
+1
+real_reps
+Real Reps
+Practice
+practice.completed
+50
+2
+strong_foundation
+Strong Foundation
+Practice
+practice.completed
+75
+3
+proof_builder
+Proof Builder
+Proof
+proof.submitted
+35
+2
+proof_library
+Proof Library
+Proof
+proof.submitted
+75
+3
+clear_proof
+Clear Proof
+Proof
+proof.submitted
+20
+1
+honest_proof
+Honest Proof
+Proof
+proof.submitted
+15
+1
+repeat_the_rep
+Repeat the Rep
+Practice
+practice.repeated
+25
+1
+better_than_last_time
+Better Than Last Time
+Proof
+proof.improvement_marked
+35
+2
+evidence_of_growth
+Evidence of Growth
+Proof
+proof.growth_context_added
+35
+2
+first_voice_rep
+First Voice Rep
+Communication
+practice.completed
+15
+0
+confident_intro
+Confident Intro
+Communication
+proof.submitted
+25
+1
+better_question
+Better Question
+Communication
+practice.completed
+20
+0
+active_listener
+Active Listener
+Communication
+practice.completed
+20
+0
+calm_delivery
+Calm Delivery
+Communication
+proof.submitted
+25
+1
+communication_builder
+Communication Builder
+Communication
+practice.completed
+60
+2
+trust_started
+Trust Started
+Trust
+trust.changed
+15
+0
+useful_feedback
+Useful Feedback
+Feedback
+feedback.marked_helpful
+20
+1
+beginner_helper
+Beginner Helper
+Contribution
+feedback.marked_helpful
+35
+2
+trusted_contributor
+Trusted Contributor
+Contribution
+trust.changed
+100
+5
+
+--- page 14 ---
+Collective Achievement Badge System - Developer Handoff
+14
+8. Future Badge Backlog
+Do not build these first. Keep them as Phase 2/3 expansions once the core loop is working and users are earning the MVP
+set.
+Direction
+Clearer Path, Direction Depth, Skill Map Started, Skill Map Builder, Path Refiner, Purpose Statement,
+Aligned Action, Direction Builder
+Practice
+Practice Variety, Comfort Zone Breaker, Practice Finisher, Hard Thing Done, Small Step Champion,
+Deep Work
+Proof
+Video Proof, Voice Proof, Written Proof, Proof With Context, Progress Snapshot, Portfolio Started
+Feedback
+Feedback Seeker, Specific Ask, Pattern Spotted, Coachable, Clear Communicator, Encouraging but
+Honest, Signal Giver
+Reflection
+What I Learned, Friction Found, Pattern Finder, Breakthrough Note, Self-Aware, Clear Next Step,
+Honest Check-In, Growth Thread, Reflection Library
+Trust
+Reliable Member, Helpful Member, Trusted Voice I, Trusted Voice II, Trusted Voice III, Trusted Guide,
+Proof-Backed Trust, Contribution Trust, Calm Presence, Trust Steward
+Contribution
+First Contribution, Practice Sharer, Prompt Builder, Guide in Training, Momentum Giver, Community
+Builder, Signal Booster, Collective Builder, Mentor Seed
+Communication
+Clearer Speaker, Hard Conversation, Concise Speaker, Story Practice, Feedback Receiver, Better
+Ask, Real-World Communication, Communication Proof, Confidence Signal
+Build Order
+1. Add event ledger and achievement tables.
+2. Seed MVP 30 achievement definitions.
+3. Emit events from Direction, Practice, Proof, Feedback, Reflection, and Trust flows.
+4. Implement server-side or edge-function achievement evaluator.
+5. Build Badge Page grid and Badge Detail sheet.
+6. Add achievement unlock notification and profile badge picker.
+7. Add analytics for unlock rate and drop-off between badges.
+Definition of Done
+All MVP badges can be unlocked from real app behavior, not manual toggles.
+A user cannot unlock the same badge twice.
+Locked badges show the next meaningful action unless hidden.
+Badge visuals render correctly in grid, profile, unlock modal, and proof detail contexts.
+Achievement checks run outside UI components so they work across web/mobile clients.
+Trust rewards are small and auditable; high-trust badges may require moderation review later.
