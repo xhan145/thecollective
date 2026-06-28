@@ -5,7 +5,9 @@ import {
   decodeOAuthState,
   getAppOrigin,
   getGoogleRedirectUri,
+  googleDisplayNameFromIdToken,
   isGoogleAuthConfigured,
+  profileInitials,
 } from "@/lib/googleAuth";
 import { getSupabaseServiceClient } from "@/lib/supabase/server";
 
@@ -90,6 +92,17 @@ export async function GET(req: Request) {
   const user = data.user;
   const service = getSupabaseServiceClient();
   const requireInvite = process.env.NEXT_PUBLIC_REQUIRE_INVITE_CODE === "true";
+
+  const displayName =
+    googleDisplayNameFromIdToken(tokens.id_token) ??
+    (typeof user.user_metadata?.given_name === "string" ? user.user_metadata.given_name.trim() : null);
+
+  if (displayName && service) {
+    await service
+      .from("profiles")
+      .update({ display_name: displayName, initials: profileInitials(displayName) })
+      .eq("id", user.id);
+  }
 
   if (state.mode === "signup" && state.invite) {
     await fetch(`${origin}/api/beta/redeem-invite`, {

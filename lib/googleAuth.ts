@@ -65,3 +65,27 @@ export function authErrorRedirect(req: Request, code: string, detail?: string): 
   if (detail) url.searchParams.set("detail", detail.slice(0, 180));
   return Response.redirect(url);
 }
+
+/** First name (or first token of full name) from a Google ID token payload. */
+export function googleDisplayNameFromIdToken(idToken: string): string | null {
+  try {
+    const payload = JSON.parse(Buffer.from(idToken.split(".")[1], "base64url").toString("utf8"));
+    if (typeof payload.given_name === "string" && payload.given_name.trim()) {
+      return payload.given_name.trim();
+    }
+    if (typeof payload.name === "string" && payload.name.trim()) {
+      const full = payload.name.trim();
+      return full.split(/\s+/)[0] || full;
+    }
+  } catch {
+    /* ignore malformed token */
+  }
+  return null;
+}
+
+export function profileInitials(displayName: string): string {
+  const parts = displayName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  const compact = displayName.replace(/\s+/g, "");
+  return (compact.slice(0, 2) || "M").toUpperCase();
+}
