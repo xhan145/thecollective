@@ -30,7 +30,7 @@ export default function FeedPage() {
         <section className="space-y-3">
           <SectionLabel title="For you" />
           {ranked.length ? (
-            <MotionList className="space-y-3">
+            <MotionList className="space-y-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-4 lg:space-y-0">
               {ranked.map(({ proof, relation }) => (
                 <MotionItem key={proof.id}>
                   <ProofCard
