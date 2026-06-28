@@ -49,6 +49,7 @@ export default function SettingsPage() {
         <SectionLabel title="Account" />
         <div className="space-y-2">
           <ButtonLink href="/account" variant="secondary" className="w-full">Edit account</ButtonLink>
+          <ButtonLink href="/settings/customization" variant="secondary" className="w-full">Customization &amp; pixel style</ButtonLink>
           <ButtonLink href="/notifications" variant="secondary" className="w-full">Notifications</ButtonLink>
           <ButtonLink href="/app-feedback" variant="secondary" className="w-full">Help shape Collective</ButtonLink>
         </div>

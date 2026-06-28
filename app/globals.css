@@ -306,3 +306,78 @@ button, input, textarea, select { font: inherit; }
    so remapped near-white text stays legible (not light-on-cream). */
 .dark .from-\[\#FFF1C7\] { --tw-gradient-from: var(--c-soft) var(--tw-gradient-from-position) !important; }
 .dark .to-\[\#FFFDF8\] { --tw-gradient-to: var(--c-surface) var(--tw-gradient-to-position) !important; }
+
+/* ============================================================
+   Pixel-soft layer — a subtle retro-handheld influence, configurable via
+   <html data-pixel="off|soft|medium"> + data-pixel-grid (set by
+   CustomizationProvider). Default Soft. NEVER pixelates text or avatars;
+   keeps cream/gold + rounded cards; honors reduced motion; preserves contrast.
+   ============================================================ */
+:root {
+  --pixel-intensity: 0.18;
+  --pixel-grid-opacity: 0.035;
+  --pixel-border-size: 1px;
+  --pixel-radius-step: 4px;
+  --retro-shadow: 2px 2px 0 rgba(17, 17, 17, 0.06);
+}
+html[data-pixel="off"] {
+  --pixel-intensity: 0;
+  --pixel-grid-opacity: 0;
+  --pixel-border-size: 0px;
+  --pixel-radius-step: 0px;
+  --retro-shadow: none;
+}
+html[data-pixel="medium"] {
+  --pixel-intensity: 0.34;
+  --pixel-grid-opacity: 0.06;
+  --pixel-border-size: 2px;
+  --pixel-radius-step: 6px;
+  --retro-shadow: 3px 3px 0 rgba(17, 17, 17, 0.09);
+}
+
+/* Whole-app Soft: a very subtle pixel grid layered over the page surface.
+   Applied as a real background-image (behind content), gated on soft/medium. */
+html[data-pixel="soft"] .pixel-grid-bg,
+html[data-pixel="medium"] .pixel-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 17, var(--pixel-grid-opacity)) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 17, var(--pixel-grid-opacity)) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+html[data-pixel-grid="off"] .pixel-grid-bg { background-image: none; }
+
+/* Opt-in utility classes (components adopt these as screens are updated). */
+.pixel-card {
+  border: var(--pixel-border-size) solid #efe7d8;
+  box-shadow: var(--retro-shadow);
+  border-radius: calc(24px - var(--pixel-radius-step));
+}
+.pixel-button {
+  box-shadow: var(--retro-shadow);
+}
+.pixel-icon-tile {
+  border: var(--pixel-border-size) solid #efe7d8;
+  border-radius: calc(16px - var(--pixel-radius-step));
+}
+.pixel-corner {
+  position: relative;
+}
+.pixel-corner::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 4px;
+  height: 4px;
+  background: #f2a900;
+  opacity: var(--pixel-intensity);
+  pointer-events: none;
+}
+.pixel-soft {
+  font-family: ui-monospace, "Courier New", monospace;
+  letter-spacing: 0.04em;
+}
+
+/* Density hook (components may consume --space-density). */
+html[data-density="compact"] { --space-density: 0.82; }
+html[data-density="comfortable"] { --space-density: 1; }

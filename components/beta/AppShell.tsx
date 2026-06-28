@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">
       <DesktopSidebar unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
-      <main className="relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
+      <main className="pixel-grid-bg relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
         <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
           <div className="flex items-center justify-between gap-3">
             <Link href="/home" aria-label="Collective home">

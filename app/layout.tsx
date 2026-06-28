@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Lora } from "next/font/google";
 import { BetaAppProvider } from "@/components/beta/AppStateProvider";
 import { ThemeProvider } from "@/components/beta/ThemeProvider";
+import { CustomizationProvider } from "@/components/beta/CustomizationProvider";
 import { ServiceWorkerRegister } from "@/components/beta/ServiceWorkerRegister";
 import QueryProvider from "@/components/QueryProvider";
 import "./globals.css";
@@ -52,12 +53,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans">
         <ThemeProvider>
-          <QueryProvider>
-            <BetaAppProvider>
-              <ServiceWorkerRegister />
-              {children}
-            </BetaAppProvider>
-          </QueryProvider>
+          <CustomizationProvider>
+            <QueryProvider>
+              <BetaAppProvider>
+                <ServiceWorkerRegister />
+                {children}
+              </BetaAppProvider>
+            </QueryProvider>
+          </CustomizationProvider>
         </ThemeProvider>
       </body>
     </html>
