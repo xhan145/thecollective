@@ -99,33 +99,36 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [authReady, currentUser, isProtected, supabaseEnabled, pathname, router]);
 
   return (
-    <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)]">
-      <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-3">
-          <Link href="/home" aria-label="Collective home">
-            <CollectiveWordmark />
-          </Link>
-          <div className="flex items-center gap-2">
-            {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
-            <ThemeToggleButton />
-            <NotificationsButton unread={unread} />
+    <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">
+      <DesktopSidebar unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
+      <main className="relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
+        <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/home" aria-label="Collective home">
+              <CollectiveWordmark />
+            </Link>
+            <div className="flex items-center gap-2">
+              {showDemoBadge ? <Badge tone="muted">Demo data</Badge> : isMockMode ? <Badge tone="muted">{firebaseMode}</Badge> : null}
+              <ThemeToggleButton />
+              <NotificationsButton unread={unread} />
+            </div>
           </div>
+        </header>
+        <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5 lg:mx-auto lg:max-w-4xl lg:px-8 lg:py-8">
+          {loading ? (
+            <div className="space-y-4">
+              <p className="text-center text-sm font-extrabold text-[#6E6E6E]">Getting your space ready…</p>
+              <ScreenSkeleton />
+            </div>
+          ) : (
+            <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+              {children}
+            </motion.div>
+          )}
         </div>
-      </header>
-      <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5">
-        {loading ? (
-          <div className="space-y-4">
-            <p className="text-center text-sm font-extrabold text-[#6E6E6E]">Getting your space ready…</p>
-            <ScreenSkeleton />
-          </div>
-        ) : (
-          <motion.div key={pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-            {children}
-          </motion.div>
-        )}
-      </div>
-      <BottomNav />
-    </main>
+        <BottomNav />
+      </main>
+    </div>
   );
 }
 
@@ -133,7 +136,7 @@ function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 bg-[linear-gradient(to_top,var(--c-bg)_62%,transparent)] px-5 pb-[calc(12px+env(safe-area-inset-bottom,0px))] pt-4">
+    <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 bg-[linear-gradient(to_top,var(--c-bg)_62%,transparent)] px-5 pb-[calc(12px+env(safe-area-inset-bottom,0px))] pt-4 lg:hidden">
       {/* Wrapper owns centering (static translate, never touched by Motion);
           the inner motion element owns the tap-scale so it can't wipe the
           centering/raise transform. z-[60] keeps the FAB above the nav pill. */}
@@ -182,5 +185,51 @@ function BottomNav() {
         })}
       </div>
     </nav>
+  );
+}
+
+function DesktopSidebar({ unread, showDemoBadge, demoLabel }: { unread: number; showDemoBadge: boolean; demoLabel: string | null }) {
+  const pathname = usePathname();
+  return (
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[#EFE7D8] bg-[#FFFDF8] px-4 py-6 lg:flex">
+      <Link href="/home" aria-label="Collective home" className="px-2">
+        <CollectiveWordmark />
+      </Link>
+      <nav className="mt-8 flex flex-col gap-1">
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={active ? "page" : undefined}
+              className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-colors ${active ? "text-[#F2A900]" : "text-[#8D877F] hover:text-[#111111]"}`}
+            >
+              {active && (
+                <motion.span
+                  layoutId="desktop-nav-pill"
+                  className="absolute inset-0 -z-10 rounded-2xl bg-[#FFF1C7]"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <Icon size={20} strokeWidth={active ? 2.6 : 2} />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+      <Link
+        href="/proof/new/conf-s1"
+        className="mt-6 flex items-center justify-center gap-2 rounded-full bg-[#F2A900] px-4 py-3 text-sm font-extrabold text-white shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
+      >
+        <Plus size={18} strokeWidth={2.6} /> Submit proof
+      </Link>
+      <div className="mt-auto flex items-center gap-2 px-1 pt-6">
+        <NotificationsButton unread={unread} />
+        <ThemeToggleButton />
+        {showDemoBadge && demoLabel && <Badge tone="muted">{demoLabel}</Badge>}
+      </div>
+    </aside>
   );
 }
