@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CollectiveMark } from "@/components/beta/Brand";
+import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function GoogleCompletePage() {
   const router = useRouter();
+  const { currentUser, authReady } = useBetaApp();
+  const [nextPath, setNextPath] = useState<string | null>(null);
+  const startedRef = useRef(false);
 
   useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+
     const client = getSupabaseClient();
     if (!client) {
       router.replace("/auth?error=not_configured");
@@ -19,7 +26,7 @@ export default function GoogleCompletePage() {
     const params = new URLSearchParams(hash);
     const accessToken = params.get("access_token");
     const refreshToken = params.get("refresh_token");
-    const nextPath = params.get("next") || "/home";
+    const destination = params.get("next") || "/home";
 
     if (!accessToken || !refreshToken) {
       router.replace("/auth?error=google_session_failed");
@@ -33,9 +40,15 @@ export default function GoogleCompletePage() {
         router.replace(`/auth?error=google_session_failed&detail=${encodeURIComponent(error.message)}`);
         return;
       }
-      router.replace(nextPath);
+      setNextPath(destination);
     });
   }, [router]);
+
+  // Wait for AppStateProvider to hydrate currentUser before entering protected routes.
+  useEffect(() => {
+    if (!nextPath || !authReady || !currentUser) return;
+    router.replace(nextPath);
+  }, [nextPath, authReady, currentUser, router]);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-[#FFF8EE] px-5 text-[#111111]">
