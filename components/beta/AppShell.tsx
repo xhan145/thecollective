@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, Home, MessageSquare, Plus, User } from "lucide-react";
+import { BookOpen, Compass, Home, Plus, User } from "lucide-react";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { CollectiveWordmark } from "./Brand";
 import { Badge } from "./ui";
 import { useBetaApp } from "./AppStateProvider";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/passport", "/settings", "/app-feedback", "/beta-feedback-review"];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [currentUser, pathname, router]);
 
   return (
-    <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)]">
+    <main className="retro-pixel-shell mx-auto min-h-screen max-w-[430px] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)]">
       <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <Link href="/home" aria-label="Collective home">
@@ -42,21 +42,21 @@ function BottomNav() {
   const pathname = usePathname();
   const items = [
     { href: "/home", label: "Home", icon: Home },
+    { href: "/directions", label: "Discover", icon: Compass },
     { href: "/practice", label: "Practice", icon: BookOpen },
-    { href: "/feed", label: "Feed", icon: MessageSquare },
-    { href: "/profile", label: "Profile", icon: User }
+    { href: "/passport", label: "Passport", icon: User }
   ];
 
   return (
     <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 bg-gradient-to-t from-[#FFF8EE] via-[#FFF8EE] to-[#FFF8EE]/70 px-5 pb-[calc(12px+env(safe-area-inset-bottom,0px))] pt-4">
       <Link
         href="/proof/new/say-clear-thing"
-        className="absolute left-1/2 top-0 grid h-[58px] w-[58px] -translate-x-1/2 -translate-y-4 place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_16px_34px_rgba(242,169,0,0.34)] transition active:scale-95"
+        className="pixel-button absolute left-1/2 top-0 grid h-[58px] w-[58px] -translate-x-1/2 -translate-y-4 place-items-center rounded-full bg-[#F2A900] text-white transition"
         aria-label="Submit proof"
       >
         <Plus size={27} strokeWidth={2.6} />
       </Link>
-      <div className="grid grid-cols-4 rounded-[28px] border border-[#EFE7D8] bg-[#FFFDF8]/95 p-2 shadow-[0_16px_44px_rgba(71,52,18,0.10)] backdrop-blur">
+      <div className="pixel-card grid grid-cols-4 rounded-[28px] border border-[#EFE7D8] bg-[#FFFDF8]/95 p-2 backdrop-blur">
         {items.map((item, index) => {
           const Icon = item.icon;
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);

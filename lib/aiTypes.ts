@@ -1,4 +1,5 @@
 import type { Feedback, PracticePrompt, Proof, UserProfile } from "./betaTypes";
+import type { MasteryLevel } from "./contentMastery/contentMasteryTypes";
 
 export type AiFeature = "PRACTICE_PREP" | "REFLECTION_HELPER" | "FEEDBACK_COACH" | "FEEDBACK_SUMMARY";
 export type AiSourceType = "PRACTICE_PROMPT" | "PROOF" | "PEER_FEEDBACK" | "FEEDBACK_LIST" | "APP_CONTEXT";
@@ -92,4 +93,7 @@ export type AiService = {
   generateReflectionHelp(proof: Proof | null, reflectionText: string, prompt: PracticePrompt | undefined, userContext: AiUserContext): Promise<AiResponse>;
   generateFeedbackSuggestion(proof: Proof, draftFeedback: string, userContext: AiUserContext): Promise<AiResponse>;
   generateFeedbackSummary(proof: Proof, feedbackList: Feedback[], userContext: AiUserContext): Promise<AiResponse>;
+  generateContentPracticePrep(level: MasteryLevel, userContext: AiUserContext): Promise<AiResponse>;
+  generateContentReflectionHelp(level: MasteryLevel, userReflection: string, userContext: AiUserContext): Promise<AiResponse>;
+  generateContentFeedbackCoach(level: MasteryLevel, draftFeedback: string, userContext: AiUserContext): Promise<AiResponse>;
 };

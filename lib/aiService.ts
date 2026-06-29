@@ -128,6 +128,82 @@ export const mockAiService: AiService = {
       },
       createdAt: now()
     };
+  },
+
+  async generateContentPracticePrep(level) {
+    return {
+      id: makeAiId("PRACTICE_PREP"),
+      feature: "PRACTICE_PREP",
+      title: `Prepare for ${level.levelName}`,
+      summary: "Start with one small attempt and keep proof simple.",
+      bullets: [
+        level.aiPrepPrompt,
+        `Focus on: ${level.masteryGoal}`,
+        "Proof does not need to be perfect. It only needs to show a real attempt."
+      ],
+      suggestedNextStep: level.practicePrompt,
+      caution: "AI can help you prepare, but it does not decide your trust or worth.",
+      structured: {
+        kind: "practicePrep",
+        data: {
+          title: `Prepare for ${level.levelName}`,
+          steps: [level.aiPrepPrompt, level.practicePrompt],
+          focus: level.masteryGoal,
+          encouragement: "Proof can stay simple while you practice."
+        }
+      },
+      createdAt: now()
+    };
+  },
+
+  async generateContentReflectionHelp(level, userReflection) {
+    return {
+      id: makeAiId("REFLECTION_HELPER"),
+      feature: "REFLECTION_HELPER",
+      title: "Reflect on the practice",
+      summary: "You practiced a real step. Notice what changed and choose one next step.",
+      bullets: [
+        `Practice: ${level.masteryGoal}`,
+        `Your reflection: ${compact(userReflection, "You made a real attempt.")}`,
+        `Next step: ${level.nextStep}`
+      ],
+      suggestedNextStep: level.nextStep,
+      caution: "This is reflection support, not a judgment of your confidence or identity.",
+      structured: {
+        kind: "reflectionHelp",
+        data: {
+          validation: "You practiced a real step.",
+          whatYouPracticed: level.masteryGoal,
+          nextSmallStep: level.nextStep
+        }
+      },
+      createdAt: now()
+    };
+  },
+
+  async generateContentFeedbackCoach(level, draftFeedback) {
+    return {
+      id: makeAiId("FEEDBACK_COACH"),
+      feature: "FEEDBACK_COACH",
+      title: "Make feedback more useful",
+      summary: "Use the rubric to keep feedback clear, kind, specific, and useful.",
+      bullets: [
+        `Clarity: ${level.feedbackRubric.clarity}`,
+        `Effort: ${level.feedbackRubric.effort}`,
+        `Next step: ${level.feedbackRubric.nextStep}`
+      ],
+      suggestedNextStep: compact(draftFeedback, "Name one thing that worked and one useful next step."),
+      caution: "Do not use harsh or identity-based language.",
+      structured: {
+        kind: "feedbackCoach",
+        data: {
+          whatWorked: level.feedbackRubric.effort,
+          suggestion: level.feedbackRubric.nextStep,
+          encouragement: "Feedback helps people improve. It does not define them."
+        }
+      },
+      createdAt: now()
+    };
   }
 };
 
@@ -174,6 +250,15 @@ export function makeRemoteAiService(endpoint: string): AiService {
     },
     generateFeedbackSummary(proof: Proof, feedbackList: Feedback[], userContext: AiUserContext) {
       return callRemote("FEEDBACK_SUMMARY", { proof, feedbackList, userContext });
+    },
+    generateContentPracticePrep(level, userContext) {
+      return callRemote("PRACTICE_PREP", { masteryLevel: level, userContext });
+    },
+    generateContentReflectionHelp(level, userReflection, userContext) {
+      return callRemote("REFLECTION_HELPER", { masteryLevel: level, userReflection, userContext });
+    },
+    generateContentFeedbackCoach(level, draftFeedback, userContext) {
+      return callRemote("FEEDBACK_COACH", { masteryLevel: level, draftFeedback, userContext });
     }
   };
 }

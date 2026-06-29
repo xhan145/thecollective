@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { MediaAwareFeedback, ProofSubmission } from "@/lib/types";
 import { demoProofSubmissions } from "@/lib/data";
+import { getFeedbackRubricForMasteryLevel, getNextRecommendedPractice } from "@/lib/contentMastery/contentMasteryQueries";
 import { proofTypeLabels } from "@/lib/media/proofMedia";
 import { ProofMediaCard, ProofTypeBadge } from "./ProofMediaCard";
 import { Pill, SectionHeader } from "./ui";
@@ -22,6 +23,8 @@ const fallbackFeedback: MediaAwareFeedback = {
 export function FeedbackDisplay() {
   const [proof, setProof] = useState<ProofSubmission>(demoProofSubmissions[0]);
   const [feedback, setFeedback] = useState<MediaAwareFeedback>(fallbackFeedback);
+  const recommendedPractice = getNextRecommendedPractice("user-alex");
+  const rubric = recommendedPractice ? getFeedbackRubricForMasteryLevel(recommendedPractice.masteryLevelId) : null;
 
   useEffect(() => {
     const proofJson = sessionStorage.getItem("collective.demo.latestProof");
@@ -48,6 +51,18 @@ export function FeedbackDisplay() {
       </div>
 
       <SectionHeader eyebrow="Supportive AI" title="Feedback to consider" />
+      {rubric && (
+        <div className="soft-card p-4">
+          <p className="text-xs font-black uppercase tracking-[0.12em] text-purple2">Useful feedback rubric</p>
+          <div className="mt-3 space-y-3 text-sm leading-7 text-[#e5ded4]">
+            <p><strong>Clarity:</strong> {rubric.clarity}</p>
+            <p><strong>Effort:</strong> {rubric.effort}</p>
+            <p><strong>Usefulness:</strong> {rubric.usefulness}</p>
+            <p><strong>Next step:</strong> {rubric.nextStep}</p>
+          </div>
+          <p className="mt-3 text-xs leading-5 text-[#c8c2b8]">Feedback helps you improve. It does not define you.</p>
+        </div>
+      )}
       <FeedbackBlock label="Summary" text={feedback.summary} tone="accent" />
       <FeedbackBlock label="What worked" text={feedback.whatWorked} tone="success" />
       <FeedbackBlock label="What could improve" text={feedback.whatCouldImprove} tone="warning" />

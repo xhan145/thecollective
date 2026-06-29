@@ -7,8 +7,13 @@ import { AppShell } from "@/components/beta/AppShell";
 import { AiSupportCard } from "@/components/beta/AiSupportCard";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { AttachmentPicker, ProofTypeSelector, type AttachmentDraft } from "@/components/beta/ProofComponents";
-import { Button, Card, PageHeader, SuccessState, TextArea } from "@/components/beta/ui";
+import { Badge, Button, Card, PageHeader, SuccessState, TextArea } from "@/components/beta/ui";
 import { getCollectiveAiService } from "@/lib/aiService";
+import { getMasteryLevelById, getPracticeByMasteryLevelId } from "@/lib/contentMastery/contentMasteryQueries";
+
+function toProofMediaType(proofType: string): ProofMediaType {
+  return proofType === "image" || proofType === "video" || proofType === "audio" ? proofType : "text";
+}
 
 export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
@@ -16,7 +21,9 @@ export default function NewProofPage() {
   const { currentUser, trustSummary, getPromptById, submitProof } = useBetaApp();
   const promptId = params.promptId || "say-clear-thing";
   const prompt = getPromptById(promptId);
-  const [mediaType, setMediaType] = useState<ProofMediaType>("text");
+  const contentPractice = getPracticeByMasteryLevelId(promptId);
+  const contentLevel = getMasteryLevelById(promptId);
+  const [mediaType, setMediaType] = useState<ProofMediaType>(contentPractice ? toProofMediaType(contentPractice.proofType) : "text");
   const [body, setBody] = useState("");
   const [attachment, setAttachment] = useState<AttachmentDraft | undefined>();
   const [error, setError] = useState("");
@@ -41,9 +48,25 @@ export default function NewProofPage() {
         <PageHeader title="Submit proof" subtitle="Show what you practiced. It does not need to be perfect." />
         <Card className="p-5">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">Practice prompt</p>
-          <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{prompt?.title || "Practice proof"}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.prompt || "Capture one small example of progress."}</p>
+          <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{contentPractice?.masteryGoal || prompt?.title || "Practice proof"}</h2>
+          <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{contentPractice?.prompt || prompt?.prompt || "Capture one small example of progress."}</p>
         </Card>
+        {contentPractice && (
+          <Card className="space-y-3 p-5">
+            <Badge>Proof requirement</Badge>
+            <p className="text-sm font-extrabold leading-6 text-[#111111]">{contentPractice.proofRequirement}</p>
+            <div className="grid gap-3">
+              <div className="rounded-[18px] bg-[#FFF8EE] p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">What counts</p>
+                <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{contentLevel?.feedbackRubric.effort || "A real attempt connected to this practice."}</p>
+              </div>
+              <div className="rounded-[18px] bg-[#FFF8EE] p-4">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">What does not count</p>
+                <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{contentLevel?.doesNotCountAsMastery}</p>
+              </div>
+            </div>
+          </Card>
+        )}
         <Card className="space-y-4 p-5">
           <div>
             <h2 className="text-lg font-extrabold text-[#111111]">Proof type</h2>
@@ -69,7 +92,7 @@ export default function NewProofPage() {
             sourceType="PRACTICE_PROMPT"
             sourceId={promptId}
             promptId={promptId}
-            inputSummary={body.trim() || prompt?.title || "Proof reflection"}
+            inputSummary={body.trim() || contentPractice?.masteryGoal || prompt?.title || "Proof reflection"}
             onGenerate={() =>
               aiService.generateReflectionHelp(null, body, prompt, {
                 userId: currentUser?.id || "user-alex",

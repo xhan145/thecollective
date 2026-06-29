@@ -1,0 +1,2986 @@
+{
+  "version": "1.0.0",
+  "product": "Collective",
+  "content_system": "content_mastery_table",
+  "notes": "Phase 1 seed. Every level leads to practice and proof. Levels are fixed: 1 Try it, 2 Repeat it, 3 Explain it, 4 Apply it, 5 Help someone else with it. Trust is earned through completed practice, submitted proof, useful feedback, and helping others. AI supports preparation and reflection only; it never decides a member's worth, identity, confidence, or final trust.",
+  "level_template": {
+    "1": "Try it",
+    "2": "Repeat it",
+    "3": "Explain it",
+    "4": "Apply it",
+    "5": "Help someone else with it"
+  },
+  "feedback_rubric_fields": ["clarity", "effort", "usefulness", "next_step"],
+  "directions": [
+    {
+      "direction_slug": "confident-communication",
+      "direction_name": "Confident Communication",
+      "description": "Practice speaking and sharing in a way that feels clear and steady, so your ideas come across the way you mean them.",
+      "skills": [
+        {
+          "skill_slug": "speaking-clearly",
+          "skill_name": "Speaking Clearly",
+          "description": "Say what you mean in a way that is easy to follow.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Say one short idea out loud and record it.",
+              "practice_prompt": "Pick one thing you did today. Record a 30-second voice note explaining what it was and why it mattered.",
+              "proof_requirement": "Upload a 30-second audio clip of you explaining one thing.",
+              "proof_type": "audio",
+              "feedback_rubric": {
+                "clarity": "Could you tell what the person was talking about?",
+                "effort": "Did they record a real attempt instead of skipping it?",
+                "usefulness": "Was there one idea you could follow?",
+                "next_step": "Name one moment that was easy to understand."
+              },
+              "ai_prep_prompt": "Help me pick one simple thing from my day to talk about for 30 seconds. Ask me one question to get started.",
+              "ai_reflection_prompt": "I just recorded my first clip. Ask me how it felt and what one word I would keep.",
+              "next_step": "Try recording the same idea again, a little slower.",
+              "feed_tags": ["confident-communication", "speaking-clearly", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 3,
+              "difficulty": "beginner",
+              "safety_note": "This clip is just for practice. You can delete it anytime, and rough first tries are expected.",
+              "does_not_count_as_mastery": "A scripted clip read from someone else's words, or a clip with no audible idea, does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Record the same kind of clear idea three days in a row.",
+              "practice_prompt": "For three short sessions, record a 30-second clip explaining one idea each time. Try to start with the main point first.",
+              "proof_requirement": "Upload three short clips made on different days.",
+              "proof_type": "audio",
+              "feedback_rubric": {
+                "clarity": "Did each clip start with a clear main point?",
+                "effort": "Did they show up across more than one day?",
+                "usefulness": "Was each clip easy to follow on its own?",
+                "next_step": "Point out which clip was the clearest and why."
+              },
+              "ai_prep_prompt": "Help me plan three small topics I can each explain in 30 seconds this week.",
+              "ai_reflection_prompt": "I recorded three clips. Ask me what felt easier the third time than the first.",
+              "next_step": "Move toward explaining why your clearest clip worked.",
+              "feed_tags": ["confident-communication", "speaking-clearly", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one day.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Days do not need to be perfect or in a row. Coming back at all is the win here.",
+              "does_not_count_as_mastery": "Three copies of the same recording, or three clips made in one sitting, do not count as repeated practice."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain in your own words what makes speaking clear.",
+              "practice_prompt": "Write a short note (4-6 sentences) explaining one habit that helps you speak clearly, using an example from your own clips.",
+              "proof_requirement": "Submit a short written explanation with one real example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the explanation easy to read and follow?",
+                "effort": "Did they use a real example from their own practice?",
+                "usefulness": "Could a beginner learn one thing from it?",
+                "next_step": "Name the most helpful sentence in the note."
+              },
+              "ai_prep_prompt": "Ask me three questions that help me notice what makes my clearest clip clear.",
+              "ai_reflection_prompt": "I wrote my explanation. Ask me whether I would understand it if I were brand new to this.",
+              "next_step": "Try using this habit in a real conversation next.",
+              "feed_tags": ["confident-communication", "speaking-clearly", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "There is no single right answer. Your honest explanation is what matters.",
+              "does_not_count_as_mastery": "Copy-pasted definitions or AI-written text with no personal example do not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use clear speaking in one real situation.",
+              "practice_prompt": "In a real conversation, meeting, or message this week, make your main point first. Afterward, note what you said and how it landed.",
+              "proof_requirement": "Submit a short reflection describing the real situation and what happened.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you picture the real situation they described?",
+                "effort": "Did they actually use the skill in real life?",
+                "usefulness": "Did they notice the effect of speaking clearly?",
+                "next_step": "Suggest one situation to try it in again."
+              },
+              "ai_prep_prompt": "Help me rehearse my main point for a real conversation coming up. Keep it short.",
+              "ai_reflection_prompt": "I tried it in real life. Ask me what I would keep and what I would change next time.",
+              "next_step": "Get ready to help someone else start speaking clearly.",
+              "feed_tags": ["confident-communication", "speaking-clearly", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "It is fine if the conversation did not go perfectly. Trying it in real life is the point.",
+              "does_not_count_as_mastery": "An imagined or pretend scenario, with no real conversation, does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help another member make one idea clearer.",
+              "practice_prompt": "Find a member's early clip or note and give them one kind, specific tip that helped you speak more clearly.",
+              "proof_requirement": "Submit a piece of feedback you gave to another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the feedback easy for the other person to understand?",
+                "effort": "Did they engage with the other person's actual work?",
+                "usefulness": "Could the other person act on the tip?",
+                "next_step": "Note whether the tip was kind as well as specific."
+              },
+              "ai_prep_prompt": "Help me turn a tip that worked for me into kind, specific feedback for a beginner.",
+              "ai_reflection_prompt": "I gave feedback to someone. Ask me whether it was kind, specific, and useful.",
+              "next_step": "Keep supporting newer members as they start out.",
+              "feed_tags": ["confident-communication", "speaking-clearly", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Helping means encouraging, not correcting harshly. Lead with what worked.",
+              "does_not_count_as_mastery": "Generic praise like 'nice job' with no specific, usable tip does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "managing-nervousness",
+          "skill_name": "Managing Nervousness",
+          "description": "Notice nervous feelings and speak anyway, in small steady steps.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Name what nervousness feels like for you.",
+              "practice_prompt": "Think of a time you felt nervous to speak. Write 3-4 sentences about what you noticed in your body or thoughts.",
+              "proof_requirement": "Submit a short note describing your nervous signals.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand what they noticed?",
+                "effort": "Did they share something real, even if small?",
+                "usefulness": "Was there one honest detail in it?",
+                "next_step": "Reflect back one signal they named."
+              },
+              "ai_prep_prompt": "Ask me gentle questions to help me notice how nervousness shows up for me.",
+              "ai_reflection_prompt": "I wrote down my nervous signals. Ask me which one shows up the most.",
+              "next_step": "Try one calming breath before your next recording.",
+              "feed_tags": ["confident-communication", "managing-nervousness", "try-it", "self-awareness"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Feeling nervous is normal and human. You only share what you are comfortable sharing.",
+              "does_not_count_as_mastery": "Saying 'I'm never nervous' with no reflection does not count as trying the practice."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Use one calming step before speaking, a few times.",
+              "practice_prompt": "Before three short recordings, take one slow breath or a short pause first. Record a clip each time anyway.",
+              "proof_requirement": "Upload three clips, each made after a calming step.",
+              "proof_type": "audio",
+              "feedback_rubric": {
+                "clarity": "Were the clips understandable?",
+                "effort": "Did they keep going across more than one try?",
+                "usefulness": "Did the calming step seem to help at all?",
+                "next_step": "Point out a moment that sounded steady."
+              },
+              "ai_prep_prompt": "Suggest two simple calming steps I can try before recording.",
+              "ai_reflection_prompt": "I used a calming step three times. Ask me if it changed how I felt.",
+              "next_step": "Move toward explaining what calms you and why.",
+              "feed_tags": ["confident-communication", "managing-nervousness", "repeat-it", "practice"],
+              "trust_signal": "Showed repeated practice across more than one try.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "If a topic feels too stressful, pick an easier one. Steady beats scary.",
+              "does_not_count_as_mastery": "Skipping the calming step or recording all clips with no pause does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain one way you handle nervousness.",
+              "practice_prompt": "Write 4-6 sentences explaining one thing that helps you speak even when nervous, with an example.",
+              "proof_requirement": "Submit a short written explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the explanation easy to follow?",
+                "effort": "Did they use a real personal example?",
+                "usefulness": "Could a nervous beginner learn from it?",
+                "next_step": "Name the most reassuring part of the note."
+              },
+              "ai_prep_prompt": "Ask me questions to help me describe what helps me feel steadier.",
+              "ai_reflection_prompt": "I explained my calming method. Ask me if it would help someone as nervous as I was.",
+              "next_step": "Use your calming step in a real, slightly bigger moment.",
+              "feed_tags": ["confident-communication", "managing-nervousness", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your method does not need to work every time. Honesty helps others most.",
+              "does_not_count_as_mastery": "Generic advice copied from elsewhere with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Speak in a real moment despite feeling nervous.",
+              "practice_prompt": "Pick one real moment this week where you usually stay quiet. Speak up using your calming step, then write what happened.",
+              "proof_requirement": "Submit a reflection on a real moment you spoke up.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the real situation?",
+                "effort": "Did they take a real, brave step?",
+                "usefulness": "Did they notice how the calming step helped?",
+                "next_step": "Suggest a next moment to practice in."
+              },
+              "ai_prep_prompt": "Help me prepare one sentence to say in a real moment I usually avoid.",
+              "ai_reflection_prompt": "I spoke up in real life. Ask me what I am proud of and what felt hard.",
+              "next_step": "Get ready to encourage someone else who feels nervous.",
+              "feed_tags": ["confident-communication", "managing-nervousness", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Pick a safe, low-stakes moment. You are building courage, not testing it.",
+              "does_not_count_as_mastery": "An imagined moment with no real attempt to speak up does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Encourage a nervous member to take one step.",
+              "practice_prompt": "Reply to a member who shared feeling nervous. Offer one kind, specific encouragement that helped you.",
+              "proof_requirement": "Submit the encouraging feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the message easy to understand?",
+                "effort": "Did they respond to the person's real situation?",
+                "usefulness": "Could the person use the encouragement?",
+                "next_step": "Note whether it felt warm and respectful."
+              },
+              "ai_prep_prompt": "Help me write a short, kind message to encourage a nervous beginner.",
+              "ai_reflection_prompt": "I encouraged someone. Ask me whether my words were kind and specific.",
+              "next_step": "Keep welcoming new members who feel nervous.",
+              "feed_tags": ["confident-communication", "managing-nervousness", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Encourage, do not pressure. People move at their own pace.",
+              "does_not_count_as_mastery": "Telling someone to 'just relax' with no specific support does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "active-listening",
+          "skill_name": "Active Listening",
+          "description": "Show people you heard them before you respond.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Repeat back one thing someone said.",
+              "practice_prompt": "In one conversation today, repeat back the main point the other person made before you reply. Write down what you said.",
+              "proof_requirement": "Submit a short note with the sentence you used to repeat back.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what they repeated back?",
+                "effort": "Did they actually try it in a conversation?",
+                "usefulness": "Did the repeat-back capture the other point?",
+                "next_step": "Name one phrase that showed listening."
+              },
+              "ai_prep_prompt": "Give me one simple phrase I can use to repeat back what someone said.",
+              "ai_reflection_prompt": "I tried repeating back. Ask me how the other person reacted.",
+              "next_step": "Try repeating back in a couple more conversations.",
+              "feed_tags": ["confident-communication", "active-listening", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "You do not need to share private details of the conversation, just your phrase.",
+              "does_not_count_as_mastery": "Describing listening in theory without trying it in a real conversation does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Practice repeating back across several conversations.",
+              "practice_prompt": "In three different conversations, repeat back the main point before replying. Note each time how it went.",
+              "proof_requirement": "Submit short notes from three conversations.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the three notes easy to follow?",
+                "effort": "Did they practice across different conversations?",
+                "usefulness": "Did repeating back help the talk?",
+                "next_step": "Point out the smoothest example."
+              },
+              "ai_prep_prompt": "Help me plan three everyday chats where I can practice listening.",
+              "ai_reflection_prompt": "I practiced listening three times. Ask me what got easier.",
+              "next_step": "Move toward explaining why listening first helps.",
+              "feed_tags": ["confident-communication", "active-listening", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one conversation.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "Keep notes about your own actions, not other people's private words.",
+              "does_not_count_as_mastery": "Three notes about the same single conversation do not count as repeated practice."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why listening first helps a conversation.",
+              "practice_prompt": "Write 4-6 sentences explaining how repeating back changes a conversation, using one of your own examples.",
+              "proof_requirement": "Submit a short written explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the explanation clear?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn the value of listening?",
+                "next_step": "Name the clearest point made."
+              },
+              "ai_prep_prompt": "Ask me questions about how listening changed one of my conversations.",
+              "ai_reflection_prompt": "I explained why listening helps. Ask me if a beginner would be convinced.",
+              "next_step": "Use active listening in a harder conversation.",
+              "feed_tags": ["confident-communication", "active-listening", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view of why listening helps is valid, even if it is simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use listening in a real disagreement or hard talk.",
+              "practice_prompt": "In a real moment of disagreement or tension this week, repeat back the other person's view before sharing yours. Reflect on what changed.",
+              "proof_requirement": "Submit a reflection on a real, harder conversation.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the situation?",
+                "effort": "Did they use listening in a real, harder moment?",
+                "usefulness": "Did listening change the outcome?",
+                "next_step": "Suggest where to try this again."
+              },
+              "ai_prep_prompt": "Help me prepare to repeat back someone's view in a tense conversation.",
+              "ai_reflection_prompt": "I listened during a hard talk. Ask me what felt different from usual.",
+              "next_step": "Get ready to coach someone on listening.",
+              "feed_tags": ["confident-communication", "active-listening", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Choose a safe disagreement. Step away from any conversation that feels unsafe.",
+              "does_not_count_as_mastery": "A made-up disagreement with no real conversation does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member practice listening better.",
+              "practice_prompt": "Give a member one kind, specific tip on how to repeat back what they hear, based on what worked for you.",
+              "proof_requirement": "Submit the feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the tip easy to understand?",
+                "effort": "Did they engage with the member's real work?",
+                "usefulness": "Could the member use the tip?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me turn my listening habit into a tip for a beginner.",
+              "ai_reflection_prompt": "I gave a listening tip. Ask me if it was kind, specific, and useful.",
+              "next_step": "Keep helping members listen better.",
+              "feed_tags": ["confident-communication", "active-listening", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer a tip, not a lecture. Respect how the other person communicates.",
+              "does_not_count_as_mastery": "Vague praise with no usable listening tip does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "sharing-your-opinion",
+          "skill_name": "Sharing Your Opinion",
+          "description": "Say what you think clearly and respectfully, even when it differs from others.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "State one honest opinion in a sentence.",
+              "practice_prompt": "Pick a low-stakes topic (a movie, a meal, a tool). Write one sentence starting with 'I think...' and one reason.",
+              "proof_requirement": "Submit one opinion sentence with a reason.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the opinion easy to understand?",
+                "effort": "Did they share a real opinion?",
+                "usefulness": "Did the reason support the opinion?",
+                "next_step": "Reflect back their main point."
+              },
+              "ai_prep_prompt": "Help me turn something I like or dislike into one clear opinion sentence.",
+              "ai_reflection_prompt": "I shared one opinion. Ask me if it felt true to what I think.",
+              "next_step": "Try sharing opinions on a few more topics.",
+              "feed_tags": ["confident-communication", "sharing-your-opinion", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Start with light topics. There is no wrong opinion here.",
+              "does_not_count_as_mastery": "Repeating someone else's opinion as your own does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Share opinions with reasons a few times.",
+              "practice_prompt": "Share three short opinions on three different topics, each with one reason. Use 'I think... because...'.",
+              "proof_requirement": "Submit three opinion-with-reason statements.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were all three easy to follow?",
+                "effort": "Did they cover different topics?",
+                "usefulness": "Did each reason fit its opinion?",
+                "next_step": "Point out the most convincing one."
+              },
+              "ai_prep_prompt": "Suggest three everyday topics I can form a quick opinion on.",
+              "ai_reflection_prompt": "I shared three opinions. Ask me which felt easiest to back up.",
+              "next_step": "Move toward explaining how you form an opinion.",
+              "feed_tags": ["confident-communication", "sharing-your-opinion", "repeat-it", "practice"],
+              "trust_signal": "Showed repeated practice across several topics.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Disagreeing with popular views is fine. Stay respectful, not harsh.",
+              "does_not_count_as_mastery": "Three opinions with no reasons do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how you share an opinion respectfully.",
+              "practice_prompt": "Write 4-6 sentences on how you share an opinion without putting others down, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn to be respectful?",
+                "next_step": "Name the most respectful phrasing."
+              },
+              "ai_prep_prompt": "Ask me questions about how I keep opinions respectful.",
+              "ai_reflection_prompt": "I explained respectful opinions. Ask me if my own examples match it.",
+              "next_step": "Share an opinion in a real group or discussion.",
+              "feed_tags": ["confident-communication", "sharing-your-opinion", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Respectful does not mean silent. You can disagree and be kind.",
+              "does_not_count_as_mastery": "An explanation that promotes putting others down does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Share an opinion in a real group setting.",
+              "practice_prompt": "In a real discussion this week, share your honest opinion with a reason, even if others disagree. Reflect on how it went.",
+              "proof_requirement": "Submit a reflection on a real discussion.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you picture the discussion?",
+                "effort": "Did they share a real opinion in real life?",
+                "usefulness": "Did they stay respectful while honest?",
+                "next_step": "Suggest a setting to try next."
+              },
+              "ai_prep_prompt": "Help me prepare to share my opinion in a group where people may disagree.",
+              "ai_reflection_prompt": "I shared my opinion in a group. Ask me what felt good and what was hard.",
+              "next_step": "Get ready to help someone else find their voice.",
+              "feed_tags": ["confident-communication", "sharing-your-opinion", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Pick a safe group. You never have to share opinions where you feel unsafe.",
+              "does_not_count_as_mastery": "An imagined discussion with no real sharing does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member share their opinion with confidence.",
+              "practice_prompt": "Encourage a member who is unsure about an opinion. Give one kind, specific tip to help them say it clearly and respectfully.",
+              "proof_requirement": "Submit the feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the tip clear?",
+                "effort": "Did they engage with the member's real post?",
+                "usefulness": "Could the member act on it?",
+                "next_step": "Note whether it built the person up."
+              },
+              "ai_prep_prompt": "Help me encourage a member to share their opinion clearly and kindly.",
+              "ai_reflection_prompt": "I helped someone share an opinion. Ask me if I was kind and specific.",
+              "next_step": "Keep helping quiet members find their voice.",
+              "feed_tags": ["confident-communication", "sharing-your-opinion", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Support their opinion, even if you disagree with it. Help the voice, not just the view.",
+              "does_not_count_as_mastery": "Pushing your own opinion onto them does not count as helping."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "direction_slug": "momentum-building",
+      "direction_name": "Momentum Building",
+      "description": "Build the habit of starting, continuing, and coming back, so progress keeps moving even when motivation dips.",
+      "skills": [
+        {
+          "skill_slug": "starting-small",
+          "skill_name": "Starting Small",
+          "description": "Make the first step so small it is easy to begin.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Do one two-minute version of a task.",
+              "practice_prompt": "Pick something you have been putting off. Do a two-minute version of it now, then note what you did.",
+              "proof_requirement": "Submit a short note describing the two-minute action you took.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what they did?",
+                "effort": "Did they actually take a real action?",
+                "usefulness": "Was it a true small start?",
+                "next_step": "Encourage one more small start."
+              },
+              "ai_prep_prompt": "Help me shrink a task I am avoiding into a two-minute first step.",
+              "ai_reflection_prompt": "I did a two-minute start. Ask me how it felt to begin.",
+              "next_step": "Try a small start on two more days.",
+              "feed_tags": ["momentum-building", "starting-small", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Small really is enough. The goal is to begin, not to finish.",
+              "does_not_count_as_mastery": "Planning to start later, with no action taken, does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Take a small start on three separate days.",
+              "practice_prompt": "On three different days, do a two-minute start on something. Note each one.",
+              "proof_requirement": "Submit three short notes from three different days.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the notes easy to follow?",
+                "effort": "Did they show up on more than one day?",
+                "usefulness": "Were these real small starts?",
+                "next_step": "Point out their steadiest day."
+              },
+              "ai_prep_prompt": "Help me pick three small starts I could realistically do this week.",
+              "ai_reflection_prompt": "I started small three times. Ask me what made it easier to begin.",
+              "next_step": "Move toward explaining why small starts work.",
+              "feed_tags": ["momentum-building", "starting-small", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one day.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Missing a day is not failure. Just start small again next time.",
+              "does_not_count_as_mastery": "Three small starts on the same day do not count as repeated practice."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why starting small helps you keep going.",
+              "practice_prompt": "Write 4-6 sentences on why small starts work for you, using a real example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the most helpful insight."
+              },
+              "ai_prep_prompt": "Ask me questions about why small starts helped me begin.",
+              "ai_reflection_prompt": "I explained why small starts work. Ask me if it matches my own experience.",
+              "next_step": "Use a small start on a bigger goal that matters to you.",
+              "feed_tags": ["momentum-building", "starting-small", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your reasons are valid even if they are simple.",
+              "does_not_count_as_mastery": "A generic tip with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use a small start to move a goal that matters.",
+              "practice_prompt": "Pick a goal you care about. Use small starts for several days, then reflect on the progress you made.",
+              "proof_requirement": "Submit a reflection showing real progress on a goal.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you see the goal and the progress?",
+                "effort": "Did they apply it to something real?",
+                "usefulness": "Did small starts move the goal forward?",
+                "next_step": "Suggest the next small start."
+              },
+              "ai_prep_prompt": "Help me break a goal I care about into a chain of small starts.",
+              "ai_reflection_prompt": "I used small starts on a real goal. Ask me how far I got.",
+              "next_step": "Get ready to help someone who feels stuck.",
+              "feed_tags": ["momentum-building", "starting-small", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Progress can be slow and still count. Compare yourself only to where you began.",
+              "does_not_count_as_mastery": "A goal you only thought about, with no real starts, does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member take their first small step.",
+              "practice_prompt": "Find a member who feels stuck. Suggest one specific two-minute start they could take.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the person's real situation?",
+                "usefulness": "Was the step small and doable?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me turn my small-start habit into a tip for someone who feels stuck.",
+              "ai_reflection_prompt": "I helped someone start small. Ask me if my tip was kind and specific.",
+              "next_step": "Keep helping members get unstuck.",
+              "feed_tags": ["momentum-building", "starting-small", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Suggest, do not pressure. Let them choose their own first step.",
+              "does_not_count_as_mastery": "Telling someone to 'just do it' with no concrete small step does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "daily-consistency",
+          "skill_name": "Daily Consistency",
+          "description": "Show up regularly in a way that fits your real life.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Do one small action and mark it done.",
+              "practice_prompt": "Choose one tiny daily action. Do it once today and write it down.",
+              "proof_requirement": "Submit a note of the action you completed today.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what they did?",
+                "effort": "Did they complete a real action?",
+                "usefulness": "Was it a clear, repeatable action?",
+                "next_step": "Encourage them to repeat it tomorrow."
+              },
+              "ai_prep_prompt": "Help me pick one tiny action I could repeat most days.",
+              "ai_reflection_prompt": "I did my action once. Ask me if it felt doable to repeat.",
+              "next_step": "Try the same action across a few more days.",
+              "feed_tags": ["momentum-building", "daily-consistency", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 3,
+              "difficulty": "beginner",
+              "safety_note": "Pick something small enough to keep. This is not about being perfect.",
+              "does_not_count_as_mastery": "Choosing an action but not doing it does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Repeat your action across several days.",
+              "practice_prompt": "Do your chosen action on several days this week. Mark each day you did it.",
+              "proof_requirement": "Submit a simple log of the days you completed it.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the log easy to read?",
+                "effort": "Did they show up on multiple days?",
+                "usefulness": "Was the action consistent each time?",
+                "next_step": "Celebrate their most consistent stretch."
+              },
+              "ai_prep_prompt": "Help me plan when in my day I will do my small action.",
+              "ai_reflection_prompt": "I repeated my action several days. Ask me what helped me come back.",
+              "next_step": "Move toward explaining how you stay consistent.",
+              "feed_tags": ["momentum-building", "daily-consistency", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "A missed day is just a day. Returning matters more than a perfect run.",
+              "does_not_count_as_mastery": "A log claiming days with no real action behind them does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain what helps you stay consistent.",
+              "practice_prompt": "Write 4-6 sentences explaining one thing that helps you keep showing up, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the most useful tip."
+              },
+              "ai_prep_prompt": "Ask me questions about what keeps me coming back to my action.",
+              "ai_reflection_prompt": "I explained my consistency habit. Ask me if it would help a beginner.",
+              "next_step": "Apply consistency to something that matters to you.",
+              "feed_tags": ["momentum-building", "daily-consistency", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "There is no single right way to be consistent. Yours can be unique.",
+              "does_not_count_as_mastery": "Streak-pressure advice that shames missed days does not count here."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Stay consistent on a goal that matters to you.",
+              "practice_prompt": "Apply your consistency habit to a meaningful goal for two weeks. Reflect on what you kept up and what slipped.",
+              "proof_requirement": "Submit a reflection on a real goal over time.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you see the goal and effort?",
+                "effort": "Did they apply it over real time?",
+                "usefulness": "Did they reflect honestly on ups and downs?",
+                "next_step": "Suggest a way to keep it sustainable."
+              },
+              "ai_prep_prompt": "Help me set a realistic consistency plan for a goal I care about.",
+              "ai_reflection_prompt": "I stayed consistent on a real goal. Ask me what worked and what I would adjust.",
+              "next_step": "Get ready to support someone building a habit.",
+              "feed_tags": ["momentum-building", "daily-consistency", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Sustainable beats intense. It is fine to scale down to keep going.",
+              "does_not_count_as_mastery": "Claiming consistency with no real evidence over time does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member build a doable routine.",
+              "practice_prompt": "Help a member who is struggling to stay consistent. Suggest one specific, gentle adjustment that worked for you.",
+              "proof_requirement": "Submit the feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's real routine?",
+                "usefulness": "Was the adjustment realistic?",
+                "next_step": "Note whether it was supportive, not shaming."
+              },
+              "ai_prep_prompt": "Help me turn my consistency habit into a gentle tip for someone struggling.",
+              "ai_reflection_prompt": "I helped someone with consistency. Ask me if I avoided shame and stayed kind.",
+              "next_step": "Keep supporting members who are building routines.",
+              "feed_tags": ["momentum-building", "daily-consistency", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Never shame a missed day. Help them restart kindly.",
+              "does_not_count_as_mastery": "Pressuring someone about broken streaks does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "tracking-progress",
+          "skill_name": "Tracking Progress",
+          "description": "Keep a simple record so you can see how far you have come.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Record one note about today's progress.",
+              "practice_prompt": "Write one sentence about something you did today toward a goal.",
+              "proof_requirement": "Submit a one-sentence progress note.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the note understandable?",
+                "effort": "Did they record real progress?",
+                "usefulness": "Did it capture one concrete thing?",
+                "next_step": "Encourage another note tomorrow."
+              },
+              "ai_prep_prompt": "Help me notice one bit of progress from today worth recording.",
+              "ai_reflection_prompt": "I recorded one progress note. Ask me if it felt good to see it written.",
+              "next_step": "Try recording a note on a few more days.",
+              "feed_tags": ["momentum-building", "tracking-progress", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 3,
+              "difficulty": "beginner",
+              "safety_note": "Small progress counts. There is no minimum size for a note.",
+              "does_not_count_as_mastery": "An empty or blank note does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Keep progress notes across several days.",
+              "practice_prompt": "Write a short progress note on several days. Keep them in one place.",
+              "proof_requirement": "Submit a simple progress log of several days.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the log easy to read?",
+                "effort": "Did they track across multiple days?",
+                "usefulness": "Did the notes show real progress?",
+                "next_step": "Point out a clear sign of growth."
+              },
+              "ai_prep_prompt": "Help me set up a simple way to track a few days of progress.",
+              "ai_reflection_prompt": "I tracked several days. Ask me what pattern I notice.",
+              "next_step": "Move toward explaining why tracking helps you.",
+              "feed_tags": ["momentum-building", "tracking-progress", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Gaps in your log are okay. Track what you can.",
+              "does_not_count_as_mastery": "Backfilling fake entries does not count as tracking."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how tracking helps you keep going.",
+              "practice_prompt": "Write 4-6 sentences on how seeing your progress affects your motivation, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about how tracking changed how I feel about my progress.",
+              "ai_reflection_prompt": "I explained why tracking helps. Ask me if it rings true for me.",
+              "next_step": "Use tracking on a longer, meaningful goal.",
+              "feed_tags": ["momentum-building", "tracking-progress", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Tracking is for you, not for comparison with others.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Track a real goal long enough to see change.",
+              "practice_prompt": "Track progress on a meaningful goal for two weeks, then write what the record taught you.",
+              "proof_requirement": "Submit a reflection based on your real progress log.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Could you see the goal and the record?",
+                "effort": "Did they track over real time?",
+                "usefulness": "Did the record reveal something useful?",
+                "next_step": "Suggest one thing to track next."
+              },
+              "ai_prep_prompt": "Help me decide what to track for a goal that matters over two weeks.",
+              "ai_reflection_prompt": "I tracked a real goal. Ask me what surprised me in the record.",
+              "next_step": "Get ready to help someone set up tracking.",
+              "feed_tags": ["momentum-building", "tracking-progress", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "If the record shows slow progress, that is still information, not failure.",
+              "does_not_count_as_mastery": "A reflection with no underlying record does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member start a simple tracking habit.",
+              "practice_prompt": "Help a member who wants to track progress. Suggest one simple, specific way to record it that worked for you.",
+              "proof_requirement": "Submit the feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's real goal?",
+                "usefulness": "Was the method simple and doable?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me turn my tracking method into a simple tip for a beginner.",
+              "ai_reflection_prompt": "I helped someone track progress. Ask me if my tip was kind and specific.",
+              "next_step": "Keep helping members see their own progress.",
+              "feed_tags": ["momentum-building", "tracking-progress", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Keep it simple. A complicated system can discourage a beginner.",
+              "does_not_count_as_mastery": "Suggesting a tool with no guidance on how to use it does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "recovering-after-a-miss",
+          "skill_name": "Recovering After a Miss",
+          "description": "Come back kindly after a break, instead of giving up.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Restart after a missed day without self-blame.",
+              "practice_prompt": "Think of a habit you dropped. Restart it today with one small action and write one kind sentence to yourself about it.",
+              "proof_requirement": "Submit a note of your restart action and your kind sentence.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what they restarted?",
+                "effort": "Did they take a real restart action?",
+                "usefulness": "Was the self-talk kind?",
+                "next_step": "Affirm that coming back counts."
+              },
+              "ai_prep_prompt": "Help me restart a dropped habit with one small, kind step today.",
+              "ai_reflection_prompt": "I restarted after a miss. Ask me how it felt to come back.",
+              "next_step": "Practice restarting a couple more times this month.",
+              "feed_tags": ["momentum-building", "recovering-after-a-miss", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Missing is part of every journey. Coming back is the real skill.",
+              "does_not_count_as_mastery": "Harsh self-criticism with no restart action does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Practice recovering more than once.",
+              "practice_prompt": "Each time you miss something this week, restart with a small step and note how you came back.",
+              "proof_requirement": "Submit notes from at least two restarts.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the notes clear?",
+                "effort": "Did they restart more than once?",
+                "usefulness": "Did they come back kindly each time?",
+                "next_step": "Point out the smoothest comeback."
+              },
+              "ai_prep_prompt": "Help me plan how I will restart quickly the next time I miss.",
+              "ai_reflection_prompt": "I recovered more than once. Ask me what made restarting easier.",
+              "next_step": "Move toward explaining how you bounce back.",
+              "feed_tags": ["momentum-building", "recovering-after-a-miss", "repeat-it", "resilience"],
+              "trust_signal": "Showed repeated practice of recovering.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "You are not behind. Every restart is a fresh, valid beginning.",
+              "does_not_count_as_mastery": "Pretending you never missed does not count as recovering."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how you bounce back after a miss.",
+              "practice_prompt": "Write 4-6 sentences on how you recover after dropping a habit, with a real example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn to bounce back?",
+                "next_step": "Name the most encouraging line."
+              },
+              "ai_prep_prompt": "Ask me questions about how I get back on track after a break.",
+              "ai_reflection_prompt": "I explained how I bounce back. Ask me if it would comfort a beginner.",
+              "next_step": "Use your comeback plan on a goal you care about.",
+              "feed_tags": ["momentum-building", "recovering-after-a-miss", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your comeback method is personal and valid.",
+              "does_not_count_as_mastery": "Advice based on shame or punishment does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Recover from a real setback on a real goal.",
+              "practice_prompt": "After a real setback on a meaningful goal, use your comeback plan to keep going. Reflect on the recovery.",
+              "proof_requirement": "Submit a reflection on recovering from a real setback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the setback and recovery?",
+                "effort": "Did they recover from something real?",
+                "usefulness": "Did they handle it kindly and keep going?",
+                "next_step": "Suggest a way to make recovery easier next time."
+              },
+              "ai_prep_prompt": "Help me plan how to recover from a setback on a goal I care about.",
+              "ai_reflection_prompt": "I recovered from a real setback. Ask me what I learned about myself.",
+              "next_step": "Get ready to support someone who feels they failed.",
+              "feed_tags": ["momentum-building", "recovering-after-a-miss", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Setbacks are normal. If a goal stops fitting your life, adjusting it is also a valid recovery.",
+              "does_not_count_as_mastery": "Claiming you recovered when you actually gave up does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member who feels like they failed.",
+              "practice_prompt": "Reply to a member who feels discouraged after missing. Offer one kind, specific way to restart that worked for you.",
+              "proof_requirement": "Submit the feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the message clear?",
+                "effort": "Did they engage with the person's real feelings?",
+                "usefulness": "Could the person use the restart tip?",
+                "next_step": "Note whether it was warm and non-judging."
+              },
+              "ai_prep_prompt": "Help me comfort and encourage a member who feels they failed.",
+              "ai_reflection_prompt": "I helped someone restart. Ask me if I was kind and avoided shame.",
+              "next_step": "Keep welcoming members back after breaks.",
+              "feed_tags": ["momentum-building", "recovering-after-a-miss", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Never call a miss a failure. Treat their setback the way you would want yours treated.",
+              "does_not_count_as_mastery": "Guilt-tripping someone about quitting does not count as helping."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "direction_slug": "self-reflection",
+      "direction_name": "Self-Reflection",
+      "description": "Build the habit of looking honestly at your own thoughts, actions, and patterns, so you can grow with awareness.",
+      "skills": [
+        {
+          "skill_slug": "noticing-your-feelings",
+          "skill_name": "Noticing Your Feelings",
+          "description": "Name what you feel without judging it.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Name one feeling you had today.",
+              "practice_prompt": "Pick one moment today. Write the feeling you had and one thing that caused it.",
+              "proof_requirement": "Submit a short note naming one feeling and its cause.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what they felt?",
+                "effort": "Did they share something honest?",
+                "usefulness": "Did they connect a feeling to a cause?",
+                "next_step": "Reflect back the feeling they named."
+              },
+              "ai_prep_prompt": "Help me find words for a feeling I had today. Offer a few options.",
+              "ai_reflection_prompt": "I named one feeling. Ask me if naming it changed anything.",
+              "next_step": "Try naming feelings on a few more days.",
+              "feed_tags": ["self-reflection", "noticing-your-feelings", "try-it", "self-awareness"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "All feelings are allowed here. You only share what feels safe to share.",
+              "does_not_count_as_mastery": "Writing 'fine' with no real feeling named does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Name feelings across several days.",
+              "practice_prompt": "On several days, note one feeling and its cause. Keep them together.",
+              "proof_requirement": "Submit a short feelings log from several days.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the log easy to read?",
+                "effort": "Did they reflect across multiple days?",
+                "usefulness": "Were the feelings named honestly?",
+                "next_step": "Point out a recurring feeling."
+              },
+              "ai_prep_prompt": "Help me make a simple way to note one feeling each day.",
+              "ai_reflection_prompt": "I logged feelings for several days. Ask me what I notice.",
+              "next_step": "Move toward explaining why naming feelings helps.",
+              "feed_tags": ["self-reflection", "noticing-your-feelings", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Hard feelings are okay to note. If anything feels overwhelming, please reach out to someone you trust.",
+              "does_not_count_as_mastery": "A log of vague one-word entries with no causes does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why noticing feelings helps you.",
+              "practice_prompt": "Write 4-6 sentences on how naming your feelings affects your choices, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest insight."
+              },
+              "ai_prep_prompt": "Ask me questions about how naming feelings has helped me decide things.",
+              "ai_reflection_prompt": "I explained why noticing feelings helps. Ask me if it matches my life.",
+              "next_step": "Use feeling-awareness in a real decision.",
+              "feed_tags": ["self-reflection", "noticing-your-feelings", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "AI can help you find words, but only you decide what your feelings mean.",
+              "does_not_count_as_mastery": "Generic emotional advice with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use feeling-awareness to guide a real choice.",
+              "practice_prompt": "Before a real decision this week, name what you feel and let it inform your choice. Reflect on what happened.",
+              "proof_requirement": "Submit a reflection on a real decision guided by your feelings.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the decision?",
+                "effort": "Did they use this in a real choice?",
+                "usefulness": "Did noticing feelings help them decide?",
+                "next_step": "Suggest another moment to try it."
+              },
+              "ai_prep_prompt": "Help me check in with my feelings before a real decision I am facing.",
+              "ai_reflection_prompt": "I used my feelings in a real choice. Ask me what I learned.",
+              "next_step": "Get ready to help someone name their feelings.",
+              "feed_tags": ["self-reflection", "noticing-your-feelings", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Feelings inform choices but do not have to control them. Big decisions can wait until you feel steady.",
+              "does_not_count_as_mastery": "A reflection with no real decision behind it does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member put words to a feeling.",
+              "practice_prompt": "Reply to a member sharing something hard. Gently help them name what they might be feeling, without telling them what to feel.",
+              "proof_requirement": "Submit the supportive reply you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the reply easy to understand?",
+                "effort": "Did they respond to the person's real share?",
+                "usefulness": "Did it help without labeling them?",
+                "next_step": "Note whether it was gentle and respectful."
+              },
+              "ai_prep_prompt": "Help me gently support a member to name their own feeling without deciding it for them.",
+              "ai_reflection_prompt": "I helped someone name a feeling. Ask me if I let them stay in control.",
+              "next_step": "Keep supporting members who are reflecting.",
+              "feed_tags": ["self-reflection", "noticing-your-feelings", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "You are a peer, not a therapist. For serious distress, kindly point them to professional help.",
+              "does_not_count_as_mastery": "Telling someone how they should feel does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "reviewing-your-day",
+          "skill_name": "Reviewing Your Day",
+          "description": "Look back briefly to learn from how a day went.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Review one day in a few sentences.",
+              "practice_prompt": "At the end of today, write what went well and one thing you would change.",
+              "proof_requirement": "Submit a short end-of-day review.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow their review?",
+                "effort": "Did they reflect honestly?",
+                "usefulness": "Did they note a win and a change?",
+                "next_step": "Reflect back their win."
+              },
+              "ai_prep_prompt": "Ask me two simple questions to review how my day went.",
+              "ai_reflection_prompt": "I reviewed my day. Ask me if anything stood out.",
+              "next_step": "Try a daily review a few more times.",
+              "feed_tags": ["self-reflection", "reviewing-your-day", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Reviewing is for learning, not for judging yourself harshly.",
+              "does_not_count_as_mastery": "Listing only criticism with no balance does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Review several days in a row-ish.",
+              "practice_prompt": "Do a short end-of-day review on several days. Keep them together.",
+              "proof_requirement": "Submit reviews from several days.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the reviews clear?",
+                "effort": "Did they review multiple days?",
+                "usefulness": "Did each note a win and a change?",
+                "next_step": "Point out a useful pattern."
+              },
+              "ai_prep_prompt": "Help me set up a quick daily review I can keep up.",
+              "ai_reflection_prompt": "I reviewed several days. Ask me what shows up repeatedly.",
+              "next_step": "Move toward explaining why daily review helps.",
+              "feed_tags": ["self-reflection", "reviewing-your-day", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Skip a day if you need to. The habit matters more than perfection.",
+              "does_not_count_as_mastery": "Copy-paste reviews with no real reflection do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain what daily review does for you.",
+              "practice_prompt": "Write 4-6 sentences on how reviewing your day changes your next day, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the best takeaway."
+              },
+              "ai_prep_prompt": "Ask me questions about how reviewing days has helped me adjust.",
+              "ai_reflection_prompt": "I explained why review helps. Ask me if it feels true.",
+              "next_step": "Use review to improve a real, ongoing effort.",
+              "feed_tags": ["self-reflection", "reviewing-your-day", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your reflection style is your own. Keep it kind.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use reviews to adjust a real effort over time.",
+              "practice_prompt": "Review your days for two weeks while working on a goal, and use what you learn to adjust. Reflect on the changes you made.",
+              "proof_requirement": "Submit a reflection showing how reviews changed your actions.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you see the adjustments?",
+                "effort": "Did they review over real time?",
+                "usefulness": "Did the reviews lead to real changes?",
+                "next_step": "Suggest one more thing to watch for."
+              },
+              "ai_prep_prompt": "Help me use my daily reviews to spot one thing to adjust on a goal.",
+              "ai_reflection_prompt": "I used reviews to adjust a real effort. Ask me what changed.",
+              "next_step": "Get ready to help someone start reviewing.",
+              "feed_tags": ["self-reflection", "reviewing-your-day", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Adjusting based on reflection is wisdom, not failure.",
+              "does_not_count_as_mastery": "A reflection with no real adjustments made does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member start reviewing their days.",
+              "practice_prompt": "Help a member who wants to reflect more. Share one simple, specific review question that worked for you.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's goal?",
+                "usefulness": "Was the review question simple to use?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me turn my review habit into one simple question for a beginner.",
+              "ai_reflection_prompt": "I helped someone start reviewing. Ask me if my tip was kind and clear.",
+              "next_step": "Keep helping members reflect well.",
+              "feed_tags": ["self-reflection", "reviewing-your-day", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Encourage gentle reflection, not harsh self-grading.",
+              "does_not_count_as_mastery": "A complicated reflection system dumped on a beginner does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "identifying-patterns",
+          "skill_name": "Identifying Patterns",
+          "description": "Spot the habits and cycles that repeat in your life.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Notice one pattern in your behavior.",
+              "practice_prompt": "Look back at the past week. Write one thing you noticed yourself doing more than once.",
+              "proof_requirement": "Submit a note naming one pattern you noticed.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you tell what pattern they saw?",
+                "effort": "Did they look back honestly?",
+                "usefulness": "Was it a real, repeated pattern?",
+                "next_step": "Reflect back the pattern they named."
+              },
+              "ai_prep_prompt": "Help me look back at my week and spot one thing I repeated.",
+              "ai_reflection_prompt": "I named one pattern. Ask me if I had noticed it before.",
+              "next_step": "Try spotting patterns across a longer stretch.",
+              "feed_tags": ["self-reflection", "identifying-patterns", "try-it", "self-awareness"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 6,
+              "difficulty": "beginner",
+              "safety_note": "Patterns are information, not judgments about who you are.",
+              "does_not_count_as_mastery": "Naming a one-time event as a pattern does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Track patterns over a couple of weeks.",
+              "practice_prompt": "Over two weeks, note repeated behaviors or feelings you observe. List the patterns you find.",
+              "proof_requirement": "Submit a short list of patterns observed over time.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the list clear?",
+                "effort": "Did they observe over real time?",
+                "usefulness": "Were these genuine patterns?",
+                "next_step": "Point out the strongest pattern."
+              },
+              "ai_prep_prompt": "Help me set up a simple way to watch for repeated behaviors.",
+              "ai_reflection_prompt": "I tracked patterns for two weeks. Ask me which surprised me.",
+              "next_step": "Move toward explaining one pattern and its trigger.",
+              "feed_tags": ["self-reflection", "identifying-patterns", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across real time.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "Notice patterns with curiosity, not criticism.",
+              "does_not_count_as_mastery": "Guessing patterns without observing does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain one pattern and what triggers it.",
+              "practice_prompt": "Write 4-6 sentences explaining one pattern you have, what tends to trigger it, and how it affects you.",
+              "proof_requirement": "Submit a short explanation of a pattern and its trigger.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they connect pattern, trigger, and effect?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest connection."
+              },
+              "ai_prep_prompt": "Ask me questions to connect one of my patterns to what triggers it.",
+              "ai_reflection_prompt": "I explained a pattern and its trigger. Ask me if it feels accurate.",
+              "next_step": "Try changing how you respond to one trigger.",
+              "feed_tags": ["self-reflection", "identifying-patterns", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 12,
+              "difficulty": "intermediate",
+              "safety_note": "Understanding a pattern is enough at this stage. You do not have to fix it yet.",
+              "does_not_count_as_mastery": "Naming a pattern with no link to a trigger or effect does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Change how you respond to one real pattern.",
+              "practice_prompt": "Choose one pattern you want to shift. Try a different response when its trigger appears, and reflect on what happened.",
+              "proof_requirement": "Submit a reflection on changing a real pattern.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the pattern and change?",
+                "effort": "Did they try a real new response?",
+                "usefulness": "Did the change have an effect?",
+                "next_step": "Suggest how to keep the new response going."
+              },
+              "ai_prep_prompt": "Help me plan a different response for the next time a pattern's trigger shows up.",
+              "ai_reflection_prompt": "I tried changing a pattern. Ask me what worked and what was hard.",
+              "next_step": "Get ready to help someone spot their patterns.",
+              "feed_tags": ["self-reflection", "identifying-patterns", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Change is slow. One different response is real progress, even if the pattern returns.",
+              "does_not_count_as_mastery": "Saying you will change with no real attempt does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member notice one of their patterns.",
+              "practice_prompt": "Reply to a member's reflection and gently point out a possible pattern you notice, framed as a question.",
+              "proof_requirement": "Submit the reflective question you offered another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the question clear?",
+                "effort": "Did they engage with the person's real reflection?",
+                "usefulness": "Could it help the person see something new?",
+                "next_step": "Note whether it was gentle, not labeling."
+              },
+              "ai_prep_prompt": "Help me turn a pattern I notice in someone's reflection into a gentle question.",
+              "ai_reflection_prompt": "I helped someone spot a pattern. Ask me if I stayed curious, not judging.",
+              "next_step": "Keep helping members reflect with curiosity.",
+              "feed_tags": ["self-reflection", "identifying-patterns", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer patterns as questions, not diagnoses. Let them decide if it fits.",
+              "does_not_count_as_mastery": "Labeling someone's character or 'analyzing' them does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "setting-intentions",
+          "skill_name": "Setting Intentions",
+          "description": "Decide on purpose how you want to show up, before you act.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Set one intention for your day.",
+              "practice_prompt": "Before your day really starts, write one short intention for how you want to show up today.",
+              "proof_requirement": "Submit one intention you set for the day.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the intention clear?",
+                "effort": "Did they set a real intention?",
+                "usefulness": "Was it about how they show up?",
+                "next_step": "Reflect back their intention."
+              },
+              "ai_prep_prompt": "Help me set one short intention for how I want to show up today.",
+              "ai_reflection_prompt": "I set an intention. Ask me if I kept it in mind.",
+              "next_step": "Try setting an intention on a few more days.",
+              "feed_tags": ["self-reflection", "setting-intentions", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 3,
+              "difficulty": "beginner",
+              "safety_note": "An intention is a direction, not a strict rule. Missing it is okay.",
+              "does_not_count_as_mastery": "A to-do list item is not the same as an intention about how you show up."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Set and revisit intentions across days.",
+              "practice_prompt": "Set a morning intention on several days and note that evening whether it helped. Keep them together.",
+              "proof_requirement": "Submit several intentions with short evening notes.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the entries clear?",
+                "effort": "Did they set intentions on multiple days?",
+                "usefulness": "Did they revisit them honestly?",
+                "next_step": "Point out an intention that worked well."
+              },
+              "ai_prep_prompt": "Help me build a quick routine to set and check an intention each day.",
+              "ai_reflection_prompt": "I set intentions for several days. Ask me which ones stuck.",
+              "next_step": "Move toward explaining how intentions guide you.",
+              "feed_tags": ["self-reflection", "setting-intentions", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Revisit kindly. An unmet intention is information, not a failure.",
+              "does_not_count_as_mastery": "Setting intentions but never revisiting them does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how intentions shape your actions.",
+              "practice_prompt": "Write 4-6 sentences on how setting intentions changes how you act, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest insight."
+              },
+              "ai_prep_prompt": "Ask me questions about how an intention changed one of my days.",
+              "ai_reflection_prompt": "I explained how intentions guide me. Ask me if it feels true.",
+              "next_step": "Set an intention for a real, important situation.",
+              "feed_tags": ["self-reflection", "setting-intentions", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your intentions are personal. There is no correct one.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Set an intention before a real, important moment.",
+              "practice_prompt": "Before a real important event this week, set a clear intention for how you want to show up. Reflect on how it went.",
+              "proof_requirement": "Submit a reflection on an intention used in a real moment.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the moment?",
+                "effort": "Did they set and use a real intention?",
+                "usefulness": "Did the intention shape how they showed up?",
+                "next_step": "Suggest another moment to try it."
+              },
+              "ai_prep_prompt": "Help me set an intention for an important event coming up.",
+              "ai_reflection_prompt": "I used an intention in a real moment. Ask me if it helped me show up well.",
+              "next_step": "Get ready to help someone set their own intention.",
+              "feed_tags": ["self-reflection", "setting-intentions", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "An intention guides you; it does not guarantee an outcome. Be kind to yourself either way.",
+              "does_not_count_as_mastery": "A reflection with no real event behind it does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member set a clear intention.",
+              "practice_prompt": "Help a member who wants to show up differently. Offer one specific way to phrase an intention that worked for you.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the person's goal?",
+                "usefulness": "Could the person use the phrasing?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me turn my intention habit into a tip for someone who wants to show up differently.",
+              "ai_reflection_prompt": "I helped someone set an intention. Ask me if my tip was kind and specific.",
+              "next_step": "Keep helping members set intentions.",
+              "feed_tags": ["self-reflection", "setting-intentions", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Help them find their own intention, not the one you would pick.",
+              "does_not_count_as_mastery": "Setting an intention for them, instead of helping them set their own, does not count."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "direction_slug": "asking-better-questions",
+      "direction_name": "Asking Better Questions",
+      "description": "Learn to ask questions that open up understanding, for others and for yourself.",
+      "skills": [
+        {
+          "skill_slug": "clarifying-questions",
+          "skill_name": "Clarifying Questions",
+          "description": "Ask to make sure you understood correctly.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Ask one clarifying question.",
+              "practice_prompt": "In a conversation today, ask one question to check you understood, like 'Do you mean...?' Write the question down.",
+              "proof_requirement": "Submit the clarifying question you asked.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the question easy to understand?",
+                "effort": "Did they ask it in a real moment?",
+                "usefulness": "Did it actually check understanding?",
+                "next_step": "Reflect back what made it clarifying."
+              },
+              "ai_prep_prompt": "Give me a simple template for a clarifying question I can use today.",
+              "ai_reflection_prompt": "I asked a clarifying question. Ask me how the other person responded.",
+              "next_step": "Try clarifying questions in a few more talks.",
+              "feed_tags": ["asking-better-questions", "clarifying-questions", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Asking to understand is a strength, not a sign you missed something.",
+              "does_not_count_as_mastery": "A yes/no question that does not check meaning does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Use clarifying questions several times.",
+              "practice_prompt": "In three conversations, ask a clarifying question before responding. Note each one.",
+              "proof_requirement": "Submit three clarifying questions from three conversations.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the questions clear?",
+                "effort": "Did they practice across conversations?",
+                "usefulness": "Did each one check understanding?",
+                "next_step": "Point out the best clarifying question."
+              },
+              "ai_prep_prompt": "Help me plan everyday moments to practice clarifying questions.",
+              "ai_reflection_prompt": "I clarified three times. Ask me if it reduced confusion.",
+              "next_step": "Move toward explaining why clarifying helps.",
+              "feed_tags": ["asking-better-questions", "clarifying-questions", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one conversation.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Record your own questions, not others' private details.",
+              "does_not_count_as_mastery": "Three versions of the same single question do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why clarifying prevents misunderstanding.",
+              "practice_prompt": "Write 4-6 sentences on how clarifying questions prevent mix-ups, with a real example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn the value?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about a time clarifying saved me from a misunderstanding.",
+              "ai_reflection_prompt": "I explained why clarifying helps. Ask me if a beginner would get it.",
+              "next_step": "Use clarifying questions in a high-stakes talk.",
+              "feed_tags": ["asking-better-questions", "clarifying-questions", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view of why clarifying helps is valid, even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Clarify in a situation where it really matters.",
+              "practice_prompt": "In a real situation where misunderstanding would be costly, ask clarifying questions before acting. Reflect on the result.",
+              "proof_requirement": "Submit a reflection on a real, important clarification.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the situation?",
+                "effort": "Did they clarify in a real, important moment?",
+                "usefulness": "Did clarifying change the outcome?",
+                "next_step": "Suggest where to use it again."
+              },
+              "ai_prep_prompt": "Help me prepare clarifying questions for an important conversation coming up.",
+              "ai_reflection_prompt": "I clarified in an important moment. Ask me what I avoided by asking.",
+              "next_step": "Get ready to coach someone on clarifying.",
+              "feed_tags": ["asking-better-questions", "clarifying-questions", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Asking before acting is wise, not weak.",
+              "does_not_count_as_mastery": "An imagined scenario with no real conversation does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member ask clearer clarifying questions.",
+              "practice_prompt": "Help a member who tends to assume. Suggest one specific clarifying question phrasing that worked for you.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's situation?",
+                "usefulness": "Could the member use the phrasing?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me turn my clarifying habit into a usable tip for a beginner.",
+              "ai_reflection_prompt": "I gave a clarifying tip. Ask me if it was kind, specific, and useful.",
+              "next_step": "Keep helping members ask before assuming.",
+              "feed_tags": ["asking-better-questions", "clarifying-questions", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer a phrasing, not a correction of their character.",
+              "does_not_count_as_mastery": "Vague praise with no usable phrasing does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "open-ended-questions",
+          "skill_name": "Open-Ended Questions",
+          "description": "Ask questions that invite more than a yes or no.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Ask one open-ended question.",
+              "practice_prompt": "Ask someone a question starting with 'What' or 'How' that invites a real answer. Write it down.",
+              "proof_requirement": "Submit one open-ended question you asked.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the question clear?",
+                "effort": "Did they ask it for real?",
+                "usefulness": "Did it invite more than yes/no?",
+                "next_step": "Reflect back what made it open."
+              },
+              "ai_prep_prompt": "Help me turn a yes/no question into an open-ended one.",
+              "ai_reflection_prompt": "I asked an open question. Ask me how much the person opened up.",
+              "next_step": "Try a few more open-ended questions.",
+              "feed_tags": ["asking-better-questions", "open-ended-questions", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Open questions are an invitation, not pressure. Let people share what they want.",
+              "does_not_count_as_mastery": "A yes/no question dressed up as open does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Ask open-ended questions across conversations.",
+              "practice_prompt": "In three conversations, ask at least one open-ended question each. Note them.",
+              "proof_requirement": "Submit three open-ended questions from three conversations.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they practice across conversations?",
+                "usefulness": "Did each invite real answers?",
+                "next_step": "Point out the most opening question."
+              },
+              "ai_prep_prompt": "Give me three open-ended question starters I can use this week.",
+              "ai_reflection_prompt": "I asked open questions three times. Ask me what people shared.",
+              "next_step": "Move toward explaining why open questions help.",
+              "feed_tags": ["asking-better-questions", "open-ended-questions", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one conversation.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Keep notes on your questions, not on others' private answers.",
+              "does_not_count_as_mastery": "Asking the same person the same question three times does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why open questions deepen a talk.",
+              "practice_prompt": "Write 4-6 sentences on how open-ended questions change a conversation, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about a time an open question led somewhere good.",
+              "ai_reflection_prompt": "I explained why open questions help. Ask me if it feels true.",
+              "next_step": "Use open questions in a real, meaningful conversation.",
+              "feed_tags": ["asking-better-questions", "open-ended-questions", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your reasons are valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use open questions to understand someone better.",
+              "practice_prompt": "In a real conversation where you want to understand someone, lead with open-ended questions. Reflect on what you learned.",
+              "proof_requirement": "Submit a reflection on a real, deeper conversation.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the conversation?",
+                "effort": "Did they use open questions for real?",
+                "usefulness": "Did it deepen understanding?",
+                "next_step": "Suggest where to try it again."
+              },
+              "ai_prep_prompt": "Help me prepare open questions to understand someone I want to connect with.",
+              "ai_reflection_prompt": "I used open questions in a real talk. Ask me what I learned about the person.",
+              "next_step": "Get ready to coach someone on open questions.",
+              "feed_tags": ["asking-better-questions", "open-ended-questions", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Follow the other person's comfort. Curiosity should never feel like interrogation.",
+              "does_not_count_as_mastery": "An imagined conversation with no real attempt does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member ask more open questions.",
+              "practice_prompt": "Help a member who asks mostly yes/no questions. Suggest one specific open-ended phrasing that worked for you.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's style?",
+                "usefulness": "Could the member use the phrasing?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me turn my open-question habit into a tip for a beginner.",
+              "ai_reflection_prompt": "I gave an open-question tip. Ask me if it was kind and useful.",
+              "next_step": "Keep helping members ask richer questions.",
+              "feed_tags": ["asking-better-questions", "open-ended-questions", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer a phrasing, not a critique of how they talk.",
+              "does_not_count_as_mastery": "Generic praise with no usable phrasing does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "follow-up-questions",
+          "skill_name": "Follow-Up Questions",
+          "description": "Build on someone's answer to go a little deeper.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Ask one follow-up to someone's answer.",
+              "practice_prompt": "When someone answers you today, ask one follow-up like 'Can you say more about that?' Write it down.",
+              "proof_requirement": "Submit the follow-up question you asked.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the follow-up clear?",
+                "effort": "Did they ask it in a real moment?",
+                "usefulness": "Did it build on the answer?",
+                "next_step": "Reflect back what made it a follow-up."
+              },
+              "ai_prep_prompt": "Give me two simple follow-up question phrases to use today.",
+              "ai_reflection_prompt": "I asked a follow-up. Ask me what more the person shared.",
+              "next_step": "Try follow-ups in a few more conversations.",
+              "feed_tags": ["asking-better-questions", "follow-up-questions", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Follow-ups show you are listening. Stop if the person seems uncomfortable.",
+              "does_not_count_as_mastery": "Changing the subject instead of building on the answer does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Use follow-up questions several times.",
+              "practice_prompt": "In three conversations, ask a follow-up that builds on what the person said. Note them.",
+              "proof_requirement": "Submit three follow-up questions from three conversations.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they practice across conversations?",
+                "usefulness": "Did each build on an answer?",
+                "next_step": "Point out the best follow-up."
+              },
+              "ai_prep_prompt": "Help me practice noticing moments to ask a follow-up.",
+              "ai_reflection_prompt": "I used follow-ups three times. Ask me if conversations went deeper.",
+              "next_step": "Move toward explaining why follow-ups matter.",
+              "feed_tags": ["asking-better-questions", "follow-up-questions", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across more than one conversation.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Note your questions, not others' private answers.",
+              "does_not_count_as_mastery": "Repeating the original question instead of building on the answer does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how follow-ups show real interest.",
+              "practice_prompt": "Write 4-6 sentences on how follow-up questions deepen a conversation, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me about a time a follow-up question opened up a good conversation.",
+              "ai_reflection_prompt": "I explained why follow-ups matter. Ask me if a beginner would get it.",
+              "next_step": "Use follow-ups in a conversation that matters.",
+              "feed_tags": ["asking-better-questions", "follow-up-questions", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your reasons are valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use follow-ups to truly understand someone.",
+              "practice_prompt": "In a real conversation, use a chain of follow-up questions to understand someone's view fully. Reflect on it.",
+              "proof_requirement": "Submit a reflection on a real, deeper conversation.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the conversation?",
+                "effort": "Did they use follow-ups for real?",
+                "usefulness": "Did it deepen understanding?",
+                "next_step": "Suggest where to use it again."
+              },
+              "ai_prep_prompt": "Help me plan how to follow up to really understand someone's view.",
+              "ai_reflection_prompt": "I used follow-ups in a real talk. Ask me what I understood that I had missed.",
+              "next_step": "Get ready to coach someone on follow-ups.",
+              "feed_tags": ["asking-better-questions", "follow-up-questions", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Stay curious, not pushy. Respect when someone is done sharing.",
+              "does_not_count_as_mastery": "An imagined conversation with no real attempt does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member ask better follow-ups.",
+              "practice_prompt": "Help a member whose conversations stay shallow. Suggest one specific follow-up phrasing that worked for you.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's situation?",
+                "usefulness": "Could the member use the phrasing?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me turn my follow-up habit into a tip for a beginner.",
+              "ai_reflection_prompt": "I gave a follow-up tip. Ask me if it was kind and useful.",
+              "next_step": "Keep helping members deepen their conversations.",
+              "feed_tags": ["asking-better-questions", "follow-up-questions", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer a phrasing, not a critique of how they talk.",
+              "does_not_count_as_mastery": "Generic praise with no usable phrasing does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "questions-for-yourself",
+          "skill_name": "Questions for Yourself",
+          "description": "Ask yourself honest questions to understand what you want.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Ask yourself one honest question.",
+              "practice_prompt": "Write one honest question about something you are unsure of, and a first attempt at answering it.",
+              "proof_requirement": "Submit one self-question and your short answer.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the question and answer clear?",
+                "effort": "Did they ask something real?",
+                "usefulness": "Did the question prompt honest thought?",
+                "next_step": "Reflect back the question they raised."
+              },
+              "ai_prep_prompt": "Help me find one honest question to ask myself about something I am unsure of.",
+              "ai_reflection_prompt": "I asked myself a question. Ask me if answering it was harder than expected.",
+              "next_step": "Try a few more self-questions over the week.",
+              "feed_tags": ["asking-better-questions", "questions-for-yourself", "try-it", "self-awareness"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Be gentle with your own answers. There are no wrong ones.",
+              "does_not_count_as_mastery": "A surface question with no attempt to answer honestly does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Ask yourself questions across several days.",
+              "practice_prompt": "Each day for several days, ask yourself one honest question and jot a short answer.",
+              "proof_requirement": "Submit several self-questions with answers.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they reflect across multiple days?",
+                "usefulness": "Were the questions honest?",
+                "next_step": "Point out the most revealing question."
+              },
+              "ai_prep_prompt": "Help me build a habit of asking myself one honest question a day.",
+              "ai_reflection_prompt": "I asked myself questions for several days. Ask me what theme I notice.",
+              "next_step": "Move toward explaining how self-questions guide you.",
+              "feed_tags": ["asking-better-questions", "questions-for-yourself", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "If a question stirs up a lot, it is okay to pause and talk to someone you trust.",
+              "does_not_count_as_mastery": "The same question repeated with no real engagement does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how self-questions clarify what you want.",
+              "practice_prompt": "Write 4-6 sentences on how asking yourself questions helps you understand what you want, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest insight."
+              },
+              "ai_prep_prompt": "Ask me questions about how self-questioning helped me get clearer on something.",
+              "ai_reflection_prompt": "I explained how self-questions help. Ask me if it rings true.",
+              "next_step": "Use self-questions for a real decision you face.",
+              "feed_tags": ["asking-better-questions", "questions-for-yourself", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "AI can offer questions, but your answers and their meaning are yours alone.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use self-questions to make a real decision.",
+              "practice_prompt": "Facing a real decision, ask yourself a few honest questions to guide your choice. Reflect on how it helped.",
+              "proof_requirement": "Submit a reflection on a real decision guided by self-questions.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you understand the decision?",
+                "effort": "Did they use self-questions for real?",
+                "usefulness": "Did the questions clarify their choice?",
+                "next_step": "Suggest a question to keep asking."
+              },
+              "ai_prep_prompt": "Help me come up with honest questions to ask myself about a real decision.",
+              "ai_reflection_prompt": "I used self-questions for a real decision. Ask me what became clear.",
+              "next_step": "Get ready to help someone ask themselves good questions.",
+              "feed_tags": ["asking-better-questions", "questions-for-yourself", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Questions guide decisions; they do not have to rush them. Take your time.",
+              "does_not_count_as_mastery": "A reflection with no real decision behind it does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member ask themselves a better question.",
+              "practice_prompt": "Reply to a member who feels stuck on a choice. Offer one honest question they could ask themselves, not the answer.",
+              "proof_requirement": "Submit the reflective question you offered another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the question clear?",
+                "effort": "Did they engage with the person's situation?",
+                "usefulness": "Could the question help them think?",
+                "next_step": "Note whether it left the choice with them."
+              },
+              "ai_prep_prompt": "Help me offer a member one honest self-question instead of giving them the answer.",
+              "ai_reflection_prompt": "I helped someone ask themselves a question. Ask me if I left the answer up to them.",
+              "next_step": "Keep helping members think for themselves.",
+              "feed_tags": ["asking-better-questions", "questions-for-yourself", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Offer a question, not your decision for them. Their choice stays theirs.",
+              "does_not_count_as_mastery": "Telling them what to decide does not count as helping them ask."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "direction_slug": "giving-useful-feedback",
+      "direction_name": "Giving Useful Feedback",
+      "description": "Learn to respond to others' work in a way that is kind, specific, and genuinely helpful.",
+      "skills": [
+        {
+          "skill_slug": "noticing-strengths",
+          "skill_name": "Noticing Strengths",
+          "description": "Point out what someone did well, specifically.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Name one specific strength in someone's work.",
+              "practice_prompt": "Look at a member's submission. Write one specific thing they did well, not just 'good job'.",
+              "proof_requirement": "Submit one specific strength you noticed.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the strength clearly named?",
+                "effort": "Did they look at real work?",
+                "usefulness": "Was it specific, not generic?",
+                "next_step": "Reflect back what made it specific."
+              },
+              "ai_prep_prompt": "Help me turn 'good job' into one specific strength I can name.",
+              "ai_reflection_prompt": "I named one strength. Ask me if it was specific enough to be useful.",
+              "next_step": "Try noticing strengths in a few more submissions.",
+              "feed_tags": ["giving-useful-feedback", "noticing-strengths", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Honest praise builds people up. You do not need to invent strengths.",
+              "does_not_count_as_mastery": "Generic praise like 'nice work' with no specifics does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Notice specific strengths several times.",
+              "practice_prompt": "Give specific-strength feedback on three different submissions. Note each one.",
+              "proof_requirement": "Submit three pieces of strength-based feedback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they review different work?",
+                "usefulness": "Was each strength specific?",
+                "next_step": "Point out the most useful one."
+              },
+              "ai_prep_prompt": "Help me practice spotting specific strengths in different kinds of work.",
+              "ai_reflection_prompt": "I noticed strengths three times. Ask me which felt most genuine.",
+              "next_step": "Move toward explaining why noticing strengths helps.",
+              "feed_tags": ["giving-useful-feedback", "noticing-strengths", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across different submissions.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "Each person's work deserves a fresh, honest look.",
+              "does_not_count_as_mastery": "Copy-paste praise across three submissions does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why naming strengths helps people grow.",
+              "practice_prompt": "Write 4-6 sentences on why specific strength-feedback helps someone improve, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about a time noticing a strength helped someone.",
+              "ai_reflection_prompt": "I explained why strengths matter. Ask me if a beginner would agree.",
+              "next_step": "Use strength-spotting inside fuller feedback.",
+              "feed_tags": ["giving-useful-feedback", "noticing-strengths", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view is valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Lead real feedback with a genuine strength.",
+              "practice_prompt": "Give full feedback on a real submission that starts with a specific strength before any suggestion. Reflect on how it landed.",
+              "proof_requirement": "Submit the strength-first feedback you gave.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the feedback?",
+                "effort": "Did they lead with a real strength?",
+                "usefulness": "Did the balance feel encouraging?",
+                "next_step": "Suggest where to apply this again."
+              },
+              "ai_prep_prompt": "Help me structure feedback that opens with a genuine strength.",
+              "ai_reflection_prompt": "I led feedback with a strength. Ask me how the person responded.",
+              "next_step": "Get ready to coach someone on noticing strengths.",
+              "feed_tags": ["giving-useful-feedback", "noticing-strengths", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Strength-first is not flattery. Keep it honest and specific.",
+              "does_not_count_as_mastery": "Adding empty praise just to soften criticism does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member give more specific praise.",
+              "practice_prompt": "Help a member whose feedback is too vague. Show them how to make one piece of praise specific.",
+              "proof_requirement": "Submit the coaching feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was your coaching clear?",
+                "effort": "Did they engage with the member's real feedback?",
+                "usefulness": "Could the member improve from it?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me coach a member to make their vague praise more specific.",
+              "ai_reflection_prompt": "I coached someone on praise. Ask me if I was kind and specific.",
+              "next_step": "Keep helping members give honest praise.",
+              "feed_tags": ["giving-useful-feedback", "noticing-strengths", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Model what you teach: be specific and kind in your own coaching.",
+              "does_not_count_as_mastery": "Telling them their feedback was bad with no example of better does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "being-specific",
+          "skill_name": "Being Specific",
+          "description": "Point to exact moments instead of speaking in generalities.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Point to one exact moment in someone's work.",
+              "practice_prompt": "On a submission, write feedback that points to one exact spot, like 'At the part where you said X...'.",
+              "proof_requirement": "Submit one specific, located piece of feedback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the exact moment clear?",
+                "effort": "Did they reference real work?",
+                "usefulness": "Did they point to a precise spot?",
+                "next_step": "Reflect back what made it specific."
+              },
+              "ai_prep_prompt": "Help me rewrite vague feedback to point at one exact moment.",
+              "ai_reflection_prompt": "I gave specific feedback. Ask me if I pointed to a real spot.",
+              "next_step": "Try locating feedback on a few more submissions.",
+              "feed_tags": ["giving-useful-feedback", "being-specific", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Specific is kinder than vague, because it is easier to act on.",
+              "does_not_count_as_mastery": "General comments like 'it was good overall' do not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Give located feedback several times.",
+              "practice_prompt": "On three submissions, give feedback that names an exact moment each time. Note them.",
+              "proof_requirement": "Submit three pieces of located feedback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they review different work?",
+                "usefulness": "Did each point to a precise spot?",
+                "next_step": "Point out the most precise one."
+              },
+              "ai_prep_prompt": "Help me practice pointing to exact moments in different submissions.",
+              "ai_reflection_prompt": "I gave located feedback three times. Ask me which was most precise.",
+              "next_step": "Move toward explaining why specifics help.",
+              "feed_tags": ["giving-useful-feedback", "being-specific", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across different submissions.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "Point to the work, not the person.",
+              "does_not_count_as_mastery": "Three vague comments do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why specific feedback is easier to use.",
+              "practice_prompt": "Write 4-6 sentences on why pointing to exact moments helps, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about a time specific feedback helped me more than vague feedback.",
+              "ai_reflection_prompt": "I explained why specifics help. Ask me if a beginner would agree.",
+              "next_step": "Use specific feedback inside a full review.",
+              "feed_tags": ["giving-useful-feedback", "being-specific", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view is valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Give specific feedback on real, fuller work.",
+              "practice_prompt": "Give feedback on a real, longer submission, pointing to specific moments throughout. Reflect on how useful it was.",
+              "proof_requirement": "Submit the detailed, specific feedback you gave.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the feedback?",
+                "effort": "Did they engage with real, fuller work?",
+                "usefulness": "Were the specifics actionable?",
+                "next_step": "Suggest where to apply this again."
+              },
+              "ai_prep_prompt": "Help me give specific feedback across a longer piece of work.",
+              "ai_reflection_prompt": "I gave detailed specific feedback. Ask me if it was usable.",
+              "next_step": "Get ready to coach someone on being specific.",
+              "feed_tags": ["giving-useful-feedback", "being-specific", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Specific does not mean harsh. Keep the tone kind throughout.",
+              "does_not_count_as_mastery": "A long but vague review does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member make their feedback specific.",
+              "practice_prompt": "Help a member whose feedback stays general. Show them how to point to one exact moment instead.",
+              "proof_requirement": "Submit the coaching feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was your coaching clear?",
+                "effort": "Did they engage with the member's real feedback?",
+                "usefulness": "Could the member improve from it?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me coach a member to make their general feedback specific.",
+              "ai_reflection_prompt": "I coached someone on specifics. Ask me if I was kind and clear.",
+              "next_step": "Keep helping members give precise feedback.",
+              "feed_tags": ["giving-useful-feedback", "being-specific", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Model specificity in your own coaching.",
+              "does_not_count_as_mastery": "Saying 'be more specific' without showing how does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "kind-honesty",
+          "skill_name": "Kind Honesty",
+          "description": "Share an honest concern without making someone feel small.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Share one honest concern kindly.",
+              "practice_prompt": "On a submission, share one honest thing that could be better, phrased kindly. Write it down.",
+              "proof_requirement": "Submit one kind, honest piece of feedback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the concern clear?",
+                "effort": "Did they give honest feedback?",
+                "usefulness": "Was it phrased kindly?",
+                "next_step": "Reflect back what made it kind."
+              },
+              "ai_prep_prompt": "Help me phrase one honest concern in a kind way.",
+              "ai_reflection_prompt": "I gave kind, honest feedback. Ask me if it was both kind and honest.",
+              "next_step": "Try kind honesty on a few more submissions.",
+              "feed_tags": ["giving-useful-feedback", "kind-honesty", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 6,
+              "difficulty": "beginner",
+              "safety_note": "Kind honesty means caring about both the truth and the person.",
+              "does_not_count_as_mastery": "Harsh criticism, or avoiding the truth entirely, does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Practice kind honesty several times.",
+              "practice_prompt": "Give kind, honest feedback on three submissions. Note each one.",
+              "proof_requirement": "Submit three pieces of kind, honest feedback.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they review different work?",
+                "usefulness": "Was each both honest and kind?",
+                "next_step": "Point out the best balance."
+              },
+              "ai_prep_prompt": "Help me practice balancing honesty and kindness in feedback.",
+              "ai_reflection_prompt": "I gave kind, honest feedback three times. Ask me which balance felt right.",
+              "next_step": "Move toward explaining how to balance both.",
+              "feed_tags": ["giving-useful-feedback", "kind-honesty", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across different submissions.",
+              "estimated_minutes": 12,
+              "difficulty": "intermediate",
+              "safety_note": "Each piece of work and person deserves fresh care.",
+              "does_not_count_as_mastery": "Three sugar-coated comments with no real honesty do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how to be honest without being harsh.",
+              "practice_prompt": "Write 4-6 sentences on how you stay both honest and kind in feedback, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn the balance?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about how I keep honesty kind.",
+              "ai_reflection_prompt": "I explained kind honesty. Ask me if my own feedback matches it.",
+              "next_step": "Use kind honesty on harder, real feedback.",
+              "feed_tags": ["giving-useful-feedback", "kind-honesty", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Your balance may differ from others. Honesty plus care is the aim.",
+              "does_not_count_as_mastery": "Advice that favors bluntness over care does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Give honest feedback on work that needs real change.",
+              "practice_prompt": "Give kind, honest feedback on a real submission that genuinely needs improvement. Reflect on how it was received.",
+              "proof_requirement": "Submit the kind, honest feedback you gave.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the feedback?",
+                "effort": "Did they address real issues honestly?",
+                "usefulness": "Did it stay kind while being honest?",
+                "next_step": "Suggest where to apply this again."
+              },
+              "ai_prep_prompt": "Help me deliver honest feedback on work that needs real change, kindly.",
+              "ai_reflection_prompt": "I gave honest feedback on weak work. Ask me how the person took it.",
+              "next_step": "Get ready to coach someone on kind honesty.",
+              "feed_tags": ["giving-useful-feedback", "kind-honesty", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "If feedback might hurt, slow down and check your tone before sending.",
+              "does_not_count_as_mastery": "Avoiding the real issue to keep the peace does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member soften harsh feedback while keeping honesty.",
+              "practice_prompt": "Help a member whose feedback comes off harsh. Show them how to keep the honesty but add kindness.",
+              "proof_requirement": "Submit the coaching feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was your coaching clear?",
+                "effort": "Did they engage with the member's real feedback?",
+                "usefulness": "Could the member improve from it?",
+                "next_step": "Note whether you kept it kind."
+              },
+              "ai_prep_prompt": "Help me coach a member to keep their honesty but add kindness.",
+              "ai_reflection_prompt": "I coached someone on kind honesty. Ask me if I practiced what I preached.",
+              "next_step": "Keep helping members balance honesty and care.",
+              "feed_tags": ["giving-useful-feedback", "kind-honesty", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Coach the feedback, never shame the person giving it.",
+              "does_not_count_as_mastery": "Telling them they were mean, without showing a kinder version, does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "actionable-suggestions",
+          "skill_name": "Actionable Suggestions",
+          "description": "Offer a clear next step someone can actually take.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Offer one clear next step.",
+              "practice_prompt": "On a submission, write one specific next step the person could try, not just what was wrong.",
+              "proof_requirement": "Submit one actionable next-step suggestion.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the next step clear?",
+                "effort": "Did they engage with real work?",
+                "usefulness": "Could the person actually do it?",
+                "next_step": "Reflect back what made it actionable."
+              },
+              "ai_prep_prompt": "Help me turn a problem I noticed into one clear next step.",
+              "ai_reflection_prompt": "I gave a next step. Ask me if the person could actually do it.",
+              "next_step": "Try giving next steps on a few more submissions.",
+              "feed_tags": ["giving-useful-feedback", "actionable-suggestions", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "A good suggestion gives a path forward, not just a problem.",
+              "does_not_count_as_mastery": "Listing what is wrong with no next step does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Offer actionable suggestions several times.",
+              "practice_prompt": "On three submissions, include one clear, doable next step each. Note them.",
+              "proof_requirement": "Submit three actionable suggestions.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they review different work?",
+                "usefulness": "Was each step doable?",
+                "next_step": "Point out the most useful step."
+              },
+              "ai_prep_prompt": "Help me practice turning issues into clear next steps.",
+              "ai_reflection_prompt": "I gave three next steps. Ask me which was most doable.",
+              "next_step": "Move toward explaining why next steps matter.",
+              "feed_tags": ["giving-useful-feedback", "actionable-suggestions", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across different submissions.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "Offer steps as options, not commands.",
+              "does_not_count_as_mastery": "Three suggestions that are too vague to act on do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why a next step beats just pointing out problems.",
+              "practice_prompt": "Write 4-6 sentences on why offering a next step helps more than only naming issues, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about a time a next step helped someone more than criticism.",
+              "ai_reflection_prompt": "I explained why next steps matter. Ask me if a beginner would agree.",
+              "next_step": "Use actionable suggestions in a full review.",
+              "feed_tags": ["giving-useful-feedback", "actionable-suggestions", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view is valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Give complete feedback that ends with a clear next step.",
+              "practice_prompt": "Give real feedback that names a strength, a concern, and one clear next step. Reflect on how it helped.",
+              "proof_requirement": "Submit the complete feedback you gave, including a next step.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the feedback?",
+                "effort": "Did they give complete, real feedback?",
+                "usefulness": "Was the next step clear and doable?",
+                "next_step": "Suggest where to apply this again."
+              },
+              "ai_prep_prompt": "Help me structure feedback that ends with one clear, doable next step.",
+              "ai_reflection_prompt": "I gave complete feedback with a next step. Ask me if the person could act on it.",
+              "next_step": "Get ready to coach someone on actionable suggestions.",
+              "feed_tags": ["giving-useful-feedback", "actionable-suggestions", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "One strong next step beats a long list that overwhelms.",
+              "does_not_count_as_mastery": "Feedback that ends only with criticism does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member turn criticism into a next step.",
+              "practice_prompt": "Help a member who only points out problems. Show them how to add one clear next step.",
+              "proof_requirement": "Submit the coaching feedback you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was your coaching clear?",
+                "effort": "Did they engage with the member's real feedback?",
+                "usefulness": "Could the member improve from it?",
+                "next_step": "Note whether it was kind and specific."
+              },
+              "ai_prep_prompt": "Help me coach a member to add a clear next step to their feedback.",
+              "ai_reflection_prompt": "I coached someone on next steps. Ask me if I was kind and clear.",
+              "next_step": "Keep helping members give forward-looking feedback.",
+              "feed_tags": ["giving-useful-feedback", "actionable-suggestions", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Model an actionable suggestion in your own coaching.",
+              "does_not_count_as_mastery": "Telling them to 'be more helpful' without showing how does not count."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "direction_slug": "showing-proof-of-progress",
+      "direction_name": "Showing Proof of Progress",
+      "description": "Learn to capture and share evidence of your growth, honestly and clearly.",
+      "skills": [
+        {
+          "skill_slug": "before-and-after",
+          "skill_name": "Before-and-After",
+          "description": "Show where you started and where you are now.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Capture one 'before' snapshot.",
+              "practice_prompt": "Pick a skill or project. Capture or describe its current state as your 'before'.",
+              "proof_requirement": "Submit a 'before' snapshot (photo, note, or recording).",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Was the starting point clear?",
+                "effort": "Did they capture a real 'before'?",
+                "usefulness": "Could you tell what they will improve?",
+                "next_step": "Encourage them to revisit it later."
+              },
+              "ai_prep_prompt": "Help me decide what to capture as my 'before' for a skill I want to grow.",
+              "ai_reflection_prompt": "I captured a 'before'. Ask me how I feel looking at my starting point.",
+              "next_step": "Keep working, then capture an 'after' later.",
+              "feed_tags": ["showing-proof-of-progress", "before-and-after", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Your starting point is nothing to be ashamed of. Everyone starts somewhere.",
+              "does_not_count_as_mastery": "A fake or borrowed 'before' that is not really yours does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Capture a before and an after.",
+              "practice_prompt": "After some practice, capture an 'after' to compare with your 'before'. Submit both.",
+              "proof_requirement": "Submit a before-and-after pair.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Was the change easy to see?",
+                "effort": "Did they capture both points honestly?",
+                "usefulness": "Could you tell what improved?",
+                "next_step": "Point out the clearest sign of growth."
+              },
+              "ai_prep_prompt": "Help me plan when to capture my 'after' to show real change.",
+              "ai_reflection_prompt": "I have a before and after. Ask me what changed the most.",
+              "next_step": "Move toward explaining what the change shows.",
+              "feed_tags": ["showing-proof-of-progress", "before-and-after", "repeat-it", "growth"],
+              "trust_signal": "Showed real change captured over time.",
+              "estimated_minutes": 8,
+              "difficulty": "beginner",
+              "safety_note": "Small change is still real change. Compare to your own 'before', not to others.",
+              "does_not_count_as_mastery": "An 'after' with no real effort behind the change does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain what your before-and-after shows.",
+              "practice_prompt": "Write 4-6 sentences explaining what changed between your before and after, and what caused it.",
+              "proof_requirement": "Submit a short explanation tied to your before-and-after.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they tie it to their real proof?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest cause of change."
+              },
+              "ai_prep_prompt": "Ask me questions about what actually caused the change between my before and after.",
+              "ai_reflection_prompt": "I explained my before-and-after. Ask me if I gave myself fair credit.",
+              "next_step": "Use before-and-after on a longer, real project.",
+              "feed_tags": ["showing-proof-of-progress", "before-and-after", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Honest credit matters. Name what you did and what helped.",
+              "does_not_count_as_mastery": "An explanation that overstates the change does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Document real progress on a meaningful project.",
+              "practice_prompt": "On a project that matters to you, capture before and after over time and share what the journey shows.",
+              "proof_requirement": "Submit a before-and-after with a short progress story.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Could you follow the journey?",
+                "effort": "Did they document real progress?",
+                "usefulness": "Did the proof show genuine growth?",
+                "next_step": "Suggest what to capture next."
+              },
+              "ai_prep_prompt": "Help me plan how to document before and after on a real project.",
+              "ai_reflection_prompt": "I documented real progress. Ask me what I am most proud of.",
+              "next_step": "Get ready to help someone show their progress.",
+              "feed_tags": ["showing-proof-of-progress", "before-and-after", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Progress is rarely a straight line. Honest ups and downs are welcome.",
+              "does_not_count_as_mastery": "A polished result with no real before to compare does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member capture their before-and-after.",
+              "practice_prompt": "Help a member who wants to show progress. Suggest one specific thing they could capture as a 'before'.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's goal?",
+                "usefulness": "Was the idea doable?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me suggest a good 'before' for a member who wants to show progress.",
+              "ai_reflection_prompt": "I helped someone capture a 'before'. Ask me if my tip was kind and specific.",
+              "next_step": "Keep helping members document growth.",
+              "feed_tags": ["showing-proof-of-progress", "before-and-after", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Encourage honest starting points. Remind them everyone begins somewhere.",
+              "does_not_count_as_mastery": "Telling them to 'just post something' with no specific idea does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "documenting-the-process",
+          "skill_name": "Documenting the Process",
+          "description": "Show the steps, not just the final result.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Capture one step of your process.",
+              "practice_prompt": "While working on something today, capture one step in the middle (a note, photo, or clip).",
+              "proof_requirement": "Submit one mid-process capture.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Was the step clear?",
+                "effort": "Did they capture real work in progress?",
+                "usefulness": "Could you tell what stage it shows?",
+                "next_step": "Encourage capturing another step."
+              },
+              "ai_prep_prompt": "Help me decide which step of my process is worth capturing.",
+              "ai_reflection_prompt": "I captured one step. Ask me what it shows about my work.",
+              "next_step": "Try capturing a few steps next time.",
+              "feed_tags": ["showing-proof-of-progress", "documenting-the-process", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 4,
+              "difficulty": "beginner",
+              "safety_note": "Messy middles are normal and worth showing.",
+              "does_not_count_as_mastery": "Only capturing a finished result does not count as documenting the process."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Capture several steps of a process.",
+              "practice_prompt": "On one project, capture three steps from start toward finish. Submit them in order.",
+              "proof_requirement": "Submit three in-order process captures.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Was the sequence clear?",
+                "effort": "Did they capture multiple real steps?",
+                "usefulness": "Could you follow the progress?",
+                "next_step": "Point out the most telling step."
+              },
+              "ai_prep_prompt": "Help me plan which steps of a project to capture as I go.",
+              "ai_reflection_prompt": "I captured several steps. Ask me what the sequence reveals.",
+              "next_step": "Move toward explaining why process matters.",
+              "feed_tags": ["showing-proof-of-progress", "documenting-the-process", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice of documenting steps.",
+              "estimated_minutes": 12,
+              "difficulty": "beginner",
+              "safety_note": "You decide what is private. Share only the steps you are comfortable showing.",
+              "does_not_count_as_mastery": "Three shots of the same finished result do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why showing the process builds trust.",
+              "practice_prompt": "Write 4-6 sentences on why showing your steps matters more than just the result, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about why showing my process matters.",
+              "ai_reflection_prompt": "I explained why process matters. Ask me if a beginner would agree.",
+              "next_step": "Document the full process of a real project.",
+              "feed_tags": ["showing-proof-of-progress", "documenting-the-process", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your view is valid even if simple.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Document the full process of a real project.",
+              "practice_prompt": "On a real project, document the process from start to finish and share what each stage taught you.",
+              "proof_requirement": "Submit a process record with a short reflection.",
+              "proof_type": "mixed",
+              "feedback_rubric": {
+                "clarity": "Could you follow the process?",
+                "effort": "Did they document a real, full project?",
+                "usefulness": "Did the record show genuine work?",
+                "next_step": "Suggest what to document next time."
+              },
+              "ai_prep_prompt": "Help me plan how to document a real project from start to finish.",
+              "ai_reflection_prompt": "I documented a full process. Ask me which stage taught me the most.",
+              "next_step": "Get ready to help someone document their process.",
+              "feed_tags": ["showing-proof-of-progress", "documenting-the-process", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Showing struggles in the process is honest and helpful, not a weakness.",
+              "does_not_count_as_mastery": "A record that hides all the hard parts does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member document their process.",
+              "practice_prompt": "Help a member who only shares results. Suggest one specific step in their process they could capture.",
+              "proof_requirement": "Submit the suggestion you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the suggestion clear?",
+                "effort": "Did they engage with the member's work?",
+                "usefulness": "Was the idea doable?",
+                "next_step": "Note whether it was encouraging."
+              },
+              "ai_prep_prompt": "Help me suggest one process step a member could start capturing.",
+              "ai_reflection_prompt": "I helped someone document process. Ask me if my tip was kind and specific.",
+              "next_step": "Keep helping members show their work.",
+              "feed_tags": ["showing-proof-of-progress", "documenting-the-process", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Encourage honest sharing, and respect what they want to keep private.",
+              "does_not_count_as_mastery": "Telling them to 'show more' with no specific idea does not count."
+            }
+          ]
+        },
+        {
+          "skill_slug": "sharing-small-wins",
+          "skill_name": "Sharing Small Wins",
+          "description": "Share honest small progress without overstating it.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Share one honest small win.",
+              "practice_prompt": "Share one small thing you accomplished today, honestly and simply.",
+              "proof_requirement": "Submit one small win you are sharing.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the win clear?",
+                "effort": "Did they share something real?",
+                "usefulness": "Was it honest, not overstated?",
+                "next_step": "Celebrate the win with them."
+              },
+              "ai_prep_prompt": "Help me notice one small win from today worth sharing.",
+              "ai_reflection_prompt": "I shared a small win. Ask me if it felt good to name it.",
+              "next_step": "Try sharing small wins a few more times.",
+              "feed_tags": ["showing-proof-of-progress", "sharing-small-wins", "try-it", "first-step"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 3,
+              "difficulty": "beginner",
+              "safety_note": "Small wins are worth sharing. You do not need a big result to belong here.",
+              "does_not_count_as_mastery": "Overstating a win or claiming something you did not do does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Share small wins across several days.",
+              "practice_prompt": "Share an honest small win on several days. Keep them together.",
+              "proof_requirement": "Submit small wins from several days.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were the wins clear?",
+                "effort": "Did they share across multiple days?",
+                "usefulness": "Were they honest and real?",
+                "next_step": "Point out a win worth celebrating."
+              },
+              "ai_prep_prompt": "Help me build a habit of noticing one small win each day.",
+              "ai_reflection_prompt": "I shared wins for several days. Ask me what I notice about my progress.",
+              "next_step": "Move toward explaining why small wins matter.",
+              "feed_tags": ["showing-proof-of-progress", "sharing-small-wins", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated practice across multiple days.",
+              "estimated_minutes": 8,
+              "difficulty": "beginner",
+              "safety_note": "A quiet day with no win is okay too. Honesty matters most.",
+              "does_not_count_as_mastery": "Inflating small things into big claims does not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain why honest small wins matter.",
+              "practice_prompt": "Write 4-6 sentences on why sharing small, honest wins helps you and others, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest point."
+              },
+              "ai_prep_prompt": "Ask me questions about how sharing small wins has helped me keep going.",
+              "ai_reflection_prompt": "I explained why small wins matter. Ask me if it feels true.",
+              "next_step": "Share wins as part of a real progress story.",
+              "feed_tags": ["showing-proof-of-progress", "sharing-small-wins", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Your wins are yours. Compare only to your own past.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use small wins to keep a real effort going.",
+              "practice_prompt": "Over two weeks on a real goal, share honest small wins along the way. Reflect on how it affected your momentum.",
+              "proof_requirement": "Submit a series of small wins with a short reflection.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the journey?",
+                "effort": "Did they share over real time?",
+                "usefulness": "Did the wins support their momentum?",
+                "next_step": "Suggest a win to look for next."
+              },
+              "ai_prep_prompt": "Help me notice small wins to share while working on a real goal.",
+              "ai_reflection_prompt": "I shared wins over time. Ask me if they helped me keep going.",
+              "next_step": "Get ready to help someone notice their wins.",
+              "feed_tags": ["showing-proof-of-progress", "sharing-small-wins", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Momentum is personal. Share at a pace that feels right for you.",
+              "does_not_count_as_mastery": "A reflection with no real wins behind it does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member notice and share a small win.",
+              "practice_prompt": "Reply to a member who feels they are not progressing. Help them notice one honest small win.",
+              "proof_requirement": "Submit the encouraging reply you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the reply clear?",
+                "effort": "Did they engage with the person's real situation?",
+                "usefulness": "Did it help them see a real win?",
+                "next_step": "Note whether it was warm and honest."
+              },
+              "ai_prep_prompt": "Help me point out a real small win to a member who feels stuck.",
+              "ai_reflection_prompt": "I helped someone notice a win. Ask me if it was honest and kind.",
+              "next_step": "Keep helping members see their progress.",
+              "feed_tags": ["showing-proof-of-progress", "sharing-small-wins", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 8,
+              "difficulty": "intermediate",
+              "safety_note": "Point out real wins, not invented ones. Honesty keeps encouragement meaningful.",
+              "does_not_count_as_mastery": "Empty hype with no real win named does not count as helping."
+            }
+          ]
+        },
+        {
+          "skill_slug": "reflecting-on-growth",
+          "skill_name": "Reflecting on Growth",
+          "description": "Look back over time to see and name how far you have come.",
+          "levels": [
+            {
+              "level_number": 1,
+              "level_name": "Try it",
+              "mastery_goal": "Name one way you have grown.",
+              "practice_prompt": "Think back a few weeks. Write one way you have grown since then.",
+              "proof_requirement": "Submit one note naming a real way you have grown.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the growth clear?",
+                "effort": "Did they reflect honestly?",
+                "usefulness": "Was it a real, specific change?",
+                "next_step": "Reflect back the growth they named."
+              },
+              "ai_prep_prompt": "Help me look back a few weeks and name one way I have grown.",
+              "ai_reflection_prompt": "I named one way I grew. Ask me if I had noticed it before.",
+              "next_step": "Try reflecting on growth again next month.",
+              "feed_tags": ["showing-proof-of-progress", "reflecting-on-growth", "try-it", "self-awareness"],
+              "trust_signal": "Completed first practice and submitted proof.",
+              "estimated_minutes": 5,
+              "difficulty": "beginner",
+              "safety_note": "Even small growth counts. Give yourself honest credit.",
+              "does_not_count_as_mastery": "Claiming growth with no real change behind it does not count."
+            },
+            {
+              "level_number": 2,
+              "level_name": "Repeat it",
+              "mastery_goal": "Reflect on growth more than once over time.",
+              "practice_prompt": "On two occasions a couple of weeks apart, note how you have grown. Compare them.",
+              "proof_requirement": "Submit two growth reflections from different times.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Were they clear?",
+                "effort": "Did they reflect at different times?",
+                "usefulness": "Did they capture real change?",
+                "next_step": "Point out the clearest growth."
+              },
+              "ai_prep_prompt": "Help me set up a way to reflect on my growth every couple of weeks.",
+              "ai_reflection_prompt": "I reflected on growth twice. Ask me what changed between them.",
+              "next_step": "Move toward explaining how reflecting on growth helps.",
+              "feed_tags": ["showing-proof-of-progress", "reflecting-on-growth", "repeat-it", "consistency"],
+              "trust_signal": "Showed repeated reflection over real time.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "Growth is uneven. Slow stretches are normal and still count.",
+              "does_not_count_as_mastery": "Two identical reflections with no real comparison do not count."
+            },
+            {
+              "level_number": 3,
+              "level_name": "Explain it",
+              "mastery_goal": "Explain how reflecting on growth supports progress.",
+              "practice_prompt": "Write 4-6 sentences on how looking back at your growth helps you move forward, with an example.",
+              "proof_requirement": "Submit a short explanation with an example.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was it easy to follow?",
+                "effort": "Did they use a real example?",
+                "usefulness": "Could a beginner learn from it?",
+                "next_step": "Name the clearest insight."
+              },
+              "ai_prep_prompt": "Ask me questions about how reflecting on growth has helped me keep going.",
+              "ai_reflection_prompt": "I explained how reflecting on growth helps. Ask me if it feels true.",
+              "next_step": "Use growth reflection to set a real next goal.",
+              "feed_tags": ["showing-proof-of-progress", "reflecting-on-growth", "explain-it", "understanding"],
+              "trust_signal": "Can explain the skill in their own words with an example.",
+              "estimated_minutes": 10,
+              "difficulty": "beginner",
+              "safety_note": "AI can help you reflect, but your sense of your own growth is yours to decide.",
+              "does_not_count_as_mastery": "A definition with no personal example does not count."
+            },
+            {
+              "level_number": 4,
+              "level_name": "Apply it",
+              "mastery_goal": "Use a growth reflection to set your next goal.",
+              "practice_prompt": "Reflect on your growth over the past month, then set a real next goal based on what you see. Share both.",
+              "proof_requirement": "Submit a growth reflection plus the next goal it led to.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Could you follow the reflection and goal?",
+                "effort": "Did they reflect on real growth?",
+                "usefulness": "Did the goal follow from the reflection?",
+                "next_step": "Suggest how to track the new goal."
+              },
+              "ai_prep_prompt": "Help me turn a reflection on my growth into one clear next goal.",
+              "ai_reflection_prompt": "I set a goal from my growth reflection. Ask me if it fits where I am now.",
+              "next_step": "Get ready to help someone reflect on their growth.",
+              "feed_tags": ["showing-proof-of-progress", "reflecting-on-growth", "apply-it", "real-world"],
+              "trust_signal": "Applied the skill in a real situation and reflected on it.",
+              "estimated_minutes": 15,
+              "difficulty": "intermediate",
+              "safety_note": "Let the goal come from you. AI can prompt, but the direction is your call.",
+              "does_not_count_as_mastery": "A goal unrelated to the reflection, or no real reflection, does not count."
+            },
+            {
+              "level_number": 5,
+              "level_name": "Help someone else with it",
+              "mastery_goal": "Help a member see their own growth.",
+              "practice_prompt": "Reply to a member who feels they have not grown. Help them notice one real way they have, based on their shared work.",
+              "proof_requirement": "Submit the reflective reply you gave another member.",
+              "proof_type": "text",
+              "feedback_rubric": {
+                "clarity": "Was the reply clear?",
+                "effort": "Did they engage with the member's real work?",
+                "usefulness": "Did it help them see real growth?",
+                "next_step": "Note whether it was warm and honest."
+              },
+              "ai_prep_prompt": "Help me point out a real way a member has grown, based on their work.",
+              "ai_reflection_prompt": "I helped someone see their growth. Ask me if it was honest and kind.",
+              "next_step": "Keep helping members recognize their progress.",
+              "feed_tags": ["showing-proof-of-progress", "reflecting-on-growth", "help-others", "contribution"],
+              "trust_signal": "Gave useful feedback that helped another member.",
+              "estimated_minutes": 10,
+              "difficulty": "intermediate",
+              "safety_note": "Point to real evidence of growth, and let them own how it feels.",
+              "does_not_count_as_mastery": "Generic 'you've grown so much' with no real evidence does not count."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -11,9 +11,14 @@
     "gitnexus:serve": "node .tools/gitnexus.mjs serve",
     "gitnexus:mcp": "node .tools/gitnexus.mjs mcp",
     "gitnexus:status": "node .tools/gitnexus.mjs status",
-    "gitnexus:list": "node .tools/gitnexus.mjs list"
+    "gitnexus:list": "node .tools/gitnexus.mjs list",
+    "validate:content-mastery": "node scripts/validateContentMastery.mjs",
+    "seed:content-mastery": "node scripts/seedContentMastery.mjs",
+    "test": "npm run validate:content-mastery"
   },
   "dependencies": {
+    "@elevenlabs/client": "^1.14.0",
+    "@elevenlabs/react": "^1.9.0",
     "@next/swc-win32-x64-msvc": "^16.2.6",
     "@supabase/supabase-js": "2.105.4",
     "lucide-react": "0.468.0",

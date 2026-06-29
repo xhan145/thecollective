@@ -19,7 +19,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
 }
 
 export function Card({ children, className = "", asButton = false, ...props }: ComponentPropsWithoutRef<"div"> & { asButton?: boolean }) {
-  const classes = `rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] shadow-[0_16px_42px_rgba(71,52,18,0.08)] ${className}`;
+  const classes = `pixel-card rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] ${className}`;
   if (asButton) {
     return (
       <div role="button" tabIndex={0} className={`${classes} active:scale-[0.99] transition`} {...props}>
@@ -37,7 +37,7 @@ export function Card({ children, className = "", asButton = false, ...props }: C
 export function Button({ children, variant = "primary", className = "", ...props }: ComponentPropsWithoutRef<"button"> & { variant?: "primary" | "secondary" | "quiet" }) {
   const styles =
     variant === "primary"
-      ? "bg-[#F2A900] text-white shadow-[0_12px_28px_rgba(242,169,0,0.24)]"
+      ? "pixel-button bg-[#F2A900] text-white"
       : variant === "secondary"
         ? "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]"
         : "bg-transparent text-[#6E6E6E]";
@@ -54,7 +54,7 @@ export function Button({ children, variant = "primary", className = "", ...props
 export function ButtonLink({ children, variant = "primary", className = "", ...props }: ComponentPropsWithoutRef<typeof Link> & { variant?: "primary" | "secondary" | "quiet" }) {
   const styles =
     variant === "primary"
-      ? "bg-[#F2A900] text-white shadow-[0_12px_28px_rgba(242,169,0,0.24)]"
+      ? "pixel-button bg-[#F2A900] text-white"
       : variant === "secondary"
         ? "border border-[#EFE7D8] bg-[#FFF8EE] text-[#111111]"
         : "bg-transparent text-[#6E6E6E]";
