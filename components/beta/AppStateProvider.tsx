@@ -101,7 +101,7 @@ type BetaAppContextValue = {
   signInWithEmail: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   completeOnboarding: (payload: OnboardingPayload) => Promise<void>;
-  updateProfile: (fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean }) => Promise<void>;
+  updateProfile: (fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean; headline?: string | null; currentFocusSkill?: string | null; introductionSummary?: string | null; openToIntroductions?: boolean }) => Promise<void>;
   completePractice: (promptId: string) => void;
   submitProof: (input: ProofDraftInput) => Promise<{ proof: Proof | null; error: string | null }>;
   logEvent: (eventType: BetaEventType, metadata?: Record<string, unknown>) => void;
@@ -495,7 +495,11 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
                       : {}),
                     ...(fields.username !== undefined ? { username: fields.username } : {}),
                     ...(fields.bio !== undefined ? { bio: fields.bio } : {}),
-                    ...(fields.mentorOptIn !== undefined ? { mentorOptIn: fields.mentorOptIn } : {})
+                    ...(fields.mentorOptIn !== undefined ? { mentorOptIn: fields.mentorOptIn } : {}),
+                    ...(fields.headline !== undefined ? { headline: fields.headline } : {}),
+                    ...(fields.currentFocusSkill !== undefined ? { currentFocusSkill: fields.currentFocusSkill } : {}),
+                    ...(fields.introductionSummary !== undefined ? { introductionSummary: fields.introductionSummary } : {}),
+                    ...(fields.openToIntroductions !== undefined ? { openToIntroductions: fields.openToIntroductions } : {})
                   }
                 : u
             )

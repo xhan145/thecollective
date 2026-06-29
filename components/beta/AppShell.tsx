@@ -14,13 +14,13 @@ import { useTheme } from "./ThemeProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/passport", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges"];
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
   { href: "/practice", label: "Practice", icon: BookOpen },
   { href: "/feed", label: "Feed", icon: MessageSquare },
-  { href: "/profile", label: "Profile", icon: User },
+  { href: "/passport", label: "Passport", icon: User },
 ] as const;
 
 function ThemeToggleButton({ className = "" }: { className?: string }) {

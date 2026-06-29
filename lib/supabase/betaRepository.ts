@@ -64,6 +64,10 @@ function mapProfile(row: any): UserProfile {
     bio: row.bio ?? undefined,
     avatarUrl: row.avatar_url ?? undefined,
     currentDirectionId: row.current_direction_id ?? null,
+    headline: row.headline ?? null,
+    currentFocusSkill: row.current_focus_skill ?? null,
+    introductionSummary: row.introduction_summary ?? null,
+    openToIntroductions: row.open_to_introductions ?? true,
     onboardingCompleted: row.onboarding_completed ?? false,
     trustScore: row.trust_score ?? 0,
     mentorOptIn: row.mentor_opt_in ?? false,
@@ -422,7 +426,16 @@ export async function updateOnboarding(
 export async function updateProfile(
   client: SupabaseClient,
   userId: string,
-  fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean },
+  fields: {
+    displayName?: string;
+    username?: string;
+    bio?: string;
+    mentorOptIn?: boolean;
+    headline?: string | null;
+    currentFocusSkill?: string | null;
+    introductionSummary?: string | null;
+    openToIntroductions?: boolean;
+  },
 ): Promise<void> {
   const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (fields.displayName !== undefined) {
@@ -432,6 +445,10 @@ export async function updateProfile(
   if (fields.username !== undefined) patch.username = fields.username;
   if (fields.bio !== undefined) patch.bio = fields.bio;
   if (fields.mentorOptIn !== undefined) patch.mentor_opt_in = fields.mentorOptIn;
+  if (fields.headline !== undefined) patch.headline = fields.headline;
+  if (fields.currentFocusSkill !== undefined) patch.current_focus_skill = fields.currentFocusSkill;
+  if (fields.introductionSummary !== undefined) patch.introduction_summary = fields.introductionSummary;
+  if (fields.openToIntroductions !== undefined) patch.open_to_introductions = fields.openToIntroductions;
   await client.from("profiles").update(patch).eq("id", userId);
 }
 

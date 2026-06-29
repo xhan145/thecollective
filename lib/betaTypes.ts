@@ -40,6 +40,11 @@ export type UserProfile = {
   bio?: string;
   avatarUrl?: string;
   currentDirectionId?: string | null;
+  // Passport profile fields (033).
+  headline?: string | null;
+  currentFocusSkill?: string | null;
+  introductionSummary?: string | null;
+  openToIntroductions?: boolean;
   onboardingCompleted?: boolean;
   trustScore?: number;
   mentorOptIn?: boolean;
