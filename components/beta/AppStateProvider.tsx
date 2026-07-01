@@ -264,6 +264,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
     let active = true;
 
     async function loadFor(uid: string, email: string | null) {
+      if (active) setAuthReady(false);
       try {
         const [bundle, content, myCohorts] = await Promise.all([
           loadUserBundle(supabase!, uid, email),
