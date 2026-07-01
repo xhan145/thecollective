@@ -123,6 +123,8 @@ export async function GET(req: Request) {
       .eq("id", user.id)
       .maybeSingle();
 
+      console.log("User profile:", JSON.stringify(profile, null, 2));
+
     if (requireInvite && !profile?.beta_access) {
       nextPath = "/access";
     } else if (!profile?.onboarding_completed) {
