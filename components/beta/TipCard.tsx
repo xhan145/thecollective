@@ -43,15 +43,21 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
 
   async function handleReport() {
     if (reported) return;
-    // Fire-and-forget — attach bearer so the route can identify the reporter.
+    // Optimistic for snappy feedback; revert if the report never lands so the
+    // user isn't falsely told it was reported (and can retry).
+    setReported(true);
     const supabase = getSupabaseClient();
     const token = supabase ? (await supabase.auth.getSession()).data.session?.access_token : undefined;
-    fetch("/api/tips/report", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-      body: JSON.stringify({ tipId: tip.id, reason: "reported" }),
-    }).catch(() => {});
-    setReported(true);
+    try {
+      const res = await fetch("/api/tips/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify({ tipId: tip.id, reason: "reported" }),
+      });
+      if (!res.ok) setReported(false);
+    } catch {
+      setReported(false);
+    }
   }
 
   const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold transition";
