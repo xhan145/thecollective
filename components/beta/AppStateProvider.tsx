@@ -212,6 +212,7 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
   return {
     ...seedSnapshot,
     directions: content?.directions ?? seedSnapshot.directions,
+    skills: content?.skills ?? seedSnapshot.skills,
     prompts: content?.prompts ?? seedSnapshot.prompts,
     currentUserId: uid,
     users: Array.from(usersById.values()),
@@ -287,7 +288,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
     loadContent(supabase).then((content) => {
       if (!active) return;
       contentRef.current = content;
-      setSnapshot((current) => ({ ...current, directions: content.directions, prompts: content.prompts }));
+      setSnapshot((current) => ({ ...current, directions: content.directions, skills: content.skills, prompts: content.prompts }));
     });
 
     supabase.auth.getSession().then(({ data }) => {

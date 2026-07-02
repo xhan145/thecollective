@@ -86,6 +86,29 @@ export type Direction = {
   description: string;
   promptIds: string[];
   beginnerSafePrompt?: string;
+  // Content-mastery: the skill ladder under this direction (030). Optional so
+  // the in-app fallback (flat directions) stays valid.
+  skillIds?: string[];
+};
+
+// Content-mastery (030): the tier between a Direction and its practice levels.
+export type Skill = {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string;
+  directionId: string;
+  // The 5 level practice ids (slugs) in level order (1..5).
+  levelPromptIds: string[];
+};
+
+export type MasteryProofType = "text" | "image" | "video" | "audio" | "mixed";
+
+export type FeedbackRubric = {
+  clarity?: string;
+  effort?: string;
+  usefulness?: string;
+  next_step?: string;
 };
 
 export type PracticePrompt = {
@@ -101,6 +124,22 @@ export type PracticePrompt = {
   proofPrompt?: string;
   level?: PracticeLevel;
   contextTags?: ContextTag[];
+  // Content-mastery level fields (030). Present when the practice is a mastery
+  // level loaded from Supabase; absent for the flat in-app fallback.
+  skillId?: string;
+  levelNumber?: number;
+  levelName?: string;
+  masteryGoal?: string;
+  proofType?: MasteryProofType;
+  feedbackRubric?: FeedbackRubric;
+  aiPrepPrompt?: string;
+  aiReflectionPrompt?: string;
+  nextStep?: string;
+  trustSignal?: string;
+  doesNotCount?: string;
+  safetyNote?: string;
+  difficulty?: string;
+  feedTags?: string[];
 };
 
 export type ProofAttachment = {
@@ -265,6 +304,7 @@ export type BetaAppSnapshot = {
   users: UserProfile[];
   cohorts: Cohort[];
   directions: Direction[];
+  skills: Skill[];
   prompts: PracticePrompt[];
   proofs: Proof[];
   feedback: Feedback[];

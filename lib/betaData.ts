@@ -330,6 +330,7 @@ export const seedSnapshot: BetaAppSnapshot = {
   users: seedUsers,
   cohorts: seedCohorts,
   directions: seedDirections,
+  skills: [],
   prompts: seedPrompts,
   proofs: seedProofs,
   feedback: seedFeedback,
