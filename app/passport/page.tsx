@@ -45,6 +45,10 @@ export default function PassportPage() {
     router.replace("/auth");
   }
   const [menuOpen, setMenuOpen] = useState(false);
+  // Relative ages use Date.now(), which differs between SSR and the client.
+  // Defer them to after mount so the first client render matches the server.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [tab, setTab] = useState<PassportTab>("overview");
   const [details, setDetails] = useState<ProfileDetails | null>(null);
   const [pinnedIds, setPinnedIds] = useState<string[]>([]);
@@ -172,7 +176,7 @@ export default function PassportPage() {
                 <div className="space-y-2">
                   {pinnedProofs.map((p) => (
                     <Link key={p.id} href={`/proof/${p.id}`} className="block">
-                      <PinnedProofCard title={p.title} kind={MEDIA_LABEL[p.mediaType] ?? "Proof"} age={shortAge(p.createdAt)} />
+                      <PinnedProofCard title={p.title} kind={MEDIA_LABEL[p.mediaType] ?? "Proof"} age={mounted ? shortAge(p.createdAt) : undefined} />
                     </Link>
                   ))}
                 </div>
@@ -190,7 +194,7 @@ export default function PassportPage() {
             ) : (
               myProofs.map((p) => (
                 <Link key={p.id} href={`/proof/${p.id}`} className="block">
-                  <PinnedProofCard title={p.title} kind={MEDIA_LABEL[p.mediaType] ?? "Proof"} age={shortAge(p.createdAt)} />
+                  <PinnedProofCard title={p.title} kind={MEDIA_LABEL[p.mediaType] ?? "Proof"} age={mounted ? shortAge(p.createdAt) : undefined} />
                 </Link>
               ))
             )}

@@ -200,20 +200,17 @@ function TimeAgo({ iso }: { iso: string }) {
 export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, relation, canGiveFeedback }: { proof: Proof; feedbackCount: number; authorName?: string; authorAvatarUrl?: string; relation?: import("@/lib/feed/rankProofFeed").FeedRelation; canGiveFeedback?: boolean }) {
   const { isLearningFrom, toggleLearnFrom } = useBetaApp();
   const learning = isLearningFrom(proof.userId);
-  const router = useRouter();
   const name = authorName || "A member";
   const showDemoBadge = Boolean(proof.isDemo);
   const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
+  // A single stretched <Link> owns card navigation (keyboard-accessible, valid
+  // HTML). Card content is pointer-events-none so clicks fall through to the
+  // link; interactive sub-controls re-enable pointer events and sit above it —
+  // no nested interactive elements.
   return (
-    <div
-      role="link"
-      tabIndex={0}
-      aria-label={`Proof detail for ${proof.title}`}
-      className="cursor-pointer"
-      onClick={() => router.push(`/proof/${proof.id}`)}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); router.push(`/proof/${proof.id}`); } }}
-    >
-      <Card interactive className="p-3">
+    <Card interactive className="relative p-3">
+      <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`} className="absolute inset-0 z-[1] rounded-[inherit]" />
+      <div className="pointer-events-none relative z-[2]">
         <div className="mb-2.5 flex items-center gap-2">
           <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
           <span className="truncate text-xs font-extrabold text-[#111111]">{name}</span>
@@ -245,25 +242,27 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
             <p className="mt-2 text-xs font-bold text-[#F2A900]">{feedbackCount ? `${feedbackCount} feedback note${feedbackCount === 1 ? "" : "s"}` : "No feedback yet"}</p>
           </div>
         </div>
-        <ProofActions proof={proof} compact />
+        <div className="pointer-events-auto">
+          <ProofActions proof={proof} compact />
+        </div>
         {relation && (
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="pointer-events-auto mt-3 flex flex-wrap gap-2">
             {relation !== "behind" && (
-              <button type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleLearnFrom(proof.userId); }}
+              <button type="button" onClick={() => toggleLearnFrom(proof.userId)}
                 className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${learning ? "bg-[#FFE7AE] text-[#7A5300]" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
                 {learning ? "✓ Learning from" : "Learn from"}
               </button>
             )}
             {relation === "behind" && canGiveFeedback && (
-              <Link href={`/proof/${proof.id}/feedback`} onClick={(e) => e.stopPropagation()}
+              <Link href={`/proof/${proof.id}/feedback`}
                 className="rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-1.5 text-xs font-extrabold text-[#6E6E6E]">
                 Give feedback
               </Link>
             )}
           </div>
         )}
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }
 
