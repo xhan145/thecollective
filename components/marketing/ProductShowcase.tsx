@@ -1,24 +1,23 @@
 import Section from "./Section";
-import PhoneMockup from "./PhoneMockup";
 import { MARKETING } from "@/lib/marketing/content";
 
 export default function ProductShowcase() {
+  const steps = MARKETING.showcaseSteps;
   return (
-    <Section bg="cream">
-      <h2 className="text-center font-display text-[28px] font-bold text-[#111111] lg:text-[36px]">See it in action</h2>
-      <div className="mt-12 space-y-16">
-        {MARKETING.showcase.map((item, i) => (
-          <div key={item.title} className={`grid items-center gap-8 lg:grid-cols-2 ${i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""}`}>
-            <div className="flex justify-center">
-              <div className="w-full max-w-[360px] rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6 shadow-[0_18px_50px_rgba(71,52,18,0.10)]">
-                <PhoneMockup className="!w-full !max-w-[240px]" />
-              </div>
+    <Section id="how" bg="cream">
+      <h2 className="text-center font-display text-[28px] font-bold text-[#111111] lg:text-[36px]">{MARKETING.showcaseTitle}</h2>
+      <p className="mx-auto mt-3 max-w-[520px] text-center text-[15px] leading-7 text-[#6E6E6E]">One rep, start to finish — the same loop every time.</p>
+      <div className="mx-auto mt-10 grid max-w-5xl gap-4 lg:grid-cols-4">
+        {steps.map((s, i) => (
+          <div key={s.n} className="relative">
+            <div className="h-full rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-5 shadow-[0_10px_30px_rgba(71,52,18,0.06)]">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-[#FFF1C7] text-sm font-black text-[#B07A00]">{s.n}</div>
+              <h3 className="mt-3 font-display text-[18px] font-bold text-[#111111]">{s.title}</h3>
+              <p className="mt-1.5 text-[14px] leading-6 text-[#6E6E6E]">{s.body}</p>
             </div>
-            <div className="text-center lg:text-left">
-              <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-[#F2A900]">Step {i + 1}</p>
-              <h3 className="mt-2 font-display text-[24px] font-bold text-[#111111]">{item.title}</h3>
-              <p className="mt-2 text-[15px] leading-7 text-[#6E6E6E]">{item.body}</p>
-            </div>
+            {i < steps.length - 1 && (
+              <span aria-hidden className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-lg text-[#E0D3B4] lg:block">&rarr;</span>
+            )}
           </div>
         ))}
       </div>
