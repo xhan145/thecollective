@@ -9,6 +9,7 @@ import { CollectiveMiniMark } from "@/components/beta/Brand";
 export default function PhoneMockup({ className = "" }: { className?: string }) {
   return (
     <motion.div
+      aria-hidden
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}

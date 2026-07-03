@@ -1,9 +1,6 @@
-"use client";
-
 import Section from "./Section";
 import { ButtonLink } from "@/components/beta/ui";
 import { MARKETING, ROUTES } from "@/lib/marketing/content";
-import { trackEvent } from "@/lib/analytics";
 
 export default function TryThisFirst() {
   const { sectionTitle, sectionSub, card } = MARKETING.tryFirst;
@@ -33,7 +30,7 @@ export default function TryThisFirst() {
         </ul>
 
         <div className="mt-7">
-          <ButtonLink href={ROUTES.demo} onClick={() => trackEvent("demo_practice_started", { source: "try_this_first" })} className="w-full">{card.cta}</ButtonLink>
+          <ButtonLink href={ROUTES.demo} className="w-full">{card.cta}</ButtonLink>
           <p className="mt-3 text-center text-xs text-[#9B958B]">{card.secondaryText}</p>
         </div>
       </div>

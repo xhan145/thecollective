@@ -1,9 +1,6 @@
-"use client";
-
 import Section from "./Section";
 import { ButtonLink } from "@/components/beta/ui";
 import { MARKETING, ROUTES } from "@/lib/marketing/content";
-import { trackEvent } from "@/lib/analytics";
 
 export default function FounderStory() {
   const { eyebrow, paragraphs, cta } = MARKETING.founder;
@@ -17,7 +14,7 @@ export default function FounderStory() {
           ))}
         </div>
         <div className="mt-7 flex justify-center">
-          <ButtonLink href={ROUTES.demo} onClick={() => trackEvent("demo_practice_started", { source: "founder" })}>{cta}</ButtonLink>
+          <ButtonLink href={ROUTES.demo}>{cta}</ButtonLink>
         </div>
       </div>
     </Section>

@@ -23,8 +23,9 @@ export default function DemoPage() {
   }, []);
 
   function pick(key: string) {
+    // Fire once, on the first selection — toggling options shouldn't inflate it.
+    if (picked === null) trackEvent("demo_proof_started", { proof_type: key });
     setPicked(key);
-    trackEvent("demo_proof_started", { proof_type: key });
   }
 
   return (

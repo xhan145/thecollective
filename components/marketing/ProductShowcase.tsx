@@ -16,7 +16,11 @@ export default function ProductShowcase() {
               <p className="mt-1.5 text-[14px] leading-6 text-[#6E6E6E]">{s.body}</p>
             </div>
             {i < steps.length - 1 && (
-              <span aria-hidden className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-lg text-[#E0D3B4] lg:block">&rarr;</span>
+              <>
+                {/* desktop: arrow in the gap to the next card; mobile: chevron below */}
+                <span aria-hidden className="pointer-events-none absolute -right-3 top-1/2 hidden -translate-y-1/2 text-lg text-[#E0D3B4] lg:block">&rarr;</span>
+                <span aria-hidden className="mt-1 block text-center text-lg text-[#E0D3B4] lg:hidden">&darr;</span>
+              </>
             )}
           </div>
         ))}
