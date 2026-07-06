@@ -352,6 +352,7 @@ export async function loadUserBundle(
     mediaUrl: row.media_url ?? undefined,
     openForContributions: row.open_for_contributions ?? false,
     contributionFocus: row.contribution_focus ?? null,
+    tags: row.tags ?? [],
   }));
 
   return {
@@ -532,6 +533,16 @@ export async function persistProof(
 }
 
 export async function persistFeedback(client: SupabaseClient, feedback: Feedback): Promise<void> {
+  // Structured answers double as the level's feedback rubric capture (035):
+  // stored keyed to the rubric dimensions; freeform body stays primary.
+  const rubric =
+    feedback.clarityNote || feedback.usefulNote || feedback.nextStepNote
+      ? {
+          ...(feedback.clarityNote ? { clarity: feedback.clarityNote } : {}),
+          ...(feedback.usefulNote ? { usefulness: feedback.usefulNote } : {}),
+          ...(feedback.nextStepNote ? { next_step: feedback.nextStepNote } : {}),
+        }
+      : null;
   await client.from("feedback").insert({
     id: feedback.id,
     proof_id: feedback.proofId,
@@ -543,6 +554,7 @@ export async function persistFeedback(client: SupabaseClient, feedback: Feedback
     clarity_note: feedback.clarityNote ?? null,
     useful_note: feedback.usefulNote ?? null,
     next_step_note: feedback.nextStepNote ?? null,
+    rubric,
   });
   await client.from("proofs").update({ status: "feedback-ready" }).eq("id", feedback.proofId);
   await client.rpc("record_feedback_trust", { p_feedback_id: feedback.id });
