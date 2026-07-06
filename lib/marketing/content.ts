@@ -137,7 +137,7 @@ export const MARKETING = {
     columns: [
       { heading: "Product", links: [{ label: "How it works", href: "#how" }, { label: "Trust", href: "#trust" }] },
       { heading: "Company", links: [{ label: "Why Collective", href: "#founder" }, { label: "Contact", href: "mailto:hello@thecollective.app" }] },
-      { heading: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }] },
+      { heading: "Legal", links: [{ label: "Privacy", href: "/privacy" }, { label: "Terms", href: "/terms" }] },
     ],
     socials: [{ label: "X", href: "#" }, { label: "LinkedIn", href: "#" }],
   },

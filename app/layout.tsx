@@ -17,6 +17,20 @@ export const metadata: Metadata = {
   title: "Collective | Practice confidence in real life",
   description:
     "Build confidence and communication through small real-world practices, proof, useful feedback, and earned trust. No likes, followers, or fake status.",
+  openGraph: {
+    title: "Collective | Practice confidence in real life",
+    description:
+      "Small real-world practices, proof, useful feedback, and earned trust. No likes, followers, or fake status.",
+    siteName: "Collective",
+    type: "website",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Collective — practice confidence in real life" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Collective | Practice confidence in real life",
+    description: "Small steps. Real progress. No likes, followers, or fake status.",
+    images: ["/og.png"],
+  },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
