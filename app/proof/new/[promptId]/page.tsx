@@ -11,11 +11,14 @@ import { AttachmentPicker, ProofTypeSelector, type AttachmentDraft } from "@/com
 import { Button, Card, PageHeader, SuccessState, TextArea } from "@/components/beta/ui";
 import { getCollectiveAiService } from "@/lib/aiService";
 import { levelStatus } from "@/lib/mastery";
+import { evaluateAchievements } from "@/lib/supabase/badgesRepository";
+import { DEMO_ACHIEVEMENTS } from "@/lib/badges/demo";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
   const router = useRouter();
-  const { snapshot, currentUser, trustSummary, getPromptById, submitProof, logEvent } = useBetaApp();
+  const { snapshot, currentUser, trustSummary, supabaseEnabled, getPromptById, submitProof, logEvent } = useBetaApp();
   const promptId = params.promptId || "conf-s1";
   const prompt = getPromptById(promptId);
   const [mediaType, setMediaType] = useState<ProofMediaType>("text");
@@ -53,6 +56,7 @@ export default function NewProofPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const [newBadges, setNewBadges] = useState<string[]>([]);
   const aiService = getCollectiveAiService();
 
   // MVP upload limits (bytes). Keep text/caption safe even when a file is rejected.
@@ -95,7 +99,17 @@ export default function NewProofPage() {
         setError(saveError);
         return;
       }
-      if (proof) setSubmittedId(proof.id);
+      if (proof) {
+        setSubmittedId(proof.id);
+        // Calm unlock moment: check for newly earned badges right after the
+        // rep that may have earned them (recognition, never a reward loop).
+        const client = supabaseEnabled ? getSupabaseClient() : null;
+        if (client) {
+          evaluateAchievements(client)
+            .then((slugs) => { if (slugs.length) setNewBadges(slugs); })
+            .catch(() => {});
+        }
+      }
     } finally {
       setSubmitting(false);
     }
@@ -109,6 +123,11 @@ export default function NewProofPage() {
           body={prompt?.nextStep ? `Next: ${prompt.nextStep}` : "Feedback can come next."}
           cta={
             <div className="w-full space-y-2">
+              {newBadges.length > 0 && (
+                <Link href="/badges" className="block rounded-2xl bg-[#FFF1C7] px-4 py-3 text-center text-sm font-extrabold text-[#7A5300]">
+                  Badge earned: {newBadges.map((slug) => DEMO_ACHIEVEMENTS.find((b) => b.slug === slug)?.name ?? slug).join(", ")}
+                </Link>
+              )}
               {nextLevel && (
                 <Link
                   href={`/proof/new/${nextLevel.id}`}

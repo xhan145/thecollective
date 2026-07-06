@@ -8,6 +8,7 @@ import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/bet
 import { Button, ButtonLink, Card, TextArea } from "./ui";
 import { Avatar } from "./Avatar";
 import { useBetaApp } from "./AppStateProvider";
+import { DEMO_ACHIEVEMENTS } from "@/lib/badges/demo";
 
 /** Calm Useful + Save toggles. No counts shown (usefulness over attention). */
 export function ProofActions({ proof, compact = false }: { proof: Proof; compact?: boolean }) {
@@ -366,6 +367,16 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
             <Link href={`/member/${author.id}`} className="hover:underline">
               <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
             </Link>
+            {(author.selectedBadges?.length ?? 0) > 0 && (
+              <span className="mt-1 flex flex-wrap gap-1">
+                {author.selectedBadges!.slice(0, 3).map((slug) => {
+                  const b = DEMO_ACHIEVEMENTS.find((a) => a.slug === slug);
+                  return b ? (
+                    <span key={slug} className="rounded-full bg-[#FFF1C7] px-2 py-0.5 text-[10px] font-extrabold text-[#7A5300]">{b.name}</span>
+                  ) : null;
+                })}
+              </span>
+            )}
             {author.bio && <p className="truncate text-xs text-[#6E6E6E]">{author.bio}</p>}
           </div>
           {!own && !proof.isDemo && (

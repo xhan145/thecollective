@@ -75,6 +75,7 @@ import {
 import { loadContent, type CollectiveContent } from "@/lib/supabase/contentRepository";
 import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
 import { blockUser as blockUserRow, unblockUser as unblockUserRow } from "@/lib/supabase/settingsRepository";
+import { setSelectedBadges as setSelectedBadgesRow } from "@/lib/supabase/badgesRepository";
 
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
@@ -117,6 +118,7 @@ type BetaAppContextValue = {
   isSaved: (targetType: SavedTargetType, targetId: string) => boolean;
   isLearningFrom: (teacherId: string) => boolean;
   blockMember: (memberId: string) => Promise<void>;
+  setDisplayedBadges: (slugs: string[]) => Promise<void>;
   unblockMember: (memberId: string) => Promise<void>;
   getSavedProofs: () => Proof[];
   getSavedPractices: () => PracticePrompt[];
@@ -487,6 +489,15 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           }).catch(() => {});
           void logBetaEvent(supabase!, uid, "onboarding_completed", undefined, { directionId: payload.directionId });
         }
+      },
+      async setDisplayedBadges(slugs) {
+        const capped = slugs.slice(0, 6);
+        setSnapshot((current) => ({
+          ...current,
+          users: current.users.map((u) => (u.id === current.currentUserId ? { ...u, selectedBadges: capped } : u)),
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) await setSelectedBadgesRow(supabase!, uid, capped).catch(() => {});
       },
       async blockMember(memberId) {
         setSnapshot((current) => ({

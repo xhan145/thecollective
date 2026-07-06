@@ -12,7 +12,7 @@ import { DEMO_ACHIEVEMENTS, nextActionFor, metricValue } from "@/lib/badges/demo
 import { evaluateLocalBadges, type Achievement } from "@/lib/badges/types";
 
 export default function BadgesPage() {
-  const { currentUser, snapshot, trustSummary } = useBetaApp();
+  const { currentUser, snapshot, trustSummary, setDisplayedBadges } = useBetaApp();
   const [achievements, setAchievements] = useState<Achievement[]>(DEMO_ACHIEVEMENTS);
   const [earnedSlugs, setEarnedSlugs] = useState<Set<string>>(new Set());
   const [justUnlocked, setJustUnlocked] = useState<string[]>([]);
@@ -103,12 +103,34 @@ export default function BadgesPage() {
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {visible.map(({ badge, earned }) => (
-            <BadgeCard
-              key={badge.slug}
-              badge={badge}
-              earned={earned}
-              nextAction={earned ? undefined : nextActionFor(badge, metricValue(badge, counts))}
-            />
+            <div key={badge.slug} className="relative">
+              <BadgeCard
+                badge={badge}
+                earned={earned}
+                nextAction={earned ? undefined : nextActionFor(badge, metricValue(badge, counts))}
+              />
+              {earned && (() => {
+                const selected = currentUser?.selectedBadges ?? [];
+                const pinned = selected.includes(badge.slug);
+                const full = !pinned && selected.length >= 6;
+                return (
+                  <button
+                    type="button"
+                    disabled={full}
+                    aria-pressed={pinned}
+                    aria-label={pinned ? `Remove ${badge.name} from your passport` : `Show ${badge.name} on your passport`}
+                    onClick={() =>
+                      void setDisplayedBadges(pinned ? selected.filter((sl) => sl !== badge.slug) : [...selected, badge.slug])
+                    }
+                    className={`absolute right-2 top-2 rounded-full px-2 py-1 text-[10px] font-extrabold transition-colors disabled:opacity-40 ${
+                      pinned ? "bg-[#F2A900] text-white" : "bg-[#FFF1C7] text-[#7A5300]"
+                    }`}
+                  >
+                    {pinned ? "On passport" : full ? "6 max" : "Show"}
+                  </button>
+                );
+              })()}
+            </div>
           ))}
         </div>
       </div>
