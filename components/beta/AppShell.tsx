@@ -191,7 +191,7 @@ function BottomNav() {
 function DesktopSidebar({ unread, showDemoBadge, demoLabel }: { unread: number; showDemoBadge: boolean; demoLabel: string | null }) {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[#EFE7D8] bg-[#FFFDF8] px-4 py-6 lg:flex">
+    <aside className="sticky top-0 z-10 hidden h-screen w-64 shrink-0 flex-col border-r border-[#EFE7D8] bg-[#FFFDF8] px-4 py-6 shadow-[4px_0_24px_rgba(71,52,18,0.05)] lg:flex">
       <Link href="/home" aria-label="Collective home" className="px-2">
         <CollectiveWordmark />
       </Link>
