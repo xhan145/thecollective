@@ -25,6 +25,7 @@ import { rankTips } from "@/lib/tips/rankTips";
 import { listTips } from "@/lib/supabase/tipsRepository";
 import type { Cohort, CohortMember, CohortJoinRequest } from "@/lib/cohorts/types";
 import { rankFeed, type RankedProof } from "@/lib/feed/rankProofFeed";
+import { viewerTagContext } from "@/lib/mastery";
 import {
   listMyCohorts,
   getCohort,
@@ -1037,7 +1038,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         if (!currentUser) return [];
         const authorsById: Record<string, UserProfile> = {};
         for (const u of snapshot.users) authorsById[u.id] = u;
-        return rankFeed(currentUser, proofs, authorsById, snapshot.usefulCountByProof);
+        return rankFeed(currentUser, proofs, authorsById, snapshot.usefulCountByProof, viewerTagContext(currentUser.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds }));
       },
       async createCohortAction(a) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
