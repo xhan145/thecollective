@@ -19,6 +19,18 @@ export const MARKETING = {
     primaryCta: "Try a 3-minute practice",
     secondaryCta: "Join the closed beta",
   },
+  pain: {
+    title: "You do not need more advice. You need reps.",
+    body: "Most self-improvement apps give you more content to watch, save, or scroll through. Collective gives you something to do: choose one small practice, try it in real life, submit proof, get feedback, and build trust over time.",
+  },
+  loopSteps: [
+    { n: 1, title: "Discover", body: "Choose a direction that matters to you." },
+    { n: 2, title: "Practice", body: "Take one small real-world action." },
+    { n: 3, title: "Prove", body: "Show what you tried with video, audio, writing, notes, or reflection." },
+    { n: 4, title: "Get Feedback", body: "Receive useful notes focused on improvement." },
+    { n: 5, title: "Build Trust", body: "Earn trust through real proof and helpful contribution." },
+    { n: 6, title: "Contribute", body: "Help others once you have a history of practice and useful feedback." },
+  ],
   tryFirst: {
     sectionTitle: "Try this first",
     sectionSub: "One small communication rep. No pressure. No perfect performance required.",

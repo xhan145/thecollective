@@ -11,7 +11,7 @@ export default function TryThisFirst() {
         <h2 className="mt-2 font-display text-[28px] font-bold text-[#111111] lg:text-[36px]">{card.title}</h2>
         <p className="mx-auto mt-3 max-w-[520px] text-[15px] leading-7 text-[#6E6E6E]">{sectionSub}</p>
       </div>
-      <div className="mx-auto mt-8 max-w-xl rounded-3xl border border-[#EFE7D8] bg-[#FFF8EE] p-6 shadow-[0_18px_50px_rgba(71,52,18,0.08)] lg:p-8">
+      <div className="mx-auto mt-8 max-w-xl rounded-3xl border border-[#EFE7D8] bg-[#FFF8EE] p-6 shadow-[0_18px_50px_rgba(71,52,18,0.08)] transition-transform duration-200 ease-out motion-safe:hover:-translate-y-1 lg:p-8">
         <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">The prompt</p>
         <p className="mt-2 text-[16px] font-bold leading-7 text-[#111111]">{card.prompt}</p>
 

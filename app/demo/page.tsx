@@ -17,6 +17,8 @@ const PROOF = [
 export default function DemoPage() {
   const { card } = MARKETING.tryFirst;
   const [picked, setPicked] = useState<string | null>(null);
+  const [reflection, setReflection] = useState("");
+  const writable = picked === "written" || picked === "reflection";
 
   useEffect(() => {
     trackEvent("demo_practice_started", { source: "demo_page" });
@@ -66,8 +68,24 @@ export default function DemoPage() {
               );
             })}
           </div>
-          {picked && (
-            <p className="mt-3 text-sm font-bold text-[#7A5300]">Nice — that&rsquo;s exactly how it works in the app. In the beta, you&rsquo;d capture it right here.</p>
+          {picked && !writable && (
+            <p className="mt-3 text-sm font-bold text-[#7A5300]">Nice — that&rsquo;s exactly how it works in the app. In the beta, you&rsquo;d record it right here.</p>
+          )}
+          {writable && (
+            <div className="mt-3">
+              <label htmlFor="demo-reflection" className="block text-sm font-bold text-[#38322A]">
+                Write a short reflection
+              </label>
+              <textarea
+                id="demo-reflection"
+                value={reflection}
+                onChange={(e) => setReflection(e.target.value)}
+                rows={4}
+                placeholder="I introduced myself to… It felt… Next time I want to…"
+                className="mt-2 w-full resize-none rounded-2xl border border-[#EFE7D8] bg-[#FFF8EE] px-4 py-3 text-sm text-[#111111] outline-none placeholder:text-[#9B958B] focus-visible:ring-2 focus-visible:ring-[#F2A900]/40"
+              />
+              <p className="mt-2 text-xs text-[#9B958B]">Demo only — nothing is saved. Create an account to keep your proof.</p>
+            </div>
           )}
         </section>
 
@@ -85,7 +103,7 @@ export default function DemoPage() {
           <p className="font-display text-[20px] font-bold">Ready to do it for real?</p>
           <p className="mx-auto mt-2 max-w-[420px] text-sm text-[#6E6E6E]">Join the closed beta to submit proof, get feedback, and build trust over time.</p>
           <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <ButtonLink href={ROUTES.beta} onClick={() => trackEvent("demo_signup_clicked")} className="w-full sm:w-auto">Join the closed beta</ButtonLink>
+            <ButtonLink href={ROUTES.beta} onClick={() => trackEvent("demo_signup_clicked")} className="w-full sm:w-auto">Create an account to save your proof</ButtonLink>
             <Link href="/" className="text-sm font-bold text-[#6E6E6E] hover:text-[#111111]">Back to home</Link>
           </div>
         </section>

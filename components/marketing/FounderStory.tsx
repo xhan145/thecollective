@@ -1,5 +1,5 @@
 import Section from "./Section";
-import { ButtonLink } from "@/components/beta/ui";
+import TrackedCta from "./TrackedCta";
 import { MARKETING, ROUTES } from "@/lib/marketing/content";
 
 export default function FounderStory() {
@@ -14,7 +14,7 @@ export default function FounderStory() {
           ))}
         </div>
         <div className="mt-7 flex justify-center">
-          <ButtonLink href={ROUTES.demo}>{cta}</ButtonLink>
+          <TrackedCta href={ROUTES.demo} event="founder_start_practice_clicked">{cta}</TrackedCta>
         </div>
       </div>
     </Section>

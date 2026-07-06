@@ -381,3 +381,15 @@ html[data-pixel-grid="off"] .pixel-grid-bg { background-image: none; }
 /* Density hook (components may consume --space-density). */
 html[data-density="compact"] { --space-density: 0.82; }
 html[data-density="comfortable"] { --space-density: 1; }
+
+/* ── Marketing depth layer (landing only) ─────────────────────────────
+   CSS-only 3D: gentle float for decorative hero chips. Gated behind
+   prefers-reduced-motion so the chips are simply static when reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mk-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+  }
+  .mk-float { animation: mk-float 5s ease-in-out infinite; }
+  .mk-float-late { animation: mk-float 6.5s ease-in-out 1.2s infinite; }
+}

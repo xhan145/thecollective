@@ -14,8 +14,9 @@ const lora = Lora({ subsets: ["latin"], weight: ["500", "600", "700"], variable:
 const themeInitScript = `(function(){try{var p=localStorage.getItem('collective.theme')||'system';var d=p==='dark'||(p==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
 export const metadata: Metadata = {
-  title: "Collective",
-  description: "Practice, proof, feedback, trust, and contribution.",
+  title: "Collective | Practice confidence in real life",
+  description:
+    "Build confidence and communication through small real-world practices, proof, useful feedback, and earned trust. No likes, followers, or fake status.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
