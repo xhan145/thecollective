@@ -573,14 +573,11 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
 
         // Demo mode (no backend): the optimistic proof is the source of truth.
         if (!writesEnabled || !uid) return { proof: created, error: null };
-        // Video proofs are marked submitted locally only — we do NOT store them on
-        // the database (no proofs row, no storage upload). The optimistic proof
-        // (status "submitted") is the source of truth.
-        if (input.mediaType === "video") {
-          void logBetaEvent(supabase!, uid, "proof_submit_succeeded", undefined, { proofId, stored: false });
-          return { proof: created, error: null };
-        }
         try {
+          // Every media type (including video) persists a proofs row and, when a
+          // file is attached, uploads it to storage. Attachment upload is
+          // best-effort inside persistProof, so the text proof survives even if a
+          // large video upload fails — but the proof no longer vanishes on refresh.
           await persistProof(supabase!, created, input.attachment?.file);
           void logBetaEvent(supabase!, uid, "proof_submit_succeeded", undefined, { proofId });
           return { proof: created, error: null };

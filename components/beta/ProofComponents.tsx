@@ -205,7 +205,13 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
   const learning = isLearningFrom(proof.userId);
   const name = authorName || "A member";
   const showDemoBadge = Boolean(proof.isDemo);
-  const thumb = proof.attachments[0]?.localUrl || proof.thumbnailUrl || proof.mediaUrl;
+  const attachmentUrl = proof.attachments[0]?.localUrl;
+  const isVideo = proof.mediaType === "video";
+  // A video's own URL is not an image, so rendering it in <img> produces a broken
+  // tile. Prefer a real poster image (thumbnailUrl) when present; otherwise show a
+  // frame from the video itself via a muted <video> element.
+  const imageThumb = isVideo ? proof.thumbnailUrl : attachmentUrl || proof.thumbnailUrl || proof.mediaUrl;
+  const videoThumb = isVideo && !imageThumb ? attachmentUrl || proof.mediaUrl : undefined;
   // A single stretched <Link> owns card navigation (keyboard-accessible, valid
   // HTML). Card content is pointer-events-none so clicks fall through to the
   // link; interactive sub-controls re-enable pointer events and sit above it —
@@ -232,9 +238,12 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
         )}
         <div className="flex gap-3">
           <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-[#FFF1C7] to-[#FFD986] text-[#8A5D00]">
-            {thumb ? (
+            {imageThumb ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={thumb} alt="Proof thumbnail" className="h-full w-full object-cover" />
+              <img src={imageThumb} alt="Proof thumbnail" className="h-full w-full object-cover" />
+            ) : videoThumb ? (
+              // #t=0.1 nudges browsers to paint an early frame as the poster.
+              <video src={`${videoThumb}#t=0.1`} muted playsInline preload="metadata" className="h-full w-full object-cover" />
             ) : (
               <ProofMediaIcon type={proof.mediaType} className="text-[#8A5D00]" />
             )}
@@ -326,6 +335,18 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
           </div>
         </div>
         {proof.body && <p className="mt-4 rounded-[18px] bg-[#FFF8EE] p-4 text-sm leading-6 text-[#38322A]">{proof.body}</p>}
+        {proof.attachments[0]?.localUrl && (proof.mediaType === "image" || proof.mediaType === "video" || proof.mediaType === "audio") && (
+          <div className="mt-4 overflow-hidden rounded-[18px] border border-[#EFE7D8] bg-black/[0.02]">
+            {proof.mediaType === "image" ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={proof.attachments[0].localUrl} alt={proof.title} className="max-h-[420px] w-full object-contain" />
+            ) : proof.mediaType === "video" ? (
+              <video src={proof.attachments[0].localUrl} controls playsInline preload="metadata" className="max-h-[420px] w-full bg-black" />
+            ) : (
+              <audio src={proof.attachments[0].localUrl} controls className="w-full p-3" />
+            )}
+          </div>
+        )}
         {proof.attachments[0] && <div className="mt-4"><AttachmentPreview attachment={proof.attachments[0]} /></div>}
         <ProofActions proof={proof} />
       </Card>

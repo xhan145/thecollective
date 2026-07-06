@@ -1,3 +1,4 @@
+import { AuthedRedirect } from "@/components/beta/AuthedRedirect";
 import MarketingNav from "@/components/marketing/MarketingNav";
 import Hero from "@/components/marketing/Hero";
 import PainSection from "@/components/marketing/PainSection";
@@ -19,6 +20,8 @@ import MarketingFooter from "@/components/marketing/MarketingFooter";
 export default function LandingPage() {
   return (
     <main className="w-full bg-[#FFF8EE] text-[#111111]">
+      {/* Returning members with a live session skip the marketing page. */}
+      <AuthedRedirect />
       <MarketingNav />
       {/* Concrete-first: hero action → why → try a real rep → the loop → proof of flow → focus → explainers. */}
       <Hero />
