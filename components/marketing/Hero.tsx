@@ -3,7 +3,7 @@
 import { ButtonLink } from "@/components/beta/ui";
 import { MARKETING, ROUTES } from "@/lib/marketing/content";
 import { trackEvent } from "@/lib/analytics";
-import PhoneMockup from "./PhoneMockup";
+import HeroShowcase from "./HeroShowcase";
 
 export default function Hero() {
   const { eyebrow, headline, sub, support, primaryCta, secondaryCta } = MARKETING.hero;
@@ -20,7 +20,7 @@ export default function Hero() {
             <ButtonLink href={ROUTES.beta} variant="secondary" onClick={() => trackEvent("hero_join_beta_clicked")} className="w-full sm:w-auto">{secondaryCta}</ButtonLink>
           </div>
         </div>
-        <PhoneMockup />
+        <HeroShowcase />
       </div>
     </section>
   );
