@@ -22,6 +22,8 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
             <CollectiveMiniMark className="h-7 w-11" />
             <span className="text-xs font-bold uppercase tracking-[0.14em] text-[#6E6E6E]">Collective</span>
           </div>
+          {/* Plain ink here by design: the gold gradient heading is reserved for
+              hero moments (landing) — on all ~40 PageHeaders it reads as gilt. */}
           <h1 className="font-display text-[31px] font-bold leading-tight tracking-tight text-[#111111]">{title}</h1>
           {subtitle && <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{subtitle}</p>}
         </div>
@@ -215,8 +217,8 @@ export function ProgressBar({ value, label }: { value: number; label?: string })
 export function HeroCard({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div className={`relative rounded-[24px] border border-[#F6E7C8] bg-gradient-to-br from-[#FFF1C7] to-[#FFFDF8] p-5 shadow-[0_2px_4px_rgba(71,52,18,0.06),0_14px_34px_rgba(71,52,18,0.12),0_30px_70px_rgba(71,52,18,0.07)] ${className}`}>
-      {/* Soft gold glow behind the hero moment — decorative, static (no CLS). */}
-      <div aria-hidden className="pointer-events-none absolute -inset-4 -z-10 rounded-[32px] bg-[radial-gradient(60%_70%_at_50%_20%,rgba(242,169,0,0.12),transparent_75%)]" />
+      {/* Soft gold glow behind the hero moment — breathes when motion allowed. */}
+      <div aria-hidden className="mk-breathe pointer-events-none absolute -inset-4 -z-10 rounded-[32px] bg-[radial-gradient(60%_70%_at_50%_20%,rgba(242,169,0,0.12),transparent_75%)]" />
       {children}
     </div>
   );

@@ -8,6 +8,7 @@ import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { CONTEXT_TAGS } from "@/lib/betaTypes";
 import type { PracticeLevel, ContextTag } from "@/lib/betaTypes";
+import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -48,7 +49,9 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-12 pt-[calc(40px+env(safe-area-inset-top,0px))] text-[#111111]">
+    <main className="relative mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-12 pt-[calc(40px+env(safe-area-inset-top,0px))] text-[#111111]">
+      <AmbientBackdrop />
+      <div className="relative z-[1]">
       <CollectiveMark className="mx-auto h-[78px] w-[160px]" />
 
       {step === 0 && (
@@ -199,6 +202,7 @@ export default function OnboardingPage() {
           <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
         </div>
       )}
+    </div>
     </main>
   );
 }

@@ -409,3 +409,90 @@ html[data-density="comfortable"] { --space-density: 1; }
     box-shadow: 0 4px 10px rgba(71,52,18,0.09), 0 18px 44px rgba(71,52,18,0.12);
   }
 }
+
+/* ── Ambient motion layer (UUPM) ──────────────────────────────────────
+   Dimensional, alive backgrounds for every page: drifting gold/cream
+   auroras, a slowly panning pixel grid, and breathing hero glows.
+   All movement is transform/opacity/background-position only, and is
+   DOUBLE-gated: the OS prefers-reduced-motion setting AND the in-app
+   motion preference (html[data-motion="reduced"]). With motion off the
+   gradients remain as rich static layers — nothing disappears. */
+
+/* The aurora backdrop: one aria-hidden div per screen host; the blobs are
+   pseudo-elements so no extra DOM. Sits at z-0 under a z-[1] content wrap. */
+.ambient-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  contain: paint;
+}
+.ambient-aurora::before,
+.ambient-aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.75;
+}
+.ambient-aurora::before {
+  top: -22vmax;
+  right: -18vmax;
+  background: radial-gradient(closest-side, rgba(242, 169, 0, 0.24), rgba(255, 241, 199, 0.14) 55%, transparent 75%);
+}
+.ambient-aurora::after {
+  bottom: -26vmax;
+  left: -20vmax;
+  background: radial-gradient(closest-side, rgba(255, 176, 0, 0.16), rgba(34, 197, 94, 0.07) 60%, transparent 78%);
+}
+@media (max-width: 768px) {
+  .ambient-aurora::before { filter: blur(44px); opacity: 0.6; }
+  .ambient-aurora::after { display: none; } /* one blob on mobile — half the GPU load */
+}
+
+.dark .ambient-aurora::before {
+  background: radial-gradient(closest-side, rgba(242, 169, 0, 0.15), rgba(122, 83, 0, 0.09) 55%, transparent 75%);
+}
+.dark .ambient-aurora::after {
+  background: radial-gradient(closest-side, rgba(255, 176, 0, 0.11), rgba(34, 197, 94, 0.06) 60%, transparent 78%);
+}
+
+/* Gradient heading utility — static, contrast-safe (ink → deep gold). */
+.text-gradient-gold {
+  background-image: linear-gradient(100deg, #111111 0%, #111111 52%, #8a5d00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .text-gradient-gold {
+  background-image: linear-gradient(100deg, #f5efe2 0%, #f5efe2 52%, #ffb000 100%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mk-aurora-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-6vmax, 5vmax, 0) scale(1.12); }
+  }
+  @keyframes mk-aurora-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.08); }
+    50% { transform: translate3d(7vmax, -4vmax, 0) scale(0.96); }
+  }
+  @keyframes mk-grid-pan {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 6px 6px, 6px 6px; }
+  }
+  @keyframes mk-breathe {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.82; }
+  }
+  html:not([data-motion="reduced"]) .ambient-aurora::before { animation: mk-aurora-a 22s ease-in-out infinite; }
+  html:not([data-motion="reduced"]) .ambient-aurora::after { animation: mk-aurora-b 30s ease-in-out infinite; }
+  html:not([data-motion="reduced"])[data-pixel="soft"] .pixel-grid-bg,
+  html:not([data-motion="reduced"])[data-pixel="medium"] .pixel-grid-bg {
+    animation: mk-grid-pan 7s linear infinite;
+  }
+  html:not([data-motion="reduced"]) .mk-breathe { animation: mk-breathe 8s ease-in-out infinite; }
+}

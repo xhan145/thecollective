@@ -6,6 +6,7 @@ import { ButtonLink } from "@/components/beta/ui";
 import { CollectiveWordmark } from "@/components/beta/Brand";
 import { MARKETING, ROUTES } from "@/lib/marketing/content";
 import { trackEvent } from "@/lib/analytics";
+import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
 const PROOF = [
   { key: "video", label: "Short video", hint: "Record ~60 seconds on your phone." },
@@ -31,7 +32,8 @@ export default function DemoPage() {
   }
 
   return (
-    <main className="min-h-screen w-full bg-[#FFF8EE] text-[#111111]">
+    <main className="relative min-h-screen w-full bg-[#FFF8EE] text-[#111111]">
+      <AmbientBackdrop />
       <header className="sticky top-0 z-40 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between px-5 py-3">
           <Link href="/" aria-label="Collective home"><CollectiveWordmark /></Link>
@@ -39,7 +41,7 @@ export default function DemoPage() {
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-2xl px-5 py-10">
+      <div className="relative z-[1] mx-auto w-full max-w-2xl px-5 py-10">
         <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-[#F2A900]">Try this first</p>
         <h1 className="mt-2 font-display text-[30px] font-bold leading-tight lg:text-[38px]">{card.title}</h1>
 
