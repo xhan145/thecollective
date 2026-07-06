@@ -57,3 +57,30 @@ const ranked2 = rankFeed(viewer, [P("a", "same", "direction-confidence"), P("b",
 assert.equal(ranked2[0].proof.id, "a", "useful boost orders within tier");
 
 console.log("feed-ranking checks passed");
+
+// ── Level-matched tag affinity (035 tags + viewerTagContext) ──────────────
+{
+  const Pt = (id: string, userId: string, tags: string[]): Proof =>
+    ({ ...P(id, userId, "direction-confidence"), tags } as Proof);
+  const ctx = { directionSlug: "confident-communication", activeSkillSlugs: ["speaking-clearly"] };
+  const proofsT: Proof[] = [
+    Pt("tNone", "same", []),
+    Pt("tDir", "same", ["confident-communication", "asking-questions"]),
+    Pt("tSkill", "same", ["confident-communication", "speaking-clearly"]),
+  ];
+  const rankedT = rankFeed(viewer, proofsT, authors, {}, ctx);
+  const order = rankedT.map((r) => r.proof.id);
+  assert.deepEqual(order, ["tSkill", "tDir", "tNone"], "active-skill tag > direction tag > untagged");
+
+  // Bounded: a slightly-ahead author without tags still beats a same-level
+  // author with only a direction tag (level factor stays meaningful).
+  const rankedB = rankFeed(viewer, [Pt("bAhead", "ahead1", []), Pt("bDirTag", "same", ["confident-communication"])], authors, {}, ctx);
+  assert.equal(rankedB[0].proof.id, "bAhead", "tag lift does not swamp slightly-ahead level factor");
+
+  // Backward compatible: omitting ctx leaves ranking untagged-identical.
+  const a1 = rankFeed(viewer, proofsT, authors, {});
+  const a2 = rankFeed(viewer, proofsT.map((p) => ({ ...p, tags: [] })), authors, {});
+  assert.deepEqual(a1.map((r) => r.proof.id), a2.map((r) => r.proof.id), "no ctx => tags ignored");
+}
+
+console.log("tag-affinity checks passed");

@@ -1,6 +1,7 @@
 import type { Proof, UserProfile } from "@/lib/betaTypes";
 import { levelRank } from "@/lib/betaTrust";
 import { shouldShowDemoActivity } from "@/lib/feedAlgorithm";
+import type { ViewerTagContext } from "@/lib/mastery";
 
 export type FeedRelation = "ahead" | "same" | "behind";
 export type RankedProof = { proof: Proof; relation: FeedRelation; authorRank: number };
@@ -28,6 +29,22 @@ function usefulScore(count: number): number {
   return Math.min(count, 5) * 0.4;
 }
 
+/** Level-matched affinity (spec §6.2): proofs carrying the viewer's active
+ *  skill tag rank highest, same-direction tags get a smaller lift. Bounded
+ *  below the direction-interest weight so it refines, never dominates. No
+ *  tags (pre-035 or fallback proofs) → no effect. */
+function tagScore(proof: Proof, ctx?: ViewerTagContext): number {
+  const tags = proof.tags;
+  if (!ctx || !tags || tags.length === 0) return 0;
+  // Active-skill match is the strongest relevance signal we have (the viewer
+  // is literally climbing that skill). The direction tag is near-redundant
+  // with interestScore's direction match, so its lift stays below the 0.5
+  // slightly-ahead level step — it breaks ties, never outruns level.
+  if (ctx.activeSkillSlugs.some((s) => tags.includes(s))) return 2.5;
+  if (ctx.directionSlug && tags.includes(ctx.directionSlug)) return 0.4;
+  return 0;
+}
+
 function relationFor(delta: number): FeedRelation {
   return delta > 0 ? "ahead" : delta < 0 ? "behind" : "same";
 }
@@ -38,6 +55,7 @@ export function rankFeed(
   proofs: Proof[],
   authorsById: Record<string, UserProfile>,
   usefulCountByProof: Record<string, number>,
+  tagCtx?: ViewerTagContext,
 ): RankedProof[] {
   const viewerRank = levelRank(viewer);
   const rankOne = (proof: Proof): RankedProof & { score: number } => {
@@ -45,7 +63,10 @@ export function rankFeed(
     const authorRank = author ? levelRank(author) : viewerRank;
     const delta = authorRank - viewerRank;
     const score =
-      interestScore(viewer, proof) + levelScore(delta) + usefulScore(usefulCountByProof[proof.id] ?? 0);
+      interestScore(viewer, proof) +
+      levelScore(delta) +
+      usefulScore(usefulCountByProof[proof.id] ?? 0) +
+      tagScore(proof, tagCtx);
     return { proof, relation: relationFor(delta), authorRank, score };
   };
 

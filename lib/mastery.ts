@@ -106,6 +106,35 @@ export function nextMasteryStep(
   return undefined;
 }
 
+export type ViewerTagContext = { directionSlug: string | null; activeSkillSlugs: string[] };
+
+/**
+ * The viewer's level-matching context for the feed (spec §6.2): their current
+ * direction's slug plus the skills they're actively climbing (some but not
+ * all levels complete — or, when fresh, the skill of their next step). These
+ * match the vocabulary of the levels' feed_tags denormalized onto proofs.
+ */
+export function viewerTagContext(
+  currentDirectionId: string | null | undefined,
+  data: MasteryData,
+): ViewerTagContext {
+  const direction = data.directions.find((d) => d.id === currentDirectionId);
+  const directionSlug = direction ? String(direction.slug) : null;
+  const active: string[] = [];
+  if (direction) {
+    for (const skill of data.skills.filter((s) => s.directionId === direction.id)) {
+      const p = skillProgress(skill, data.prompts, data.completedPracticeIds);
+      if (p.done > 0 && p.done < p.total) active.push(skill.slug);
+    }
+    if (active.length === 0) {
+      const next = nextMasteryStep(currentDirectionId, data);
+      const nextSkill = next?.skillId ? data.skills.find((s) => s.id === next.skillId) : undefined;
+      if (nextSkill) active.push(nextSkill.slug);
+    }
+  }
+  return { directionSlug, activeSkillSlugs: active };
+}
+
 /**
  * The id every "Submit proof" starter action should target. Never returns a
  * dead id: falls back to the first loaded prompt, then the seed default.
