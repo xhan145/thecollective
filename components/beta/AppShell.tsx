@@ -14,6 +14,7 @@ import { useBetaApp } from "./AppStateProvider";
 import { useTheme } from "./ThemeProvider";
 import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
+import { resolveStarterPromptId } from "@/lib/mastery";
 
 const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/passport", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges"];
 
@@ -58,8 +59,16 @@ function NotificationsButton({ unread, className = "" }: { unread: number; class
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount } = useBetaApp();
+  const { snapshot, currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount } = useBetaApp();
   const unread = unreadNotificationCount();
+  // The "Submit proof" starter target: the user's next mastery step when live
+  // content is loaded, never a dead id (fixes the hardcoded conf-s1 links).
+  const starterId = resolveStarterPromptId(currentUser?.currentDirectionId, {
+    directions: snapshot.directions,
+    skills: snapshot.skills,
+    prompts: snapshot.prompts,
+    completedPracticeIds: snapshot.completedPracticeIds,
+  });
   const isProtected = protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
   const loading = supabaseEnabled && !authReady && isProtected;
   // Show the demo-data badge whenever seed data is what's on screen
@@ -101,7 +110,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">
-      <DesktopSidebar unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
+      <DesktopSidebar starterId={starterId} unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
       <main className="pixel-grid-bg relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
         <AmbientBackdrop />
         <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
@@ -128,13 +137,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             </motion.div>
           )}
         </div>
-        <BottomNav />
+        <BottomNav starterId={starterId} />
       </main>
     </div>
   );
 }
 
-function BottomNav() {
+function BottomNav({ starterId }: { starterId: string }) {
   const pathname = usePathname();
 
   return (
@@ -147,7 +156,7 @@ function BottomNav() {
         <span aria-hidden className="absolute left-1/2 top-1/2 -z-10 h-28 w-44 -translate-x-1/2 rounded-full bg-[radial-gradient(60%_60%_at_50%_40%,rgba(242,169,0,0.30),transparent_72%)] blur-md" />
         <motion.div whileTap={{ scale: 0.92 }} className="pointer-events-auto">
           <Link
-            href="/proof/new/conf-s1"
+            href={`/proof/new/${starterId}`}
             className="grid h-[58px] w-[58px] place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_10px_26px_rgba(242,169,0,0.45)] outline-none transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.55)] focus-visible:ring-4 focus-visible:ring-[#F2A900]/40"
             aria-label="Submit proof"
           >
@@ -190,7 +199,7 @@ function BottomNav() {
   );
 }
 
-function DesktopSidebar({ unread, showDemoBadge, demoLabel }: { unread: number; showDemoBadge: boolean; demoLabel: string | null }) {
+function DesktopSidebar({ starterId, unread, showDemoBadge, demoLabel }: { starterId: string; unread: number; showDemoBadge: boolean; demoLabel: string | null }) {
   const pathname = usePathname();
   return (
     <aside className="sticky top-0 z-10 hidden h-screen w-64 shrink-0 flex-col border-r border-[#EFE7D8] bg-[#FFFDF8] px-4 py-6 shadow-[4px_0_24px_rgba(71,52,18,0.05)] lg:flex">
@@ -222,7 +231,7 @@ function DesktopSidebar({ unread, showDemoBadge, demoLabel }: { unread: number; 
         })}
       </nav>
       <Link
-        href="/proof/new/conf-s1"
+        href={`/proof/new/${starterId}`}
         className="mt-6 flex items-center justify-center gap-2 rounded-full bg-[#F2A900] px-4 py-3 text-sm font-extrabold text-white shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
       >
         <Plus size={18} strokeWidth={2.6} /> Submit proof

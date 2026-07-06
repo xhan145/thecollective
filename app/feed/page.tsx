@@ -6,6 +6,7 @@ import { ProofCard } from "@/components/beta/ProofComponents";
 import { ButtonLink, EmptyState, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { MotionItem, MotionList } from "@/components/beta/motion";
 import { rankFeed } from "@/lib/feed/rankProofFeed";
+import { resolveStarterPromptId } from "@/lib/mastery";
 import { hasCapability } from "@/lib/roles";
 
 export default function FeedPage() {
@@ -16,6 +17,7 @@ export default function FeedPage() {
   const ranked = viewer ? rankFeed(viewer, snapshot.proofs, authorsById, snapshot.usefulCountByProof) : [];
   const canGiveFeedback = hasCapability(viewer, "give_feedback");
   const realCount = snapshot.proofs.filter((p) => !p.isDemo && p.userId !== viewer?.id).length;
+  const starterId = resolveStarterPromptId(currentUser?.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds });
 
   return (
     <AppShell>
@@ -45,7 +47,7 @@ export default function FeedPage() {
               ))}
             </MotionList>
           ) : (
-            <EmptyState title="No proof yet" body="No real proof yet. Here are example proofs to help you start." cta={<ButtonLink href="/proof/new/conf-s1">Submit proof</ButtonLink>} />
+            <EmptyState title="No proof yet" body="No real proof yet. Here are example proofs to help you start." cta={<ButtonLink href={`/proof/new/${starterId}`}>Submit proof</ButtonLink>} />
           )}
         </section>
       </div>

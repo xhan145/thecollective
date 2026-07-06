@@ -20,6 +20,7 @@ import {
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getProfileDetails, listPinnedProofIds, type ProfileDetails } from "@/lib/supabase/passportRepository";
 import { evaluateLocalBadges } from "@/lib/badges/types";
+import { resolveStarterPromptId } from "@/lib/mastery";
 import { DEMO_ACHIEVEMENTS } from "@/lib/badges/demo";
 
 function shortAge(iso: string): string {
@@ -45,6 +46,7 @@ export default function PassportPage() {
     router.replace("/auth");
   }
   const [menuOpen, setMenuOpen] = useState(false);
+  const starterId = resolveStarterPromptId(currentUser?.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds });
   // Relative ages use Date.now(), which differs between SSR and the client.
   // Defer them to after mount so the first client render matches the server.
   const [mounted, setMounted] = useState(false);
@@ -189,7 +191,7 @@ export default function PassportPage() {
           <div className="space-y-2">
             {myProofs.length === 0 ? (
               <Card className="p-5 text-sm text-[#6E6E6E]">
-                No proof yet. Practicing something? <Link href="/proof/new/conf-s1" className="font-extrabold text-[#7A5300] hover:underline">Submit your first proof</Link>.
+                No proof yet. Practicing something? <Link href={`/proof/new/${starterId}`} className="font-extrabold text-[#7A5300] hover:underline">Submit your first proof</Link>.
               </Card>
             ) : (
               myProofs.map((p) => (

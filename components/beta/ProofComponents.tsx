@@ -154,10 +154,13 @@ export function AttachmentPreview({ attachment, onRemove }: { attachment: Attach
   );
 }
 
-export function ProofTypeSelector({ value, onChange }: { value: ProofMediaType; onChange: (type: ProofMediaType) => void }) {
-  const options: ProofMediaType[] = ["text", "image", "video", "audio"];
+export function ProofTypeSelector({ value, onChange, allowed }: { value: ProofMediaType; onChange: (type: ProofMediaType) => void; allowed?: ProofMediaType[] }) {
+  // `allowed` constrains options to a mastery level's proof type (text stays
+  // in as the beginner-safe fallback — callers include it). Absent = all.
+  const all: ProofMediaType[] = ["text", "image", "video", "audio"];
+  const options = allowed ? all.filter((t) => allowed.includes(t)) : all;
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className={`grid gap-2 ${options.length === 4 ? "grid-cols-4" : options.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
       {options.map((type) => {
         const active = type === value;
         return (
