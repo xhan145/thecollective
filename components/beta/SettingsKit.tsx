@@ -7,7 +7,7 @@ export function SettingsSection({ title, children }: { title: string; children: 
   return (
     <div className="space-y-2">
       <p className="px-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">{title}</p>
-      <div className="overflow-hidden rounded-3xl bg-[#FFFDF8] pixel-card">{children}</div>
+      <div className="elev-1 overflow-hidden rounded-3xl bg-[#FFFDF8] pixel-card">{children}</div>
     </div>
   );
 }

@@ -393,3 +393,19 @@ html[data-density="comfortable"] { --space-density: 1; }
   .mk-float { animation: mk-float 5s ease-in-out infinite; }
   .mk-float-late { animation: mk-float 6.5s ease-in-out 1.2s infinite; }
 }
+
+/* ── App depth layer (UUPM elevation scale) ───────────────────────────
+   Consistent 3-layer warm elevation for surfaces outside the shared Card.
+   Hover lift is CSS-only and gated by BOTH the OS reduced-motion setting
+   and the in-app motion preference (html[data-motion="reduced"]). */
+.elev-1 { box-shadow: 0 1px 2px rgba(71,52,18,0.05), 0 6px 18px rgba(71,52,18,0.06); }
+.elev-2 { box-shadow: 0 1px 2px rgba(71,52,18,0.06), 0 8px 22px rgba(71,52,18,0.08), 0 22px 54px rgba(71,52,18,0.07); }
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion="reduced"]) .elev-hover {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  html:not([data-motion="reduced"]) .elev-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(71,52,18,0.09), 0 18px 44px rgba(71,52,18,0.12);
+  }
+}

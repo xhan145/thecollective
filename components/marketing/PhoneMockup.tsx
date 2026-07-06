@@ -1,18 +1,14 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { CollectiveMiniMark } from "@/components/beta/Brand";
 
 // A stylized phone showing the product's look (cream cards, gold, the loop).
 // Pure CSS/markup so it ships without screenshot capture; swap for a real
-// screenshot <img> later if desired.
+// screenshot <img> later if desired. Deliberately static (no JS entrance
+// animation): the hero visual must be visible even before hydration or when
+// JS fails — a marketing page can't have an opacity-0 hero.
 export default function PhoneMockup({ className = "" }: { className?: string }) {
   return (
-    <motion.div
+    <div
       aria-hidden
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
       className={`relative mx-auto w-[280px] rounded-[40px] border border-[#EFE7D8] bg-[#FFFDF8] p-3 shadow-[0_30px_80px_rgba(71,52,18,0.18)] ${className}`}
     >
       <div className="overflow-hidden rounded-[30px] bg-[#FFF8EE] p-4">
@@ -35,6 +31,6 @@ export default function PhoneMockup({ className = "" }: { className?: string }) 
           ))}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

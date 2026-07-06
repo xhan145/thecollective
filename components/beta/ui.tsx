@@ -6,11 +6,12 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { CollectiveMiniMark } from "./Brand";
 import { Reveal, easeOut } from "./motion";
 
-// Material-ish elevation tuned to the warm brand (brown-tinted shadows).
+// UUPM elevation scale tuned to the warm brand (brown-tinted, 3-layer:
+// crisp contact + mid + wide ambient). Single source — every Card inherits.
 const ELEVATION =
-  "shadow-[0_1px_2px_rgba(71,52,18,0.06),0_10px_30px_rgba(71,52,18,0.08)]";
+  "shadow-[0_1px_2px_rgba(71,52,18,0.06),0_8px_22px_rgba(71,52,18,0.08),0_22px_54px_rgba(71,52,18,0.06)]";
 const ELEVATION_HOVER =
-  "0 4px 10px rgba(71,52,18,0.10), 0 18px 44px rgba(71,52,18,0.14)";
+  "0 4px 10px rgba(71,52,18,0.10), 0 20px 48px rgba(71,52,18,0.13), 0 34px 80px rgba(71,52,18,0.08)";
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
@@ -213,7 +214,9 @@ export function ProgressBar({ value, label }: { value: number; label?: string })
 /** Focal "hero" surface: warm cream→gold gradient card for the one key action on a screen. */
 export function HeroCard({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-[24px] border border-[#F6E7C8] bg-gradient-to-br from-[#FFF1C7] to-[#FFFDF8] p-5 shadow-[0_12px_30px_rgba(71,52,18,0.12)] ${className}`}>
+    <div className={`relative rounded-[24px] border border-[#F6E7C8] bg-gradient-to-br from-[#FFF1C7] to-[#FFFDF8] p-5 shadow-[0_2px_4px_rgba(71,52,18,0.06),0_14px_34px_rgba(71,52,18,0.12),0_30px_70px_rgba(71,52,18,0.07)] ${className}`}>
+      {/* Soft gold glow behind the hero moment — decorative, static (no CLS). */}
+      <div aria-hidden className="pointer-events-none absolute -inset-4 -z-10 rounded-[32px] bg-[radial-gradient(60%_70%_at_50%_20%,rgba(242,169,0,0.12),transparent_75%)]" />
       {children}
     </div>
   );

@@ -43,13 +43,13 @@ export default function DemoPage() {
         <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-[#F2A900]">Try this first</p>
         <h1 className="mt-2 font-display text-[30px] font-bold leading-tight lg:text-[38px]">{card.title}</h1>
 
-        <section aria-labelledby="demo-step-1" className="mt-6 rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
+        <section aria-labelledby="demo-step-1" className="mt-6 elev-1 elev-hover rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
           <p id="demo-step-1" className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">Step 1 &middot; The prompt</p>
           <p className="mt-2 text-[16px] font-bold leading-7">{card.prompt}</p>
           <p className="mt-3 text-sm text-[#6E6E6E]">Take a breath. It doesn&rsquo;t need to be perfect — this is practice.</p>
         </section>
 
-        <section aria-labelledby="demo-step-2" className="mt-4 rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
+        <section aria-labelledby="demo-step-2" className="mt-4 elev-1 elev-hover rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
           <p id="demo-step-2" className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">Step 2 &middot; Choose how to show your proof</p>
           <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
             {PROOF.map((o) => {
@@ -89,7 +89,7 @@ export default function DemoPage() {
           )}
         </section>
 
-        <section aria-labelledby="demo-step-3" className="mt-4 rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
+        <section aria-labelledby="demo-step-3" className="mt-4 elev-1 elev-hover rounded-3xl border border-[#EFE7D8] bg-[#FFFDF8] p-6">
           <p id="demo-step-3" className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">Step 3 &middot; Feedback you&rsquo;d get</p>
           <ul className="mt-3 space-y-1.5">
             {card.feedbackPreview.map((f) => (

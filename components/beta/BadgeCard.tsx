@@ -21,7 +21,7 @@ export function BadgeCard({ badge, earned, nextAction }: { badge: Achievement; e
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       className={`flex flex-col items-center rounded-3xl border p-4 text-center transition-colors ${
-        earned ? "border-[#EFE7D8] bg-[#FFFDF8]" : "border-dashed border-[#EFE7D8] bg-[#FFF8EE]"
+        earned ? "elev-2 border-[#EFE7D8] bg-[#FFFDF8]" : "border-dashed border-[#EFE7D8] bg-[#FFF8EE]"
       }`}
     >
       <div
