@@ -170,6 +170,8 @@ export type Proof = {
   mediaUrl?: string;
   openForContributions?: boolean;
   contributionFocus?: string | null;
+  // Level feed_tags denormalized at submission (035) — for level-matched feed.
+  tags?: string[];
 };
 
 export type Contribution = {

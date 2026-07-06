@@ -20,6 +20,9 @@ export default function ProofFeedbackPage() {
   const proof = getProofById(params.id);
   const feedback = proof ? getFeedbackForProof(proof.id) : [];
   const aiService = getCollectiveAiService();
+  // Scaffold the composer with the level's feedback rubric when this proof
+  // comes from a mastery level (035): rubric strings become the placeholders.
+  const rubric = proof ? snapshot.prompts.find((p) => p.id === proof.promptId)?.feedbackRubric : undefined;
 
   const canSend = Boolean(clarity.trim() || useful.trim() || nextStep.trim());
 
@@ -86,9 +89,9 @@ export default function ProofFeedbackPage() {
                 setSent(true);
               }}
             >
-              <FeedbackField label="What was clear?" value={clarity} onChange={setClarity} placeholder="Name one thing that landed." />
-              <FeedbackField label="What could be improved?" value={useful} onChange={setUseful} placeholder="One specific, kind suggestion." />
-              <FeedbackField label="One useful next step" value={nextStep} onChange={setNextStep} placeholder="A small step they could try next." />
+              <FeedbackField label="What was clear?" value={clarity} onChange={setClarity} placeholder={rubric?.clarity ?? "Name one thing that landed."} />
+              <FeedbackField label="What could be improved?" value={useful} onChange={setUseful} placeholder={rubric?.usefulness ?? "One specific, kind suggestion."} />
+              <FeedbackField label="One useful next step" value={nextStep} onChange={setNextStep} placeholder={rubric?.next_step ?? "A small step they could try next."} />
               <p className="text-center text-xs leading-5 text-[#9B958B]">
                 Be specific, useful, and kind. Feedback helps someone improve. It does not define them.
               </p>
