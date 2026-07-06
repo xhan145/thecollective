@@ -221,8 +221,14 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
       <Link href={`/proof/${proof.id}`} aria-label={`Proof detail for ${proof.title}`} className="absolute inset-0 z-[1] rounded-[inherit]" />
       <div className="pointer-events-none relative z-[2]">
         <div className="mb-2.5 flex items-center gap-2">
-          <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
-          <span className="truncate text-xs font-extrabold text-[#111111]">{name}</span>
+          <Link
+            href={`/member/${proof.userId}`}
+            className="pointer-events-auto relative z-[3] flex min-w-0 items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-[#F2A900]/40"
+            aria-label={`View ${name}'s passport`}
+          >
+            <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
+            <span className="truncate text-xs font-extrabold text-[#111111] hover:underline">{name}</span>
+          </Link>
           <span className="text-[#D9CDB8]">•</span>
           <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
           {showDemoBadge && (
@@ -353,9 +359,13 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
 
       {author && (
         <Card className="flex items-center gap-3 p-4">
-          <Avatar name={author.displayName} avatarUrl={author.avatarUrl} size={40} />
+          <Link href={`/member/${author.id}`} aria-label={`View ${author.displayName}'s passport`} className="shrink-0">
+            <Avatar name={author.displayName} avatarUrl={author.avatarUrl} size={40} />
+          </Link>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
+            <Link href={`/member/${author.id}`} className="hover:underline">
+              <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
+            </Link>
             {author.bio && <p className="truncate text-xs text-[#6E6E6E]">{author.bio}</p>}
           </div>
           {!own && !proof.isDemo && (

@@ -28,6 +28,7 @@ import { PROOF_BUCKET } from "./client";
 
 /** User-generated data loaded for the signed-in member (+ cohort feed). */
 export interface BetaUserBundle {
+  blockedUserIds: string[];
   profile: UserProfile | null;
   profiles: UserProfile[];
   proofs: Proof[];
@@ -264,7 +265,7 @@ export async function loadUserBundle(
 ): Promise<BetaUserBundle> {
   const profile = await ensureProfile(client, userId, email);
 
-  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes] =
+  const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes, blockedRes] =
     await Promise.all([
       client.from("proofs").select("*").or(`held.eq.false,user_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
@@ -281,6 +282,7 @@ export async function loadUserBundle(
       client.from("messages").select("*").order("created_at"),
       client.from("notifications").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(50),
       client.from("contributions").select("*").or(`contributor_id.eq.${userId},owner_id.eq.${userId}`),
+      client.from("blocked_users").select("blocked_id").eq("blocker_id", userId),
     ]);
 
   const messagesByConversation: Record<string, Message[]> = {};
@@ -357,6 +359,7 @@ export async function loadUserBundle(
 
   return {
     profile,
+    blockedUserIds: ((blockedRes?.data ?? []) as { blocked_id: string }[]).map((r) => r.blocked_id),
     profiles: (profilesRes.data ?? []).map(mapProfile),
     proofs,
     feedback,

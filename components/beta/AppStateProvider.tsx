@@ -74,6 +74,7 @@ import {
 } from "@/lib/supabase/betaRepository";
 import { loadContent, type CollectiveContent } from "@/lib/supabase/contentRepository";
 import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
+import { blockUser as blockUserRow, unblockUser as unblockUserRow } from "@/lib/supabase/settingsRepository";
 
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
@@ -115,6 +116,8 @@ type BetaAppContextValue = {
   isUseful: (proofId: string) => boolean;
   isSaved: (targetType: SavedTargetType, targetId: string) => boolean;
   isLearningFrom: (teacherId: string) => boolean;
+  blockMember: (memberId: string) => Promise<void>;
+  unblockMember: (memberId: string) => Promise<void>;
   getSavedProofs: () => Proof[];
   getSavedPractices: () => PracticePrompt[];
   getTeachers: () => UserProfile[];
@@ -218,6 +221,7 @@ function applyBundle(bundle: BetaUserBundle, uid: string, content: CollectiveCon
     currentUserId: uid,
     users: Array.from(usersById.values()),
     proofs: bundle.proofs,
+    blockedUserIds: bundle.blockedUserIds,
     feedback: bundle.feedback,
     trustEvents: bundle.trustEvents,
     appFeedback: bundle.appFeedback,
@@ -483,6 +487,19 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           }).catch(() => {});
           void logBetaEvent(supabase!, uid, "onboarding_completed", undefined, { directionId: payload.directionId });
         }
+      },
+      async blockMember(memberId) {
+        setSnapshot((current) => ({
+          ...current,
+          blockedUserIds: current.blockedUserIds.includes(memberId) ? current.blockedUserIds : [...current.blockedUserIds, memberId],
+        }));
+        const uid = authUid();
+        if (writesEnabled && uid) await blockUserRow(supabase!, uid, memberId).catch(() => {});
+      },
+      async unblockMember(memberId) {
+        setSnapshot((current) => ({ ...current, blockedUserIds: current.blockedUserIds.filter((id) => id !== memberId) }));
+        const uid = authUid();
+        if (writesEnabled && uid) await unblockUserRow(supabase!, uid, memberId).catch(() => {});
       },
       async updateProfile(fields) {
         setSnapshot((current) => {
@@ -1038,7 +1055,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         if (!currentUser) return [];
         const authorsById: Record<string, UserProfile> = {};
         for (const u of snapshot.users) authorsById[u.id] = u;
-        return rankFeed(currentUser, proofs, authorsById, snapshot.usefulCountByProof, viewerTagContext(currentUser.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds }));
+        return rankFeed(currentUser, proofs.filter((p) => !snapshot.blockedUserIds.includes(p.userId)), authorsById, snapshot.usefulCountByProof, viewerTagContext(currentUser.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds }));
       },
       async createCohortAction(a) {
         if (!writesEnabled || !supabase) return { error: "Supabase is not configured." };
