@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ProofMediaType } from "@/lib/betaTypes";
 import { AppShell } from "@/components/beta/AppShell";
 import { AiSupportCard } from "@/components/beta/AiSupportCard";
@@ -9,6 +10,7 @@ import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { AttachmentPicker, ProofTypeSelector, type AttachmentDraft } from "@/components/beta/ProofComponents";
 import { Button, Card, PageHeader, SuccessState, TextArea } from "@/components/beta/ui";
 import { getCollectiveAiService } from "@/lib/aiService";
+import { levelStatus } from "@/lib/mastery";
 
 export default function NewProofPage() {
   const params = useParams<{ promptId: string }>();
@@ -17,6 +19,35 @@ export default function NewProofPage() {
   const promptId = params.promptId || "conf-s1";
   const prompt = getPromptById(promptId);
   const [mediaType, setMediaType] = useState<ProofMediaType>("text");
+
+  // ── Mastery level context (content-mastery Tasks B+C) ──────────────
+  const skill = prompt?.skillId ? snapshot.skills.find((s) => s.id === prompt.skillId) : undefined;
+  const isMastery = Boolean(skill && prompt?.levelNumber);
+  // Constrain proof types to the level's proof_type; text stays as the
+  // beginner-safe fallback. `mixed`/absent → all types.
+  const requiredType = prompt?.proofType && prompt.proofType !== "mixed" ? prompt.proofType : null;
+  const allowedTypes: ProofMediaType[] | undefined = requiredType
+    ? (Array.from(new Set([requiredType, "text"])) as ProofMediaType[])
+    : undefined;
+  // Preselect the level's proof type once (don't fight later user choice).
+  const preselected = useRef(false);
+  useEffect(() => {
+    if (!preselected.current && requiredType && requiredType !== "text") {
+      preselected.current = true;
+      setMediaType(requiredType as ProofMediaType);
+    }
+  }, [requiredType]);
+  // Client lock guard: a locked level bounces back to the ladder calmly.
+  // (Server-side enforcement is Task D of the parent spec.)
+  useEffect(() => {
+    if (prompt && isMastery && levelStatus(prompt, snapshot.completedPracticeIds, snapshot.prompts) === "locked") {
+      router.replace("/practice");
+    }
+  }, [prompt, isMastery, snapshot.completedPracticeIds, snapshot.prompts, router]);
+  // The level this submission unlocks (for the success state).
+  const nextLevel = isMastery
+    ? snapshot.prompts.find((p) => p.skillId === prompt?.skillId && p.levelNumber === (prompt?.levelNumber ?? 0) + 1)
+    : undefined;
   const [body, setBody] = useState("");
   const [attachment, setAttachment] = useState<AttachmentDraft | undefined>();
   const [error, setError] = useState("");
@@ -75,8 +106,22 @@ export default function NewProofPage() {
       <AppShell>
         <SuccessState
           title="Proof saved."
-          body="Feedback can come next."
-          cta={<Button onClick={() => router.push(`/proof/${submittedId}`)} className="w-full">View proof</Button>}
+          body={prompt?.nextStep ? `Next: ${prompt.nextStep}` : "Feedback can come next."}
+          cta={
+            <div className="w-full space-y-2">
+              {nextLevel && (
+                <Link
+                  href={`/proof/new/${nextLevel.id}`}
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-[#FFB000] to-[#F2A900] px-5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]"
+                >
+                  Next level unlocked: {nextLevel.levelName ?? nextLevel.title}
+                </Link>
+              )}
+              <Button onClick={() => router.push(`/proof/${submittedId}`)} variant={nextLevel ? "secondary" : "primary"} className="w-full">
+                View proof
+              </Button>
+            </div>
+          }
         />
       </AppShell>
     );
@@ -87,9 +132,28 @@ export default function NewProofPage() {
       <div className="space-y-5">
         <PageHeader title="Submit proof" subtitle="Show what you practiced. It does not need to be perfect." />
         <Card className="p-5">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">Practice prompt</p>
+          {isMastery && skill ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF1C7] px-3 py-1 text-xs font-extrabold text-[#7A5300]">
+              {skill.name} · Level {prompt?.levelNumber} · {prompt?.levelName}
+            </span>
+          ) : (
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">Practice prompt</p>
+          )}
           <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{prompt?.title || "Practice proof"}</h2>
+          {isMastery && prompt?.masteryGoal && (
+            <p className="mt-2 rounded-2xl bg-[#FFF8EE] px-3.5 py-2.5 text-sm font-bold leading-6 text-[#38322A]">
+              Goal: {prompt.masteryGoal}
+            </p>
+          )}
           <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.proofPrompt || prompt?.prompt || "Capture one small example of progress."}</p>
+          {isMastery && prompt?.doesNotCount && (
+            <p className="mt-2 text-xs leading-5 text-[#9B958B]">
+              <span className="font-extrabold text-[#B07A00]">What doesn&rsquo;t count:</span> {prompt.doesNotCount}
+            </p>
+          )}
+          {isMastery && prompt?.safetyNote && (
+            <p className="mt-2 text-xs leading-5 text-[#9B958B]">{prompt.safetyNote}</p>
+          )}
           {currentUser?.goalText && (
             <p className="mt-2 text-xs leading-5 text-[#7A5300]">Toward your goal: "{currentUser.goalText}" — it doesn't need to be perfect.</p>
           )}
@@ -123,12 +187,18 @@ export default function NewProofPage() {
           </div>
           <ProofTypeSelector
             value={mediaType}
+            allowed={allowedTypes}
             onChange={(type) => {
               setMediaType(type);
               setAttachment(undefined);
               setError("");
             }}
           />
+          {requiredType && requiredType !== "text" && (
+            <p className="text-xs leading-5 text-[#9B958B]">
+              This practice works best as {requiredType === "audio" ? "an audio clip" : requiredType === "video" ? "a short video" : `a ${requiredType}`} — text is fine too if that&rsquo;s easier today.
+            </p>
+          )}
           <div>
             <label className="mb-2 block text-sm font-extrabold text-[#111111]">What did you practice or improve?</label>
             <TextArea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Write a short reflection..." />
