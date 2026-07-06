@@ -50,6 +50,14 @@ export default function PassportPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const [tab, setTab] = useState<PassportTab>("overview");
+  // Honor a ?tab= deep link (e.g. "See all" on /home → the member's own proofs).
+  // Read from window rather than useSearchParams to avoid a Suspense boundary.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("tab");
+    if (requested && (["overview", "proof", "feedback", "contribution"] as const).includes(requested as PassportTab)) {
+      setTab(requested as PassportTab);
+    }
+  }, []);
   const [details, setDetails] = useState<ProfileDetails | null>(null);
   const [pinnedIds, setPinnedIds] = useState<string[]>([]);
 

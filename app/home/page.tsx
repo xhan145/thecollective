@@ -69,7 +69,7 @@ export default function HomePage() {
             </section>
 
             <section className="space-y-3">
-              <SectionLabel title="Recent Proof" action={<Link href="/feed" className="text-sm font-extrabold text-[#F2A900]">See all</Link>} />
+              <SectionLabel title="Recent Proof" action={<Link href="/passport?tab=proof" className="text-sm font-extrabold text-[#F2A900]">See all</Link>} />
               {latestProof ? (
                 <ProofCard proof={latestProof} feedbackCount={getFeedbackForProof(latestProof.id).length} authorName={snapshot.users.find((u) => u.id === latestProof.userId)?.displayName} authorAvatarUrl={snapshot.users.find((u) => u.id === latestProof.userId)?.avatarUrl} />
               ) : (
