@@ -339,6 +339,7 @@ export const seedSnapshot: BetaAppSnapshot = {
   aiInteractions: [],
   aiUserFeedback: [],
   completedPracticeIds: DEMO_SEED_ENABLED ? ["conf-s1", "comm-s1", "mom-s1", "self-s1"] : [],
+  blockedUserIds: [],
   usefulMarks: [],
   usefulCountByProof: {},
   savedItems: [],

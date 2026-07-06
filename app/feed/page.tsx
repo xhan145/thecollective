@@ -15,7 +15,7 @@ export default function FeedPage() {
   const authorsById = Object.fromEntries(snapshot.users.map((u) => [u.id, u]));
   const viewer = currentUser ?? snapshot.users.find((u) => u.id === snapshot.currentUserId) ?? snapshot.users[0];
   const tagCtx = viewerTagContext(viewer?.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds });
-  const ranked = viewer ? rankFeed(viewer, snapshot.proofs, authorsById, snapshot.usefulCountByProof, tagCtx) : [];
+  const ranked = viewer ? rankFeed(viewer, snapshot.proofs.filter((p) => !snapshot.blockedUserIds.includes(p.userId)), authorsById, snapshot.usefulCountByProof, tagCtx) : [];
   const canGiveFeedback = hasCapability(viewer, "give_feedback");
   const realCount = snapshot.proofs.filter((p) => !p.isDemo && p.userId !== viewer?.id).length;
   const starterId = resolveStarterPromptId(currentUser?.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds });

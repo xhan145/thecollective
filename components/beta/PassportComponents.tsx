@@ -78,15 +78,17 @@ const INTRO_ROWS: { key: keyof ProfileDetails; label: string; icon: typeof BookO
   { key: "canHelpWith", label: "I can help with", icon: Sparkles },
 ];
 
-export function IntroductionCard({ details, editHref }: { details: ProfileDetails | null; editHref: string }) {
+export function IntroductionCard({ details, editHref }: { details: ProfileDetails | null; editHref?: string }) {
   const filled = details && INTRO_ROWS.some((r) => (details[r.key] as string | null)?.trim());
   return (
     <Card className="pixel-card p-5">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#B6AE9F]">Introduction</h3>
-        <Link href={editHref} className="rounded-full px-2.5 py-1 text-xs font-extrabold text-[#7A5300] hover:bg-[#FFF1C7]/60">
-          Edit
-        </Link>
+        {editHref ? (
+          <Link href={editHref} className="rounded-full px-2.5 py-1 text-xs font-extrabold text-[#7A5300] hover:bg-[#FFF1C7]/60">
+            Edit
+          </Link>
+        ) : null}
       </div>
       {!filled ? (
         <p className="mt-3 text-sm leading-6 text-[#6E6E6E]">

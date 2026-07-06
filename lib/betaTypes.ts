@@ -315,6 +315,8 @@ export type BetaAppSnapshot = {
   aiInteractions: AiInteraction[];
   aiUserFeedback: AiUserFeedback[];
   completedPracticeIds: string[];
+  // Members this user has blocked (034/037) — used for client-side filtering.
+  blockedUserIds: string[];
   // Engagement layer (current user's own state + cohort useful counts for ranking).
   usefulMarks: UsefulMark[];
   usefulCountByProof: Record<string, number>;

@@ -21,6 +21,8 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 import { getProfileDetails, listPinnedProofIds, type ProfileDetails } from "@/lib/supabase/passportRepository";
 import { evaluateLocalBadges } from "@/lib/badges/types";
 import { resolveStarterPromptId } from "@/lib/mastery";
+import { listReceivedPendingIntros, respondIntroductionRequest, type IntroRequest } from "@/lib/supabase/memberRepository";
+import { startConversation } from "@/lib/supabase/betaRepository";
 import { DEMO_ACHIEVEMENTS } from "@/lib/badges/demo";
 
 function shortAge(iso: string): string {
@@ -46,6 +48,28 @@ export default function PassportPage() {
     router.replace("/auth");
   }
   const [menuOpen, setMenuOpen] = useState(false);
+  const [introInbox, setIntroInbox] = useState<IntroRequest[]>([]);
+  useEffect(() => {
+    const client = supabaseEnabled ? getSupabaseClient() : null;
+    if (!client || !currentUser?.id || currentUser.id.startsWith("user-")) return;
+    void listReceivedPendingIntros(client, currentUser.id).then(setIntroInbox);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabaseEnabled, currentUser?.id]);
+  async function respondIntro(req: IntroRequest, accept: boolean) {
+    const client = getSupabaseClient();
+    if (!client || !currentUser?.id) return;
+    await respondIntroductionRequest(client, req.id, accept);
+    if (accept) {
+      await startConversation(client, {
+        kind: "peer_note",
+        initiatorId: currentUser.id,
+        recipientId: req.senderId,
+        subject: "Introduction",
+        body: "Happy to connect — thanks for reaching out!",
+      }).catch(() => {});
+    }
+    setIntroInbox((list) => list.filter((r) => r.id !== req.id));
+  }
   const starterId = resolveStarterPromptId(currentUser?.currentDirectionId, { directions: snapshot.directions, skills: snapshot.skills, prompts: snapshot.prompts, completedPracticeIds: snapshot.completedPracticeIds });
   // Relative ages use Date.now(), which differs between SSR and the client.
   // Defer them to after mount so the first client render matches the server.
@@ -231,6 +255,27 @@ export default function PassportPage() {
             </p>
             <ButtonLink href="/contribute" variant="secondary" className="mt-3 w-full">See where you can help</ButtonLink>
           </Card>
+        )}
+
+        {introInbox.length > 0 && (
+          <>
+            <SectionLabel title="Introduction requests" />
+            <div className="space-y-2">
+              {introInbox.map((req) => {
+                const sender = snapshot.users.find((u) => u.id === req.senderId);
+                return (
+                  <Card key={req.id} className="p-4">
+                    <p className="text-sm font-extrabold text-[#111111]">{sender?.displayName ?? "A member"} asked for an introduction</p>
+                    {req.message && <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">&ldquo;{req.message}&rdquo;</p>}
+                    <div className="mt-3 flex gap-2">
+                      <button type="button" onClick={() => void respondIntro(req, true)} className="flex-1 rounded-full bg-[#F2A900] px-4 py-2.5 text-sm font-extrabold text-white">Accept</button>
+                      <button type="button" onClick={() => void respondIntro(req, false)} className="flex-1 rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-4 py-2.5 text-sm font-extrabold text-[#6E6E6E]">Decline</button>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
         )}
 
         <SectionLabel title="Account" />
