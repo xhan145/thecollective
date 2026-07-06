@@ -7,8 +7,8 @@ import PhoneMockup from "./PhoneMockup";
 export default function HeroShowcase() {
   return (
     <div className="relative flex items-center justify-center" aria-hidden>
-      {/* Warm radial glow — static, no CLS. */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(55%_55%_at_50%_45%,rgba(242,169,0,0.14),transparent_75%)]" />
+      {/* Warm radial glow — breathes gently when motion is allowed. */}
+      <div className="mk-breathe pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(55%_55%_at_50%_45%,rgba(242,169,0,0.14),transparent_75%)]" />
 
       <div className="[perspective:1200px]">
         <div className="transition-transform duration-300 ease-out lg:[transform:rotateY(-8deg)_rotateX(2deg)] lg:motion-safe:hover:[transform:rotateY(-4deg)_rotateX(1deg)]">

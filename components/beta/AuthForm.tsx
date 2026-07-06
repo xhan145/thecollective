@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CollectiveMark } from "@/components/beta/Brand";
+import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
@@ -116,7 +117,9 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
+    <main className="relative mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
+      <AmbientBackdrop />
+      <div className="relative z-[1]">
       <div className="text-center">
         <CollectiveMark className="mx-auto h-[88px] w-[180px]" />
         <h1 className="mt-5 font-display text-[32px] font-bold leading-tight text-[#111111]">
@@ -203,6 +206,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
           <Link href="/signup" className="font-bold text-[#6E6E6E]">New here? Create an account</Link>
         )}
       </p>
+    </div>
     </main>
   );
 }

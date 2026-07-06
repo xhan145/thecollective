@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { CollectiveWordmark } from "./Brand";
+import AmbientBackdrop from "./AmbientBackdrop";
 import { Badge } from "./ui";
 import { ScreenSkeleton } from "./motion";
 import { useBetaApp } from "./AppStateProvider";
@@ -102,6 +103,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">
       <DesktopSidebar unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
       <main className="pixel-grid-bg relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
+        <AmbientBackdrop />
         <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
           <div className="flex items-center justify-between gap-3">
             <Link href="/home" aria-label="Collective home">
@@ -114,7 +116,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
         </header>
-        <div className="px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5 lg:mx-auto lg:max-w-4xl lg:px-8 lg:py-8">
+        <div className="relative z-[1] px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5 lg:mx-auto lg:max-w-4xl lg:px-8 lg:py-8">
           {loading ? (
             <div className="space-y-4">
               <p className="text-center text-sm font-extrabold text-[#6E6E6E]">Getting your space ready…</p>
