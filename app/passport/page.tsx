@@ -177,7 +177,16 @@ export default function PassportPage() {
           onMenu={() => setMenuOpen(true)}
         />
 
-        <BadgeMedallionRow names={badgeNames} viewHref="/badges" />
+        <BadgeMedallionRow
+          names={
+            (currentUser?.selectedBadges?.length ?? 0) > 0
+              ? currentUser!.selectedBadges!
+                  .map((slug) => DEMO_ACHIEVEMENTS.find((b) => b.slug === slug)?.name)
+                  .filter((n): n is string => Boolean(n))
+              : badgeNames
+          }
+          viewHref="/badges"
+        />
 
         <IntroductionCard details={details} editHref="/passport/edit-introduction" />
 

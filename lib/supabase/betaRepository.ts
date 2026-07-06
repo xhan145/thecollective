@@ -89,6 +89,7 @@ function mapProfile(row: any): UserProfile {
     betaAccess: row.beta_access ?? false,
     inviteCode: row.invite_code ?? null,
     betaJoinedAt: row.beta_joined_at ?? null,
+    selectedBadges: row.selected_badges ?? [],
   };
 }
 
