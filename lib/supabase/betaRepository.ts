@@ -118,6 +118,7 @@ function mapFeedback(row: any): Feedback {
     clarityNote: row.clarity_note ?? undefined,
     usefulNote: row.useful_note ?? undefined,
     nextStepNote: row.next_step_note ?? undefined,
+    moderationStatus: row.moderation_status ?? "clear",
   };
 }
 
@@ -268,9 +269,9 @@ export async function loadUserBundle(
 
   const [proofsRes, attachmentsRes, feedbackRes, trustRes, appRes, compRes, profilesRes, myUsefulRes, usefulAllRes, savedRes, connRes, convRes, messagesRes, notifsRes, contribRes, blockedRes] =
     await Promise.all([
-      client.from("proofs").select("*").or(`held.eq.false,user_id.eq.${userId}`).order("created_at", { ascending: false }),
+      client.from("proofs").select("*").or(`moderation_status.not.in.(pending,removed),user_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("proof_attachments").select("*"),
-      client.from("feedback").select("*").or(`held.eq.false,author_id.eq.${userId}`).order("created_at", { ascending: false }),
+      client.from("feedback").select("*").or(`moderation_status.not.in.(pending,removed),author_id.eq.${userId}`).order("created_at", { ascending: false }),
       client.from("trust_events").select("*").eq("user_id", userId),
       client.from("app_feedback").select("*").eq("user_id", userId).order("created_at", { ascending: false }),
       client.from("practice_completions").select("prompt_id").eq("user_id", userId),
@@ -356,6 +357,7 @@ export async function loadUserBundle(
     openForContributions: row.open_for_contributions ?? false,
     contributionFocus: row.contribution_focus ?? null,
     tags: row.tags ?? [],
+    moderationStatus: row.moderation_status ?? "clear",
   }));
 
   return {

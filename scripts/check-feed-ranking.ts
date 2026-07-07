@@ -84,3 +84,14 @@ console.log("feed-ranking checks passed");
 }
 
 console.log("tag-affinity checks passed");
+
+// ── Admin-limited content sinks below identical clear content (039) ────────
+{
+  const clear = P("cl", "same", "direction-confidence");
+  const limited = { ...P("lim", "same", "direction-confidence"), moderationStatus: "limited" } as Proof;
+  const ranked = rankFeed(viewer, [limited, clear], authors, {});
+  assert.equal(ranked[0].proof.id, "cl", "clear outranks identical limited");
+  assert.ok(ranked.findIndex(r => r.proof.id === "lim") > ranked.findIndex(r => r.proof.id === "cl"), "limited sinks below clear");
+}
+
+console.log("limited-downrank check passed");

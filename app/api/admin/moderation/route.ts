@@ -13,9 +13,15 @@ export async function POST(req: Request) {
 
   const { action, kind, id } = (await req.json()) as { action?: string; kind?: string; id?: string };
   if (!id || (kind !== "proof" && kind !== "tip" && kind !== "feedback")) return NextResponse.json({ error: "Bad request." }, { status: 400 });
-  const fn = action === "remove" ? "remove_content" : action === "clear" ? "clear_content" : null;
+  const fn = action === "remove" ? "remove_content" : action === "clear" ? "clear_content" : action === "limit" ? "limit_content" : null;
   if (!fn) return NextResponse.json({ error: "Bad action." }, { status: 400 });
   const { error } = await service.rpc(fn, { p_kind: kind, p_id: id });
   if (error) return NextResponse.json({ error: "Action failed." }, { status: 500 });
+  // Resolve open reports for this target: clear = dismissed, remove/limit = actioned.
+  if (kind === "proof" || kind === "feedback") {
+    await service.from("reports")
+      .update({ status: action === "clear" ? "dismissed" : "actioned" })
+      .eq("target_type", kind).eq("target_id", id).eq("status", "open");
+  }
   return NextResponse.json({ ok: true });
 }
