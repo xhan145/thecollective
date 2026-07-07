@@ -62,11 +62,13 @@ export function rankFeed(
     const author = authorsById[proof.userId];
     const authorRank = author ? levelRank(author) : viewerRank;
     const delta = authorRank - viewerRank;
-    const score =
+    const base =
       interestScore(viewer, proof) +
       levelScore(delta) +
       usefulScore(usefulCountByProof[proof.id] ?? 0) +
       tagScore(proof, tagCtx);
+    // Admin-limited content (039) stays visible but sinks below clear content.
+    const score = proof.moderationStatus === "limited" ? base * 0.35 : base;
     return { proof, relation: relationFor(delta), authorRank, score };
   };
 
