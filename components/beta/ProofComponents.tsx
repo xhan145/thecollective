@@ -8,6 +8,7 @@ import type { Feedback, Proof, ProofAttachment, ProofMediaType } from "@/lib/bet
 import { Button, ButtonLink, Card, TextArea } from "./ui";
 import { Avatar } from "./Avatar";
 import { useBetaApp } from "./AppStateProvider";
+import { ReportSheet } from "./ReportSheet";
 import { DEMO_ACHIEVEMENTS } from "@/lib/badges/demo";
 
 /** Calm Useful + Save toggles. No counts shown (usefulness over attention). */
@@ -329,6 +330,8 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
   const author = snapshot.users.find((u) => u.id === proof.userId);
   const own = currentUser?.id === proof.userId;
   const learning = isLearningFrom(proof.userId);
+  const [reporting, setReporting] = useState<{ type: "proof" | "feedback"; id: string } | null>(null);
+  const canReport = Boolean(currentUser) && !proof.isDemo;
   return (
     <div className="space-y-4">
       <Card className="p-5">
@@ -412,6 +415,11 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
                   ) : (
                     item.body
                   )}
+                  {canReport && item.authorId !== currentUser?.id && (
+                    <button type="button" onClick={() => setReporting({ type: "feedback", id: item.id })} className="text-[11px] font-bold text-[#9B958B] hover:text-[#B4443F]">
+                      Report this note
+                    </button>
+                  )}
                 </div>
               );
             })
@@ -420,6 +428,14 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
           )}
         </div>
       </Card>
+
+      {canReport && !own && (
+        <button type="button" onClick={() => setReporting({ type: "proof", id: proof.id })} className="w-full py-2 text-center text-xs font-bold text-[#9B958B] hover:text-[#B4443F]">
+          Report this proof
+        </button>
+      )}
+
+      {reporting && <ReportSheet targetType={reporting.type} targetId={reporting.id} onClose={() => setReporting(null)} />}
     </div>
   );
 }

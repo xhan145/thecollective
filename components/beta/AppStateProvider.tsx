@@ -76,6 +76,8 @@ import { loadContent, type CollectiveContent } from "@/lib/supabase/contentRepos
 import { logBetaEvent, type BetaEventType } from "@/lib/supabase/betaEvents";
 import { blockUser as blockUserRow, unblockUser as unblockUserRow } from "@/lib/supabase/settingsRepository";
 import { setSelectedBadges as setSelectedBadgesRow } from "@/lib/supabase/badgesRepository";
+import { submitReport as submitReportRow } from "@/lib/supabase/reportsRepository";
+import type { ReportReason, ReportTargetType } from "@/lib/moderation";
 
 const STORAGE_KEY = "collective.beta.snapshot.v1";
 
@@ -118,6 +120,7 @@ type BetaAppContextValue = {
   isSaved: (targetType: SavedTargetType, targetId: string) => boolean;
   isLearningFrom: (teacherId: string) => boolean;
   blockMember: (memberId: string) => Promise<void>;
+  reportContent: (targetType: ReportTargetType, targetId: string, reason: ReportReason, detail: string) => Promise<{ error: string | null }>;
   setDisplayedBadges: (slugs: string[]) => Promise<void>;
   unblockMember: (memberId: string) => Promise<void>;
   getSavedProofs: () => Proof[];
@@ -498,6 +501,11 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         }));
         const uid = authUid();
         if (writesEnabled && uid) await setSelectedBadgesRow(supabase!, uid, capped).catch(() => {});
+      },
+      async reportContent(targetType, targetId, reason, detail) {
+        const uid = authUid();
+        if (!writesEnabled || !uid) return { error: "Reporting needs an account." };
+        return submitReportRow(supabase!, targetType, targetId, reason, detail);
       },
       async blockMember(memberId) {
         setSnapshot((current) => ({
