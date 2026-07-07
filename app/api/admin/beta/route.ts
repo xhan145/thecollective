@@ -93,6 +93,48 @@ export async function GET(req: Request) {
     ...(heldFeedback.data ?? []).map((r: any) => ({ kind: "feedback" as const, id: r.id, authorId: r.author_id, body: r.body ?? "", createdAt: r.created_at })),
   ];
 
+  // Open member reports (040), grouped by target content.
+  const { data: openReports } = await service
+    .from("reports")
+    .select("id, reporter_id, target_type, target_id, reason, severity, detail, created_at")
+    .eq("status", "open")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  const reportProofIds = [...new Set((openReports ?? []).filter((r: any) => r.target_type === "proof").map((r: any) => r.target_id))];
+  const reportFbIds = [...new Set((openReports ?? []).filter((r: any) => r.target_type === "feedback").map((r: any) => r.target_id))];
+  const [rpProofs, rpFb] = await Promise.all([
+    reportProofIds.length ? service.from("proofs").select("id, title, body, user_id, moderation_status").in("id", reportProofIds) : Promise.resolve({ data: [] as any[] }),
+    reportFbIds.length ? service.from("feedback").select("id, body, author_id, moderation_status").in("id", reportFbIds) : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const proofById = new Map((rpProofs.data ?? []).map((p: any) => [p.id, p]));
+  const fbById = new Map((rpFb.data ?? []).map((f: any) => [f.id, f]));
+  const reportGroups = new Map<string, any>();
+  for (const r of openReports ?? []) {
+    const key = `${r.target_type}:${r.target_id}`;
+    const tgt = r.target_type === "proof" ? proofById.get(r.target_id) : fbById.get(r.target_id);
+    if (!tgt) continue; // target deleted
+    let g = reportGroups.get(key);
+    if (!g) {
+      g = {
+        key, targetType: r.target_type, targetId: r.target_id,
+        kind: r.target_type, // maps to moderation RPC kind (proof|feedback)
+        snippet: (r.target_type === "proof" ? (tgt.title ? `${tgt.title} — ${tgt.body ?? ""}` : tgt.body) : tgt.body) ?? "",
+        authorName: nameById.get(r.target_type === "proof" ? tgt.user_id : tgt.author_id) ?? "Member",
+        status: tgt.moderation_status ?? "clear",
+        reporters: new Set<string>(), reasons: new Set<string>(), severity: "mild", latestAt: r.created_at,
+      };
+      reportGroups.set(key, g);
+    }
+    g.reporters.add(r.reporter_id);
+    g.reasons.add(r.reason);
+    if (r.severity === "severe") g.severity = "severe";
+  }
+  const reports = [...reportGroups.values()].map((g) => ({
+    key: g.key, targetType: g.targetType, targetId: g.targetId, kind: g.kind,
+    snippet: String(g.snippet).slice(0, 160), authorName: g.authorName, status: g.status,
+    severity: g.severity, reasons: [...g.reasons], distinctReporters: g.reporters.size, latestAt: g.latestAt,
+  })).sort((a, b) => (a.severity === b.severity ? b.distinctReporters - a.distinctReporters : a.severity === "severe" ? -1 : 1));
+
   return NextResponse.json({
     stats: {
       totalUsers, demoUsers, onboardedUsers, betaUsers,
@@ -100,6 +142,7 @@ export async function GET(req: Request) {
       onboardingIncompleteCount: onboardingIncomplete.length,
       noProofCount: noProof.length,
     },
+    reports,
     recentProofs: (realProofs ?? []).map((p) => ({
       id: p.id, name: nameById.get(p.user_id), title: p.title, mediaType: p.media_type, createdAt: p.created_at,
     })),

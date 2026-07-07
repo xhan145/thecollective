@@ -15,7 +15,8 @@ type Person = { id: string; name?: string; createdAt: string };
 type SpamRow = { id: string; name: string; spamSignal: number; isDemo: boolean };
 type ReportedTipRow = { id: string; reason: string | null; body: string; tipId: string | null };
 type HeldContentRow = { kind: string; id: string; authorId: string; body: string; createdAt: string };
-type Payload = { stats: Stats; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[]; reportedTips?: ReportedTipRow[]; heldContent?: HeldContentRow[] };
+type ReportRow = { key: string; targetType: string; targetId: string; kind: string; snippet: string; authorName: string; status: string; severity: string; reasons: string[]; distinctReporters: number; latestAt: string };
+type Payload = { stats: Stats; reports?: ReportRow[]; appFeedback: AppFeedbackRow[]; recentProofs: ProofRow[]; onboardingIncomplete: Person[]; noProof: Person[]; spamReview?: SpamRow[]; reportedTips?: ReportedTipRow[]; heldContent?: HeldContentRow[] };
 
 const STATUSES = ["new", "reviewing", "planned", "resolved", "dismissed"];
 
@@ -51,7 +52,7 @@ export default function AdminBetaPage() {
     await authedFetch("/api/admin/app-feedback", { method: "POST", body: JSON.stringify({ id, status }) }).catch(() => {});
   }
 
-  async function moderateContent(action: "clear" | "remove", kind: string, id: string) {
+  async function moderateContent(action: "clear" | "remove" | "limit", kind: string, id: string) {
     await authedFetch("/api/admin/moderation", { method: "POST", body: JSON.stringify({ action, kind, id }) }).catch(() => {});
     await load();
   }
@@ -69,6 +70,32 @@ export default function AdminBetaPage() {
 
       {state === "ok" && data && (
         <div className="mt-6 space-y-8">
+          {data.reports && data.reports.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-lg font-extrabold text-[#111111]">Reports queue ({data.reports.length})</h2>
+              <ul className="space-y-2">
+                {data.reports.map((r) => (
+                  <li key={r.key} className="rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8] p-3">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className={`rounded-full px-2 py-0.5 font-bold ${r.severity === "severe" ? "bg-[#FBE3E1] text-[#B4443F]" : "bg-[#FFF1C7] text-[#7A5300]"}`}>{r.severity}</span>
+                      <span className="rounded-full bg-[#F5EFE6] px-2 py-0.5 font-bold text-[#6E6E6E]">{r.kind}</span>
+                      <span className="text-[#6E6E6E]">{r.distinctReporters} reporter{r.distinctReporters === 1 ? "" : "s"}</span>
+                      <span className="text-[#9B958B]">·</span>
+                      <span className="text-[#6E6E6E]">{r.reasons.join(", ")}</span>
+                      <span className="ml-auto rounded-full bg-[#F5EFE6] px-2 py-0.5 font-bold text-[#6E6E6E]">{r.status}</span>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-[#38322A]"><span className="font-extrabold">{r.authorName}</span>: {r.snippet}{r.snippet.length >= 160 ? "…" : ""}</p>
+                    <div className="mt-2 flex gap-2">
+                      <button onClick={() => moderateContent("clear", r.kind, r.targetId)} className="rounded-xl border border-[#EFE7D8] bg-white px-3 py-1 text-xs font-bold text-[#111111] hover:bg-[#F5EFE6]">Dismiss</button>
+                      <button onClick={() => moderateContent("limit", r.kind, r.targetId)} className="rounded-xl border border-[#EFE7D8] bg-white px-3 py-1 text-xs font-bold text-[#7A5300] hover:bg-[#FFF1C7]">Limit</button>
+                      <button onClick={() => moderateContent("remove", r.kind, r.targetId)} className="rounded-xl bg-[#FBE3E1] px-3 py-1 text-xs font-bold text-[#B4443F] hover:bg-[#F6CFCB]">Remove</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Users (real)" value={data.stats.totalUsers} />
             <Stat label="Onboarded" value={data.stats.onboardedUsers} />
