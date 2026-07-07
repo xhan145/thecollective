@@ -174,6 +174,8 @@ export type Proof = {
   contributionFocus?: string | null;
   // Level feed_tags denormalized at submission (035) — for level-matched feed.
   tags?: string[];
+  // Moderation state (039). Absent → treat as "clear".
+  moderationStatus?: import("./moderation").ModerationStatus;
 };
 
 export type Contribution = {
@@ -202,6 +204,8 @@ export type Feedback = {
   clarityNote?: string;
   usefulNote?: string;
   nextStepNote?: string;
+  // Moderation state (039). Absent → treat as "clear".
+  moderationStatus?: import("./moderation").ModerationStatus;
 };
 
 export type TrustEvent = {
