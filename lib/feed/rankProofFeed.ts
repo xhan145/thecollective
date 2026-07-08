@@ -1,3 +1,4 @@
+// -algo: primary proof feed ranking logic lives here.
 import type { Proof, UserProfile } from "@/lib/betaTypes";
 import { levelRank } from "@/lib/betaTrust";
 import { shouldShowDemoActivity } from "@/lib/feedAlgorithm";
