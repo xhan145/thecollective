@@ -223,10 +223,10 @@ function mapContribution(row: any): Contribution {
   };
 }
 
-function publicUrl(client: SupabaseClient, path: string | null | undefined): string | undefined {
-  if (!path) return undefined;
-  return client.storage.from(PROOF_BUCKET).getPublicUrl(path).data.publicUrl;
-}
+// Proof media lives in a PRIVATE bucket (migration 043). URLs are minted as
+// short-TTL signed URLs, authorized by storage RLS (owner or beta_community
+// viewer). See the signing pass in loadUserBundle.
+const PROOF_MEDIA_TTL_SECONDS = 3600;
 
 // ---------- profile ----------
 
@@ -303,10 +303,21 @@ export async function loadUserBundle(
 
   const attachmentsByProof = new Map<string, ProofAttachment[]>();
   for (const row of attachmentsRes.data ?? []) {
-    const att = mapAttachment({ ...row, public_url: publicUrl(client, row.storage_path) });
+    const att = mapAttachment(row); // localUrl signed below (private bucket)
     const list = attachmentsByProof.get(row.proof_id) ?? [];
     list.push(att);
     attachmentsByProof.set(row.proof_id, list);
+  }
+  // Sign proof-media URLs (bucket is private, 043). One batch call; storage RLS
+  // authorizes owner + beta_community viewers. Re-signed on the next load.
+  const attachmentPaths = [...attachmentsByProof.values()].flat()
+    .map((a) => a.storagePath).filter((p): p is string => Boolean(p));
+  if (attachmentPaths.length) {
+    const { data: signed } = await client.storage.from(PROOF_BUCKET).createSignedUrls(attachmentPaths, PROOF_MEDIA_TTL_SECONDS);
+    const urlByPath = new Map((signed ?? []).map((s) => [s.path ?? "", s.signedUrl] as const));
+    for (const list of attachmentsByProof.values()) {
+      for (const a of list) if (a.storagePath) a.localUrl = urlByPath.get(a.storagePath) ?? a.localUrl;
+    }
   }
 
   const feedback = (feedbackRes.data ?? []).map(mapFeedback);
@@ -319,7 +330,8 @@ export async function loadUserBundle(
 
   // Real content first. Demo examples only fill the feed when real proof volume
   // is low, and they never cross into trust/reputation ranking.
-  const includeDemo = process.env.NEXT_PUBLIC_INCLUDE_DEMO_CONTENT !== "false";
+  // Demo content is OFF unless explicitly enabled (must be false for a real beta).
+  const includeDemo = process.env.NEXT_PUBLIC_INCLUDE_DEMO_CONTENT === "true";
   // Score within each tier: proofs by people you learn from rank up, then useful
   // marks, then recency. Demo rows get no rank boost.
   const score = (row: any) =>

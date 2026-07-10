@@ -154,6 +154,10 @@ export type ProofAttachment = {
   storagePath?: string;
 };
 
+// Canonical proof visibility (042). selected_reviewers is reserved and behaves
+// owner-only until the reviewer table ships (Package 8).
+export type ProofVisibility = "private" | "selected_reviewers" | "beta_community";
+
 export type Proof = {
   id: string;
   userId: string;
@@ -164,7 +168,7 @@ export type Proof = {
   mediaType: ProofMediaType;
   attachments: ProofAttachment[];
   status: ProofStatus;
-  visibility: "private" | "cohort";
+  visibility: ProofVisibility;
   feedbackIds: string[];
   createdAt: string;
   isDemo?: boolean;
@@ -343,6 +347,7 @@ export type ProofDraftInput = {
   promptId: string;
   body: string;
   mediaType: ProofMediaType;
+  visibility?: ProofVisibility;
   attachment?: Omit<ProofAttachment, "id" | "storagePath"> & { file?: File };
 };
 

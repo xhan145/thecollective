@@ -6,7 +6,7 @@ import type { AppFeedback, BetaAppSnapshot, Cohort, Contribution, Direction, Fee
 // The big "active community" dataset below only fills DEMO mode (no backend).
 // To go live with empty real data, set NEXT_PUBLIC_DEMO_SEED=false (and/or
 // connect Supabase, which loads real data and ignores this seed's user data).
-const DEMO_SEED_ENABLED = process.env.NEXT_PUBLIC_DEMO_SEED !== "false";
+const DEMO_SEED_ENABLED = process.env.NEXT_PUBLIC_DEMO_SEED === "true";
 
 const now = "2026-06-09T13:00:00.000Z";
 const BASE_MS = Date.parse(now);
@@ -206,7 +206,7 @@ function generateCommunity(): GeneratedCommunity {
         thumbnailUrl: thumbForMedia(mediaType, proofIdx, rng),
         attachments: [],
         status: "submitted",
-        visibility: "cohort",
+        visibility: "beta_community",
         feedbackIds: [],
         createdAt: iso(createdMin),
         isDemo: true

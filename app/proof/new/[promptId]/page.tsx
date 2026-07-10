@@ -57,6 +57,10 @@ export default function NewProofPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<string[]>([]);
+  // Proof visibility (beta success #8). Private is the safe default — proof is
+  // never required to be public. beta_community shares it with the practice
+  // community so peers can give feedback.
+  const [visibility, setVisibility] = useState<import("@/lib/betaTypes").ProofVisibility>("private");
   const aiService = getCollectiveAiService();
 
   // MVP upload limits (bytes). Keep text/caption safe even when a file is rejected.
@@ -93,7 +97,7 @@ export default function NewProofPage() {
     setSubmitting(true);
     logEvent("proof_submit_started", { promptId, mediaType });
     try {
-      const { proof, error: saveError } = await submitProof({ promptId, body, mediaType, attachment });
+      const { proof, error: saveError } = await submitProof({ promptId, body, mediaType, attachment, visibility });
       if (saveError) {
         // Text is preserved in state — the user can simply try again.
         setError(saveError);
@@ -245,6 +249,32 @@ export default function NewProofPage() {
             }
           />
           <AttachmentPicker mediaType={mediaType} attachment={attachment} onAttachment={setAttachment} onRemove={() => setAttachment(undefined)} />
+
+          <div>
+            <p className="text-sm font-extrabold text-[#111111]">Who can see this?</p>
+            <p className="mt-0.5 text-xs leading-5 text-[#6E6E6E]">You choose. Private is just for you.</p>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {([
+                { id: "private", label: "Private", help: "Only you" },
+                { id: "beta_community", label: "Practice community", help: "Peers can give feedback" },
+              ] as const).map((opt) => {
+                const active = visibility === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setVisibility(opt.id)}
+                    aria-pressed={active}
+                    className={`rounded-2xl border p-3 text-left transition ${active ? "border-[#F2A900] bg-[#FFF1C7]" : "border-[#EFE7D8] bg-[#FFFDF8]"}`}
+                  >
+                    <span className="block text-sm font-extrabold text-[#111111]">{opt.label}</span>
+                    <span className="block text-xs text-[#6E6E6E]">{opt.help}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {error && <p className="rounded-[18px] bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
           <p className="text-center text-xs leading-5 text-[#6E6E6E]">Only share what you are comfortable sharing.</p>
           <Button className="w-full" disabled={submitting} onClick={handleSubmit}>

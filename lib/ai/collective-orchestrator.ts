@@ -388,7 +388,7 @@ const fallbackProof: Proof = {
   mediaType: "text",
   attachments: [],
   status: "submitted",
-  visibility: "cohort",
+  visibility: "beta_community",
   feedbackIds: [],
   createdAt: now(),
   isDemo: true

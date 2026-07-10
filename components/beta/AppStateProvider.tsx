@@ -595,7 +595,7 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           mediaType: input.mediaType,
           attachments: attachment ? [attachment] : [],
           status: "submitted",
-          visibility: "private",
+          visibility: input.visibility ?? "private",
           feedbackIds: [],
           createdAt: new Date().toISOString()
         };
@@ -643,6 +643,10 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
           const ownerId = uid || current.currentUserId || "user-alex";
           const proof = current.proofs.find((item) => item.id === input.proofId);
           if (!proof || !body.trim()) return current;
+          // Integrity guards (R3/R4) — DB constraints (042) are the real gate;
+          // these keep the optimistic UI honest and avoid a doomed insert.
+          if (proof.userId === ownerId) return current; // no self-feedback
+          if (current.feedback.some((f) => f.proofId === proof.id && f.authorId === ownerId)) return current; // no duplicate
           const feedbackId = crypto.randomUUID();
           created = {
             id: feedbackId,
