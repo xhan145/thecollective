@@ -16,9 +16,31 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 export default function AccountInformationPage() {
-  const { currentUser, trustSummary, supabaseEnabled } = useBetaApp();
+  const { currentUser, trustSummary, supabaseEnabled, signOut } = useBetaApp();
   const [email, setEmail] = useState<string | null>(null);
   const isDemo = !!currentUser && currentUser.id.startsWith("user-");
+  const [confirm, setConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  async function deleteAccount() {
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const client = getSupabaseClient();
+      const token = client ? (await client.auth.getSession()).data.session?.access_token : null;
+      const res = await fetch("/api/account/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      });
+      if (!res.ok) { setDeleteError("Could not delete your account. Please try again or contact support."); setDeleting(false); return; }
+      await signOut().catch(() => {});
+      if (typeof window !== "undefined") window.location.href = "/";
+    } catch {
+      setDeleteError("Could not delete your account. Please try again or contact support.");
+      setDeleting(false);
+    }
+  }
 
   useEffect(() => {
     const client = supabaseEnabled ? getSupabaseClient() : null;
@@ -42,6 +64,31 @@ export default function AccountInformationPage() {
           <Row label="Joined" value={joined ? new Date(joined).toLocaleDateString() : "—"} />
         </Card>
         <p className="px-1 text-xs leading-5 text-[#9B958B]">Update your password under Settings → Change password.</p>
+
+        {!isDemo && (
+          <Card className="border border-[#F3D6D2] bg-[#FFFBFA] p-5">
+            <h2 className="text-sm font-extrabold text-[#B4443F]">Delete account</h2>
+            <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">
+              This removes your profile details, practices, proof, and personal data, and signs you out for good. It can&rsquo;t be undone. To confirm, type <span className="font-extrabold text-[#111111]">DELETE</span> below.
+            </p>
+            <input
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="Type DELETE"
+              aria-label="Type DELETE to confirm account deletion"
+              className="mt-3 w-full rounded-2xl border border-[#EFE7D8] bg-white p-3 text-sm text-[#111111] placeholder:text-[#9B958B]"
+            />
+            {deleteError && <p className="mt-2 text-sm font-bold text-[#B4443F]">{deleteError}</p>}
+            <button
+              type="button"
+              disabled={confirm !== "DELETE" || deleting}
+              onClick={deleteAccount}
+              className="mt-3 w-full rounded-full bg-[#B4443F] px-4 py-3 text-sm font-extrabold text-white disabled:opacity-40"
+            >
+              {deleting ? "Deleting…" : "Delete my account"}
+            </button>
+          </Card>
+        )}
       </div>
     </AppShell>
   );
