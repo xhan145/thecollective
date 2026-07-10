@@ -158,6 +158,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             </Button>
           </form>
 
+          {process.env.NEXT_PUBLIC_GOOGLE_ENABLED === "true" && (
           <Button
             type="button"
             variant="secondary"
@@ -168,6 +169,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             {!googleLoading && <GoogleGlyph />}
             {googleLoading ? "Redirecting to Google…" : "Continue with Google"}
           </Button>
+          )}
           <button
             type="button"
             className="w-full py-2 text-sm font-extrabold text-[#6E6E6E]"

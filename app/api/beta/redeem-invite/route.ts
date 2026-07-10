@@ -22,41 +22,15 @@ export async function POST(req: Request) {
   const code = typeof body?.code === "string" ? body.code.trim() : "";
   if (!code) return NextResponse.json({ ok: false, error: BAD }, { status: 400 });
 
-  const { data: invite } = await service
-    .from("beta_invites")
-    .select("*")
-    .eq("code", code)
-    .maybeSingle();
-
-  const now = Date.now();
-  const valid =
-    invite &&
-    invite.status === "active" &&
-    (!invite.expires_at || new Date(invite.expires_at).getTime() > now) &&
-    invite.use_count < invite.max_uses &&
-    (!invite.email || (user.email && invite.email.toLowerCase() === user.email.toLowerCase()));
-
-  if (!valid) return NextResponse.json({ ok: false, error: BAD }, { status: 400 });
-
-  // Atomic-ish redemption: only succeeds while a use remains.
-  const nextCount = invite.use_count + 1;
-  const { data: claimed } = await service
-    .from("beta_invites")
-    .update({
-      use_count: nextCount,
-      status: nextCount >= invite.max_uses ? "used" : "active",
-    })
-    .eq("id", invite.id)
-    .lt("use_count", invite.max_uses)
-    .select("id")
-    .maybeSingle();
-
-  if (!claimed) return NextResponse.json({ ok: false, error: BAD }, { status: 400 });
-
-  await service
-    .from("profiles")
-    .update({ beta_access: true, invite_code: code, beta_joined_at: new Date().toISOString() })
-    .eq("id", user.id);
+  // Atomic redemption (R27): validation + single-statement increment + the
+  // beta_access grant all happen inside one SECURITY DEFINER transaction, so a
+  // capped invite can never be over-redeemed under concurrent requests.
+  const { data: ok, error } = await service.rpc("redeem_beta_invite", {
+    p_code: code,
+    p_user_id: user.id,
+    p_email: user.email ?? null,
+  });
+  if (error || ok !== true) return NextResponse.json({ ok: false, error: BAD }, { status: 400 });
 
   await service
     .from("beta_events")

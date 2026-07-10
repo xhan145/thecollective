@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { AiFeature, AiHelpfulness, AiIssueType, AiResponse, AiSourceType } from "@/lib/aiTypes";
 import { Badge, Button, Card, TextArea } from "./ui";
 import { useBetaApp } from "./AppStateProvider";
+import { isAiEnabled } from "@/lib/aiService";
 
 const issueOptions: Array<{ value: AiIssueType; label: string }> = [
   { value: "TOO_GENERIC", label: "Too generic" },
@@ -60,6 +61,10 @@ export function AiSupportCard({
   const [comment, setComment] = useState("");
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // AI is opt-in (R29): render nothing when disabled — no card, no interaction
+  // logging (R28). Hooks above always run so this early return is safe.
+  if (!isAiEnabled()) return null;
 
   async function runAi() {
     setLoading(true);
