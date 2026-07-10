@@ -29,8 +29,8 @@ The resolved founding-cohort scope, reconciled with the audited build state. Sta
 | Feedback eligibility & queue | 🟡 | Exclusions + ranking incomplete — **R13** Package 8. |
 | In-app notifications | 🟡 | Core types fire; moderation type missing — **R11** Package 9. |
 | Private progress dashboard | ✅ | Passport; next-best-action ladder pending — Package 9. |
-| Reporting | ✅ | Proof/feedback; profile pending — Package 10. |
-| Blocking | ✅ | Both-direction RLS; edge fix **R12** Package 3. |
+| Reporting | 🟡 | Proof/feedback; profile pending; report-target visibility not enforced — **R25** Package 10. |
+| Blocking | 🟡 | Both-direction RLS, but owner→viewer RLS shadow — **R12** Package 3. |
 | Proof deletion & visibility controls | ❌ | Package 10. |
 | Minimal admin moderation | ✅ | Queue shipped; audit trail pending — **R21**. |
 | Typed funnel analytics | 🟡 | Events partial; unread by admin — **R18** Package 11. |
@@ -53,13 +53,13 @@ The resolved founding-cohort scope, reconciled with the audited build state. Sta
 | Transactional feedback emails | 🔒 no send path; keep off (`RESEND_API_KEY` documented but unused) |
 | Trust-state display | 🔒 keep hidden (3 trust systems unconsolidated — **R17**) |
 | Founding Cohort product mode | 🔒 off |
-| AI assistance | 🔒 mock-by-default; gate on `isAiEnabled` + configured key, default hidden |
+| AI assistance | ⚠️ **exposed by default** today — `isAiEnabled()` is true when unset (R29) and cards render + log text (R28). Must gate OFF + require endpoint before invites. |
 
 ## Explicitly out of scope (do not build; remove/disable if exposed)
 
 Direct messages · groups · public comments · followers · public likes · leaderboards · competitive streaks · payments · coaching marketplace · creator monetization · user-created practices · public numeric trust · complex recommendation models · persistent AI agents · practice CMS · broad skill expansion.
 
-**Exposed-and-must-address:** the legacy `/dashboard` route shows a **hardcoded numeric trust badge** (public numeric trust) — remove/redirect (**R8**). Cohorts/achievements/AI-lab tables exist but are out of founding-beta scope — leave dormant, do not surface.
+**Exposed-and-must-address:** the legacy `/dashboard` route shows a **hardcoded numeric trust badge** (public numeric trust) — remove/redirect (**R8**). **`/cohorts*` and `/badges` are live, reachable routes** (create/join flows; badges linked from passport + proof submit) though cohorts/achievements are out of founding-beta scope — remove or gate before testers arrive (extends R8), do not merely treat as dormant. AI-lab tables can stay dormant if never surfaced.
 
 ---
 

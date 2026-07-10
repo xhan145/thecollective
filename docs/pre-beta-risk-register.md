@@ -206,6 +206,34 @@ Consolidated, deduped, ranked most-severe first. Each entry carries: Severity ·
 
 ---
 
+## Addendum — findings from external review of this audit (PR #27, 2026-07-07)
+
+All five were verified against the code before inclusion.
+
+### R25 · HIGH · Moderation authorization
+- **Finding:** `submit_report` (SECURITY DEFINER) resolves the target by id and rejects only unauthenticated/self/demo/invalid-reason — it never checks the reporter can **read** the target under proof/feedback RLS. A member who learns a **private** proof's id can severe-report it and (as a credible reporter) immediately hold it.
+- **User/technical/security impact:** A private proof can be hidden by a stranger; abuse + false-positive takedowns of content they were never authorized to see. (R2 closes the public-media proofId leak that made ids discoverable, reducing but not eliminating the vector.)
+- **Resolution:** In `submit_report`, require the target be visible to the reporter (owner, or beta_community + not blocked + not moderated) before accepting/enforcing. **Package 10.** **Complexity:** S · **Beta-blocking:** No (fix before invites).
+
+### R26 · MEDIUM · Privacy — passport visibility not enforced
+- **Finding:** `profiles_read_authenticated` lets any member read any profile row, and `/member/[id]` renders a member Passport header + trust tier without consulting `user_settings.profile_visibility`. A user who set profile visibility = private is still shown.
+- **Resolution:** Enforce `profile_visibility` on the member passport (RLS on the passport-relevant columns or a gated read path). **Package 10/4.** **Complexity:** M · **Beta-blocking:** No.
+
+### R27 · HIGH · Invite redemption race
+- **Finding:** `/api/beta/redeem-invite` reads `use_count`, computes `nextCount`, then updates guarded by `.lt("use_count", max_uses)` — compared to `max_uses`, not to the value read, and not an atomic SQL increment. Two concurrent redeems of a one-use invite both pass and both grant `beta_access`.
+- **User/security impact:** Capped/one-use invites can be over-redeemed → the closed beta admits more than intended.
+- **Resolution:** Make redemption atomic — a SECURITY DEFINER RPC doing a conditional `update … set use_count = use_count + 1 where id = $1 and use_count < max_uses returning`, granting access only when a row is returned. **Package 4.** **Complexity:** S · **Beta-blocking:** No (fix before opening invites).
+
+### R28 · MEDIUM · Privacy — AI interaction text is logged (corrects §9 claim)
+- **Finding:** The audit's "no proof/feedback body text is logged" is true for `beta_events` **only**. `AiSupportCard` passes the draft (`inputSummary = body`) and `persistAiInteraction` stores it in `ai_interactions.input_summary`; the feedback coach similarly records drafted notes. Users who use the AI helpers persist proof/feedback text outside `beta_events`.
+- **Resolution:** Redact/summarize before persistence, or (simpler for beta) gate AI off by default (R29) so nothing is written. **Package 11 / AI-gate.** **Complexity:** S · **Beta-blocking:** No.
+
+### R29 · MEDIUM · AI exposed by default (corrects release-scope "flag-off")
+- **Finding:** `isAiEnabled()` returns `true` when the flag is **unset** (`explicit !== "false"`), and `AiSupportCard` renders on practice/proof/feedback screens without checking a configured endpoint. The brief mandates AI default-OFF; today it is default-ON (mock content shown to beta users).
+- **Resolution:** Default `isAiEnabled()` OFF (require `=== "true"`) and require a configured endpoint before rendering the AI cards. Closes R28 as a side effect. **Package 4 / AI-gate.** **Complexity:** S · **Beta-blocking:** No (but must gate before invites per the brief).
+
+> Related corrections applied to the other docs: **blocking** moved from Working → Partial/Unsafe (R12); **invite gate** moved out of Working (R27); **cohorts/badges** noted as surfaced routes to remove (extends R8); Package 1 **`checks`** split into pure vs live-Supabase; **selected_reviewers** table added to the Package 2/8 model plan.
+
 ## Beta-blocking summary (must clear before invites)
 
 R1 visibility mismatch · R2 public media bucket · R3 self-feedback · R4 duplicate feedback · R5 demo-on · R6 password reset · R7 error boundary · R8 legacy routes · R9 account deletion · R10 env/config · R11 moderation notifications.

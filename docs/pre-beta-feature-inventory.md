@@ -10,13 +10,11 @@ Findings sorted into the eight required buckets. Items are the current build sta
 
 - Email signup / login / logout + session persistence & auto-refresh; Google OAuth server-side handshake.
 - Idempotent profile bootstrap (`handle_new_user` trigger + `ensureProfile` fallback).
-- Closed-beta invite gate (`beta_invites` + `/access` + `NEXT_PUBLIC_REQUIRE_INVITE_CODE`).
 - **120 real mastery levels** across 6 directions / 24 skills, stable dot-slugs, idempotent seed (`seed-content-mastery.ts`).
 - Sequential mastery ladder UI (level unlock gating, server-enforced by trigger, migration 035).
 - Text-proof end-to-end (optimistic submit; text preserved if an attachment fails).
 - Structured feedback capture (clarity / useful / next-step notes, migration 015).
 - Realtime notifications for proof / feedback / marked-useful via SECURITY DEFINER triggers (020) + unread badge + notifications center.
-- Block / unblock with both-direction RLS on proofs and introductions (037/038).
 - Report → tiered server-side hide (severe = 1 credible reporter, mild = 3 distinct) + `spam_signal`, column-locked (040/041).
 - Admin moderation queue (dismiss / limit / remove / hold) via SECURITY DEFINER RPCs (039–041).
 - Private passport progress dashboard (own-row RLS).
@@ -34,6 +32,8 @@ Findings sorted into the eight required buckets. Items are the current build sta
 - **Contribute queue** — exclusions incomplete (blocked / moderation / demo / already-contributed not all applied) and not ranked by the brief's formula.
 - **Reduced-motion** — gate covers CSS animations, not Framer-motion JS.
 - **`submit_report` demo-target error** — falls through to generic client copy.
+- **Block / unblock** — shipped, but the owner→viewer block check has an RLS shadow (R12), so it is not fully enforced — **Partial/Unsafe**, not Working.
+- **Invite gate** — works, but redemption is **not atomic** (R27 race), so a capped invite can be over-redeemed — **Partial**, not Working.
 - **Header icon buttons** — 40px (<44px touch target).
 
 ## 🟪 Mocked (fabricated/hardcoded values facing a user)
@@ -42,7 +42,7 @@ Findings sorted into the eight required buckets. Items are the current build sta
 - Home mobile bell — hardcoded "1", links to `/feed` instead of a live count → `/notifications`.
 - Notification-settings toggles (reminders / digests / loop-completed) — honored by nothing.
 - `RESEND_API_KEY` in setup checklist — no email send path exists.
-- AI features — run **mock-by-default** and stay rendered even when unconfigured.
+- AI features — run **mock-by-default**, and are **exposed by default** (`isAiEnabled()` is true when the flag is unset, R29) and stay rendered even when unconfigured; AI interaction text is also persisted to `ai_interactions.input_summary` (R28).
 - Marketing `trackEvent()` — no analytics provider wired; events silently dropped.
 
 ## ⛔ Unsafe (security / privacy / integrity risk)
@@ -92,6 +92,7 @@ Findings sorted into the eight required buckets. Items are the current build sta
 - Unused `Card` `asButton` branch (focusable, no key handler).
 - Three never-emitted beta event types (`signup_started` / `onboarding_started` / `practice_started`).
 - Stale `BETA_QA.md` claim of an `/admin/beta` funnel that does not exist.
+- **Surfaced out-of-scope routes** — `/cohorts`, `/cohorts/new`, `/cohorts/[id]` (create/join) and `/badges` (linked from `/passport` + proof submit) are live for testers though cohorts/achievements are out of founding-beta scope; remove or gate (extends R8).
 
 ## ⏸️ Intentionally delayed (flag-and-off, keep code dormant)
 

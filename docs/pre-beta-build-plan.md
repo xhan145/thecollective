@@ -19,13 +19,13 @@ Sequenced to reach the release gate with the **smallest safe set of changes**. E
 
 ## Package 1 — Development safety
 - Regenerate `.env.example` from a `process.env` grep (R10); delete dead flags (R20 optional-remove).
-- Add `eslint` + `eslint-config-next` + `lint` script; add `vitest` + a `checks` script running all `check-*.ts`; add security/negative tests (below).
+- Add `eslint` + `eslint-config-next` + `lint` script; add `vitest`. **Split checks:** a `checks` script runs only the PURE `check-*.ts`; a separate `checks:live` runs the Supabase-dependent ones (`check-content-mastery`, `content:verify`) which need `SUPABASE_*` env — only `checks` (+ lint/typecheck/build) goes into required PR CI (no service-role secret / live DB in default CI). Add security/negative tests (below).
 - Minimal GitHub Actions CI: install → `typecheck` → `lint` → `build` → `checks`; PR template; gitleaks secret scan (R22).
 - Document canonical migration apply order + a re-apply idempotency check (R23); move loose `supabase/*.sql` out.
 - **Acceptance:** CI green on a PR; `.env.example` lets a fresh operator boot the app gated; secret scan runs.
 
 ## Package 2 — Canonical data model reconciliation *(inspect-first, minimal)*
-- Do **not** create parallel duplicates. Document the name map (canonical ↔ real) in-repo. Add only the genuinely missing tables the beta needs: `proof_drafts` (P6), `moderation_actions` (P10), and a thin `feature_flags` kill-switch (optional). Everything else stays as-is with a documented alias.
+- Do **not** create parallel duplicates. Document the name map (canonical ↔ real) in-repo. Add only the genuinely missing tables the beta needs: `proof_drafts` (P6), `moderation_actions` (P10), a `selected_reviewers` table + RLS (needed so the `selected_reviewers` visibility from Package 0 can actually grant scoped access — until it lands, that value fails closed to owner-only; built with the feedback flow in P8), and a thin `feature_flags` kill-switch (optional). Everything else stays as-is with a documented alias.
 - **Acceptance:** a single source-of-truth model doc; no duplicate concepts introduced; migrations validate.
 
 ## Package 3 — Authorization & storage security *(mostly folded into P0)*
@@ -37,6 +37,8 @@ Sequenced to reach the release gate with the **smallest safe set of changes**. E
 - Password reset (R6): `resetPasswordForEmail` → `/auth/reset` → set-new-password; rate-limit.
 - Account deletion (R9): self-serve → server route anonymizes/removes owned rows while retaining moderation evidence → `auth.admin.deleteUser`; document retention.
 - Safe redirects (whitelist internal `/…`, reject `//`); Google button gated by flag (R20); expired-session + duplicate-account handling verified.
+- **Atomic invite redemption** (R27): a SECURITY DEFINER RPC doing `update … set use_count = use_count + 1 where id = $1 and use_count < max_uses returning`, granting access only when a row is returned.
+- **Gate AI off by default** (R29): `isAiEnabled()` requires `=== "true"` + a configured endpoint before rendering AI cards — also closes the AI-text-logging exposure (R28).
 - Onboarding: persist/resume; final action opens the **recommended starter practice** (`resolveStarterPromptId`), not `/home`. Sequence: promise → direction → comfort → default proof privacy → recommended practice.
 - **Acceptance:** a new user registers, onboards <2 min, lands in a real practice; forgot-password recovers; deletion erases + retains evidence.
 
@@ -64,6 +66,8 @@ Sequenced to reach the release gate with the **smallest safe set of changes**. E
 
 ## Package 10 — Safety & moderation *(mostly shipped — close gaps)*
 - Add: hide-from-personal-view, delete-own-proof, remove-attachment, change-visibility, close-feedback-request, **profile reporting**, account suspend/unsuspend, `moderation_actions` audit trail (R21/R24), reconcile report categories to the brief.
+- **Report-target visibility** (R25): `submit_report` must verify the reporter can read the target before accepting/enforcing.
+- **Passport visibility** (R26): enforce `user_settings.profile_visibility` on `/member/[id]` (do not render a private member's passport to others).
 - **Acceptance:** Journey E (report → admin review → hidden → user-facing state updates → audit row exists).
 
 ## Package 11 — Analytics & operational visibility

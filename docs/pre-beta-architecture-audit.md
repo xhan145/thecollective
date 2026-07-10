@@ -26,7 +26,7 @@
 - **Provider:** Supabase Auth (email/password + Google OAuth). Not being replaced.
 - **Flows present:** email signup/login/logout (`AppStateProvider.signUpWithEmail/signInWithEmail/signOut`), session persistence + auto-refresh via the Supabase browser client, `onAuthStateChange` rehydration, and a proper server-side nonce+state Google handshake (`app/api/google/*`).
 - **Idempotent profile bootstrap:** DB trigger `handle_new_user` (`on conflict do nothing`) + a client `ensureProfile` fallback in `betaRepository.ts`.
-- **Invite gate:** `NEXT_PUBLIC_REQUIRE_INVITE_CODE` → `lib/beta/redeemInvite.ts` + `/access`; `beta_invites` table (migration 022).
+- **Invite gate:** `NEXT_PUBLIC_REQUIRE_INVITE_CODE` → `lib/beta/redeemInvite.ts` + `/access`; `beta_invites` table (migration 022). **Redemption is not atomic** (R27) — concurrent redeems can over-consume a capped invite.
 - **Gaps (Package 4):** **no forgot-password / reset flow** (change-password needs an active session), **no account-deletion / erasure path**, onboarding does not persist/resume and finishes on `/home` rather than opening a real practice, and the Google button renders whenever Supabase is configured (the documented `NEXT_PUBLIC_GOOGLE_ENABLED` flag is never read). See R6, R9, R20.
 
 ## 4. Database & migrations
@@ -59,7 +59,7 @@
 - **Validation:** `zod` 3.25 present; used in the AI layer. Proof/attachment validation is **client-only** (MIME prefix + size from browser-supplied `file.type`), no server/DB re-validation (R19).
 - **State:** one large React context (`AppStateProvider`) + TanStack Query in the media layer. No server state framework.
 - **Error handling:** graceful in-flow (text preserved on attachment failure) but **no React error boundary** — no `app/error.tsx` / `app/global-error.tsx`. Any render throw in a client screen white-screens the app (R7).
-- **Logging:** `logBetaEvent` writes typed events to `beta_events`; **no proof/feedback body text is ever logged** (privacy-clean). No structured server logging/observability provider.
+- **Logging:** `logBetaEvent` writes typed events to `beta_events`; **no proof/feedback text is logged to `beta_events`**. However, the AI path DOES persist draft text: `AiSupportCard` passes `inputSummary = body` and `persistAiInteraction` stores it in `ai_interactions.input_summary` (R28) — so the "never logged" guarantee holds only for `beta_events`, not for AI interactions. No structured server logging/observability provider.
 
 ## 9. Analytics
 
