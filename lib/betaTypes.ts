@@ -67,6 +67,8 @@ export type UserProfile = {
   betaAccess?: boolean;
   inviteCode?: string | null;
   betaJoinedAt?: string | null;
+  // Set when the account has been soft-deleted (046/048); the app signs out.
+  deletedAt?: string | null;
   // Badges chosen for the Passport medallion row (<=6, 032).
   selectedBadges?: string[];
 };

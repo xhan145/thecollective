@@ -39,7 +39,7 @@ export default function OnboardingPage() {
       const raw = typeof window !== "undefined" ? window.localStorage.getItem(ONBOARDING_DRAFT_KEY) : null;
       if (!raw) return;
       const d = JSON.parse(raw) as Partial<{ step: number; directionId: string; startingLevel: PracticeLevel; contextTags: ContextTag[]; goalText: string; cadence: string }>;
-      if (typeof d.step === "number") setStep(d.step);
+      if (typeof d.step === "number") setStep(Math.min(Math.max(Math.trunc(d.step), 0), 4));
       if (d.directionId) setDirectionId(d.directionId);
       if (d.startingLevel) setStartingLevel(d.startingLevel);
       if (Array.isArray(d.contextTags)) setContextTags(d.contextTags);
@@ -56,12 +56,12 @@ export default function OnboardingPage() {
 
   // Default to Confident Communication when directions load.
   useEffect(() => {
-    if (directionId || snapshot.directions.length === 0) return;
+    if (!restored || directionId || snapshot.directions.length === 0) return;
     const preferred =
       snapshot.directions.find((d) => d.slug === "confident-communication" || d.slug === "communication") ||
       snapshot.directions[0];
     setDirectionId(preferred.id);
-  }, [snapshot.directions, directionId]);
+  }, [restored, snapshot.directions, directionId]);
 
   async function finish() {
     if (!directionId) return;
