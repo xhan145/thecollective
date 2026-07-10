@@ -79,6 +79,11 @@ begin
   end if;
 end$$;
 
+-- Collapse any pre-existing duplicates (keep earliest) so the unique index
+-- can be created on databases that allowed dupes (no-op where none exist).
+delete from public.feedback f using public.feedback g
+ where f.author_id = g.author_id and f.proof_id = g.proof_id and f.ctid > g.ctid;
+
 -- One feedback per author per proof (no duplicate-feedback trust farming).
 create unique index if not exists feedback_author_proof_uidx
   on public.feedback (author_id, proof_id);

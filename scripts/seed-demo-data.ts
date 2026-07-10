@@ -242,7 +242,7 @@ async function seed(sb: SupabaseClient) {
       media_url: mediaUrl,
       thumbnail_url: mediaUrl,
       media_kind: mediaKindFor(kind),
-      visibility: "cohort",
+      visibility: "beta_community",
       status: "submitted",
       is_demo: true,
       demo_seed_id: seedId,
