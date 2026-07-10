@@ -26,7 +26,9 @@ export default function GoogleCompletePage() {
     const params = new URLSearchParams(hash);
     const accessToken = params.get("access_token");
     const refreshToken = params.get("refresh_token");
-    const destination = params.get("next") || "/home";
+    const rawNext = params.get("next");
+    // Safe redirect (R20): internal absolute paths only — reject //, protocol-relative, and external URLs.
+    const destination = rawNext && rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("\\") ? rawNext : "/home";
 
     if (!accessToken || !refreshToken) {
       router.replace("/auth?error=google_session_failed");

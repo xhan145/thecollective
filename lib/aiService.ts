@@ -326,9 +326,9 @@ export function getAiEndpoint() {
 }
 
 export function isAiEnabled() {
+  // Default OFF for beta (R29): AI is opt-in and must be explicitly enabled.
   const explicit = process.env.NEXT_PUBLIC_COLLECTIVE_AI_ENABLED || process.env.VITE_COLLECTIVE_AI_ENABLED;
-  if (!explicit) return true;
-  return explicit !== "false";
+  return explicit === "true";
 }
 
 export function isMockAiMode() {

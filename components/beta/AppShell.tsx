@@ -59,7 +59,7 @@ function NotificationsButton({ unread, className = "" }: { unread: number; class
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { snapshot, currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount } = useBetaApp();
+  const { snapshot, currentUser, isMockMode, firebaseMode, supabaseEnabled, authReady, unreadNotificationCount, signOut } = useBetaApp();
   const unread = unreadNotificationCount();
   // The "Submit proof" starter target: the user's next mastery step when live
   // content is loaded, never a dead id (fixes the hardcoded conf-s1 links).
@@ -77,6 +77,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!authReady) return;
+    // A soft-deleted account (046/048) can never operate, even on a still-valid
+    // session or if the auth ban failed — sign out and return to the landing.
+    if (currentUser?.deletedAt) {
+      void signOut();
+      router.replace("/");
+      return;
+    }
     // Wait until the Supabase session has been checked before redirecting,
     // otherwise a hard refresh on an authed route bounces to /auth.
     if (!currentUser && isProtected) {
@@ -106,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     ) {
       router.replace("/onboarding");
     }
-  }, [authReady, currentUser, isProtected, supabaseEnabled, pathname, router]);
+  }, [authReady, currentUser, isProtected, supabaseEnabled, pathname, router, signOut]);
 
   return (
     <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">

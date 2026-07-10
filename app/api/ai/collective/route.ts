@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { runCollectivePanel } from "@/lib/ai/collective-orchestrator";
+import { isAiEnabled } from "@/lib/aiService";
 import type { AiFeature, AiUserContext, CollectiveAiAction } from "@/lib/aiTypes";
 import type { Feedback, PracticePrompt, Proof } from "@/lib/betaTypes";
 
@@ -49,6 +50,9 @@ function safeInput(input: CollectiveAiRequest["input"]): Record<string, unknown>
 }
 
 export async function POST(request: Request) {
+  // AI is opt-in (R29): the server endpoint enforces the flag too, so a direct
+  // POST can't trigger model calls when beta AI is off.
+  if (!isAiEnabled()) return NextResponse.json({ error: "AI is disabled." }, { status: 403 });
   try {
     const body = (await request.json()) as CollectiveAiRequest;
     const input = safeInput(body.input);
