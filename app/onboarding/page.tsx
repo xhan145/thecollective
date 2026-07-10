@@ -11,7 +11,7 @@ import type { PracticeLevel, ContextTag } from "@/lib/betaTypes";
 import { resolveStarterPromptId } from "@/lib/mastery";
 import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
-const ONBOARDING_DRAFT_KEY = "collective.onboarding.draft.v1";
+const ONBOARDING_DRAFT_PREFIX = "collective.onboarding.draft.v1";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -32,27 +32,28 @@ export default function OnboardingPage() {
   // Resume: restore an in-progress draft once on mount so a refresh or return
   // picks up where the user left off.
   const [restored, setRestored] = useState(false);
+  const draftKey = currentUser ? `${ONBOARDING_DRAFT_PREFIX}:${currentUser.id}` : null;
   useEffect(() => {
-    if (restored) return;
+    if (restored || !draftKey) return;
     setRestored(true);
     try {
-      const raw = typeof window !== "undefined" ? window.localStorage.getItem(ONBOARDING_DRAFT_KEY) : null;
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(draftKey) : null;
       if (!raw) return;
       const d = JSON.parse(raw) as Partial<{ step: number; directionId: string; startingLevel: PracticeLevel; contextTags: ContextTag[]; goalText: string; cadence: string }>;
-      if (typeof d.step === "number") setStep(Math.min(Math.max(Math.trunc(d.step), 0), 4));
+      if (typeof d.step === "number") setStep(Math.min(Math.max(Math.trunc(d.step), 0), 6));
       if (d.directionId) setDirectionId(d.directionId);
       if (d.startingLevel) setStartingLevel(d.startingLevel);
       if (Array.isArray(d.contextTags)) setContextTags(d.contextTags);
       if (typeof d.goalText === "string") setGoalText(d.goalText);
       if (d.cadence) setCadence(d.cadence);
     } catch { /* ignore malformed draft */ }
-  }, [restored]);
+  }, [restored, draftKey]);
 
   // Persist the draft as the user progresses.
   useEffect(() => {
-    if (!restored || typeof window === "undefined") return;
-    window.localStorage.setItem(ONBOARDING_DRAFT_KEY, JSON.stringify({ step, directionId, startingLevel, contextTags, goalText, cadence }));
-  }, [restored, step, directionId, startingLevel, contextTags, goalText, cadence]);
+    if (!restored || !draftKey || typeof window === "undefined") return;
+    window.localStorage.setItem(draftKey, JSON.stringify({ step, directionId, startingLevel, contextTags, goalText, cadence }));
+  }, [restored, draftKey, step, directionId, startingLevel, contextTags, goalText, cadence]);
 
   // Default to Confident Communication when directions load.
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function OnboardingPage() {
       prompts: snapshot.prompts,
       completedPracticeIds: snapshot.completedPracticeIds,
     });
-    if (typeof window !== "undefined") window.localStorage.removeItem(ONBOARDING_DRAFT_KEY);
+    if (draftKey && typeof window !== "undefined") window.localStorage.removeItem(draftKey);
     router.push(`/proof/new/${starterId}`);
   }
 
