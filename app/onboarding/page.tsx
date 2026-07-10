@@ -8,7 +8,10 @@ import { Button, Card, LoopStrip } from "@/components/beta/ui";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { CONTEXT_TAGS } from "@/lib/betaTypes";
 import type { PracticeLevel, ContextTag } from "@/lib/betaTypes";
+import { resolveStarterPromptId } from "@/lib/mastery";
 import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
+
+const ONBOARDING_DRAFT_KEY = "collective.onboarding.draft.v1";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -25,6 +28,31 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (supabaseEnabled && authReady && !currentUser) router.replace("/auth");
   }, [supabaseEnabled, authReady, currentUser, router]);
+
+  // Resume: restore an in-progress draft once on mount so a refresh or return
+  // picks up where the user left off.
+  const [restored, setRestored] = useState(false);
+  useEffect(() => {
+    if (restored) return;
+    setRestored(true);
+    try {
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(ONBOARDING_DRAFT_KEY) : null;
+      if (!raw) return;
+      const d = JSON.parse(raw) as Partial<{ step: number; directionId: string; startingLevel: PracticeLevel; contextTags: ContextTag[]; goalText: string; cadence: string }>;
+      if (typeof d.step === "number") setStep(d.step);
+      if (d.directionId) setDirectionId(d.directionId);
+      if (d.startingLevel) setStartingLevel(d.startingLevel);
+      if (Array.isArray(d.contextTags)) setContextTags(d.contextTags);
+      if (typeof d.goalText === "string") setGoalText(d.goalText);
+      if (d.cadence) setCadence(d.cadence);
+    } catch { /* ignore malformed draft */ }
+  }, [restored]);
+
+  // Persist the draft as the user progresses.
+  useEffect(() => {
+    if (!restored || typeof window === "undefined") return;
+    window.localStorage.setItem(ONBOARDING_DRAFT_KEY, JSON.stringify({ step, directionId, startingLevel, contextTags, goalText, cadence }));
+  }, [restored, step, directionId, startingLevel, contextTags, goalText, cadence]);
 
   // Default to Confident Communication when directions load.
   useEffect(() => {
@@ -45,7 +73,15 @@ export default function OnboardingPage() {
       contextTags: contextTags.length ? contextTags : undefined,
       cadence: cadence ?? undefined,
     });
-    router.push("/home");
+    // Onboarding must open a real practice (beta success #4/#5), not /home.
+    const starterId = resolveStarterPromptId(directionId, {
+      directions: snapshot.directions,
+      skills: snapshot.skills,
+      prompts: snapshot.prompts,
+      completedPracticeIds: snapshot.completedPracticeIds,
+    });
+    if (typeof window !== "undefined") window.localStorage.removeItem(ONBOARDING_DRAFT_KEY);
+    router.push(`/proof/new/${starterId}`);
   }
 
   return (

@@ -151,6 +151,9 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             {mode === "signup" && REQUIRE_INVITE && (
               <input className={field} placeholder="Invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} autoComplete="one-time-code" aria-label="Invite code" />
             )}
+            {mode === "login" && (
+              <a href="/auth/reset" className="block text-right text-xs font-extrabold text-[#7A5300]">Forgot password?</a>
+            )}
             {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
             {notice && <p className="rounded-2xl bg-[#FFF8EE] p-3 text-sm font-bold leading-6 text-[#38322A]">{notice}</p>}
             <Button type="submit" className="w-full" disabled={loading || googleLoading}>
