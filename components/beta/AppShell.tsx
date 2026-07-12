@@ -16,7 +16,7 @@ import { demoSeedEnabled } from "@/lib/betaData";
 import { REQUIRE_INVITE } from "@/lib/beta/redeemInvite";
 import { resolveStarterPromptId } from "@/lib/mastery";
 
-const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/passport", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges", "/member"];
+const protectedPrefixes = ["/home", "/directions", "/practice", "/proof", "/feed", "/profile", "/passport", "/progress", "/app-feedback", "/beta-feedback-review", "/notes", "/notifications", "/settings", "/account", "/contribute", "/cohorts", "/badges", "/member"];
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
