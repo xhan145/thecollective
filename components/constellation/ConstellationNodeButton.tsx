@@ -173,7 +173,8 @@ export function ConstellationNodeButton({
         <span className={`text-[12px] font-extrabold leading-tight ${node.status === "locked" ? "text-[#9B958B]" : "text-[#111111]"}`}>
           {node.label}
         </span>
-        <span className={`text-[10px] font-bold leading-tight ${node.status === "active" ? "text-[#B07A00]" : node.status === "attention_needed" ? "text-[#B07A00]" : "text-[#9B958B]"}`}>
+        {/* #7A5300 (not #B07A00) where the text carries state — 6.3:1 on cream. */}
+        <span className={`text-[10px] font-bold leading-tight ${node.status === "active" || node.status === "attention_needed" ? "text-[#7A5300]" : "text-[#9B958B]"}`}>
           {node.evidenceCount > 0 ? `${node.evidenceCount} · ${STATUS_LABELS[node.status]}` : STATUS_LABELS[node.status]}
         </span>
       </span>

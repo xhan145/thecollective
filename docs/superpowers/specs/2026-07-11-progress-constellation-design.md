@@ -225,6 +225,30 @@ initial loading (skeleton constellation: 6 soft discs + faint paths), refresh (s
 
 UI is additive (new route + one home card): revert commit(s) to remove; no data loss. Migration 050 is additive; rollback = `drop table public.feedback_applications` (+ policies/trigger dropped with it); no other object is modified. The screen tolerates the table's absence, so UI-revert and migration-revert are independent.
 
-## 13. Acceptance criteria
+## 13. Verification record (2026-07-11)
+
+**Automated:** `npx tsx scripts/check-constellation.ts` (projection contract: status rules, lock order, moderation exclusion, foreign-row rejection, priority table, determinism) — pass. `node scripts/check-constellation-a11y.mjs` (real-browser keyboard contract: roving tabindex, arrow nav, Enter opens dialog w/ focus, Escape closes + returns focus, list parity, labels, live region) — 10/10 pass. `npm run typecheck` + `npm run build` — pass. Horizontal overflow at 320/375/390/430 px — 0 px each (measured headless).
+
+**End-to-end:** full loop exercised through the real UI in demo mode — apply sheet → plan → mark practiced → "5 of 5 connected" + Loop complete badge (screenshots 14–17).
+
+**Screenshots** (`constellation-shots/`, captured by `scripts/capture-constellation-shots.mjs` — requires `npm i --no-save puppeteer-core` + installed Chrome + dev server on :3160): partial/empty/full-loop × mobile+desktop, selected sheet + desktop inspector, list view, reduced motion, dark mode ×2, 320/375/430/tablet widths, home preview, apply flow ×3.
+
+**Performance notes:** no rAF loops and no canvas — ambient motion is compositor-only CSS (transform/opacity/box-shadow keyframes), double-gated, and `animation-play-state: paused` when the tab is hidden; the SMIL shimmer dot is unmounted (not just paused) under reduced motion or hidden tab. The map module is client-only and route-scoped; evidence dots are capped at 24 static SVG circles; layout math is pure and memoized; the two extra reads (completions + applications) run once per mount and only on /progress and /home-preview. Build output for /progress stays within the app's normal page-chunk range (framer-motion + lucide are already shared chunks).
+
+**Manual QA checklist (for reviewer):**
+- [ ] 320 / 375 / 390 / 430 / tablet / desktop / wide — no overflow, no clipped nodes, CTA reachable, no bottom-nav collision
+- [ ] Keyboard-only walkthrough (Tab → arrows → Enter → Escape) matches the a11y script
+- [ ] Screen reader announces node state on focus and selection
+- [ ] Dark mode + pixel-soft on: discs/lines/labels legible (dark disc variants in globals.css)
+- [ ] OS reduced-motion AND in-app data-motion="reduced": no breathe/shimmer/draw-in; everything legible
+- [ ] Offline: banner shows, last snapshot still renders
+- [ ] List view parity: same states, same copy, working CTAs
+- [ ] Apply flow: plan → practiced → demonstrated ladder; Escape/backdrop close; focus returns
+- [ ] Home preview mirrors the map states and routes to /progress
+- [ ] Evidence links land on authorized screens only (own proof/feedback routes)
+
+**Known limitations:** demo-mode hard-refresh on /progress can bounce to /auth (pre-existing hydration race in demo entry, not constellation-specific); `resume_practice` rule is dormant until an in-progress practice is persisted; feedback "unread" relies on notifications rows; full-loop count is single-loop (v1) by design; screenshots capture stills — breathe/shimmer/draw-in reviewed live.
+
+## 14. Acceptance criteria
 
 Visual: reads as deliberate and finished as LumenDeck's surfaces while unmistakably Collective; composed, not scattered; panels integrated; empty state complete; reduced-motion attractive. Functional: every completed node has real evidence; links re-authorize; deterministic next action; private; works without AI, without animation, in list view, at 320 px; typecheck/build/check-script pass. Prohibited list honored (no scores, followers, streak pressure, paid/AI nodes, random layouts, decorative fake evidence, unbounded zoom, hidden gestures, placeholder icons).

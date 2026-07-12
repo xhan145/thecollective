@@ -12,7 +12,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Badge, Button, ButtonLink } from "@/components/beta/ui";
 import type { ConstellationNode, ConstellationNodeKey } from "@/lib/constellation/types";
 import { NODE_ICONS, STATUS_LABELS } from "./ConstellationNodeButton";
@@ -89,7 +90,8 @@ export function NodeDetailContent({
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Badge tone={statusTone(node.status)}>{STATUS_LABELS[node.status]}</Badge>
-        {isRecommended && <Badge tone="gold">Recommended next</Badge>}
+        {/* "active" already reads "Next step" — don't double-badge it. */}
+        {isRecommended && node.status !== "active" && <Badge tone="gold">Recommended next</Badge>}
         {node.evidenceCount > 0 && (
           <span className="text-xs font-bold text-[#6E6E6E]">
             {node.evidenceCount} piece{node.evidenceCount === 1 ? "" : "s"} of evidence
@@ -212,7 +214,12 @@ export function ConstellationDetailSheet({
 }) {
   const motionAllowed = useMotionAllowed();
   const dialogRef = useDialogFocus(node !== null, onClose);
-  return (
+  // Portal to <body>: the page content lives in a `relative z-[1]` wrapper,
+  // so a fixed overlay rendered in place would stack UNDER the bottom nav.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(
     <AnimatePresence>
       {node && (
         <motion.div
@@ -248,7 +255,8 @@ export function ConstellationDetailSheet({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 

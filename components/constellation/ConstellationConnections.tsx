@@ -29,11 +29,13 @@ import {
 
 type SegmentState = "locked" | "available" | "active" | "completed";
 
+// Widths are stage units (scale with the stage) — tuned so the crisp stroke
+// reads ~1.6px at 390px and ~2.6px at desktop, LumenDeck-wire territory.
 const SEGMENT_STYLE: Record<SegmentState, { stroke: string; width: number; opacity: number; dash?: string; glow: number }> = {
-  locked: { stroke: "#D8CFBE", width: 0.55, opacity: 0.55, dash: "1.6 2.2", glow: 0 },
-  available: { stroke: "#E4C97E", width: 0.6, opacity: 0.7, glow: 0.06 },
-  active: { stroke: "#F2A900", width: 0.85, opacity: 0.95, glow: 0.22 },
-  completed: { stroke: "#E0A400", width: 0.75, opacity: 0.8, glow: 0.14 }
+  locked: { stroke: "#D8CFBE", width: 0.36, opacity: 0.55, dash: "1.4 2", glow: 0 },
+  available: { stroke: "#E4C97E", width: 0.4, opacity: 0.7, glow: 0.06 },
+  active: { stroke: "#F2A900", width: 0.56, opacity: 0.95, glow: 0.2 },
+  completed: { stroke: "#E0A400", width: 0.46, opacity: 0.8, glow: 0.13 }
 };
 
 /** Underlying completion, independent of display status (a completed node can
@@ -128,7 +130,7 @@ export function ConstellationConnections({
             d={p.d}
             fill="none"
             stroke={lit ? "#E4C97E" : "#E7DEC9"}
-            strokeWidth={0.42}
+            strokeWidth={0.3}
             strokeLinecap="round"
             opacity={clarified ? 0.85 : lit ? 0.5 : 0.34}
             style={{ transition: "opacity 150ms ease-out" }}

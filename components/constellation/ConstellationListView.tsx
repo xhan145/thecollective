@@ -58,7 +58,7 @@ export function ConstellationListView({
                           {index + 1}. {node.label}
                         </span>
                         <Badge tone={statusTone(node.status)}>{STATUS_LABELS[node.status]}</Badge>
-                        {recommended && <Badge tone="gold">Next</Badge>}
+                        {recommended && node.status !== "active" && <Badge tone="gold">Next</Badge>}
                       </div>
                       <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">{node.explanation}</p>
                       {node.evidenceCount > 0 && (

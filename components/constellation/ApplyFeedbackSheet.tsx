@@ -7,6 +7,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Badge, Button } from "@/components/beta/ui";
 import type { ApplyTarget } from "@/lib/constellation/useConstellation";
 import type { FeedbackApplicationStatus } from "@/lib/constellation/types";
@@ -83,6 +84,10 @@ export function ApplyFeedbackSheet({
 
   const selected = targets.find((t) => t.feedbackId === selectedId) ?? null;
 
+  // Portal to <body> — same stacking-context escape as the detail sheet.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   async function plan() {
     if (!selected) return;
     setBusy(true);
@@ -112,7 +117,8 @@ export function ApplyFeedbackSheet({
     );
   }
 
-  return (
+  if (!mounted) return null;
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
@@ -250,6 +256,7 @@ export function ApplyFeedbackSheet({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
