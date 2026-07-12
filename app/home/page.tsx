@@ -9,6 +9,7 @@ import { DirectionCard, LoopSignalRow, PracticePromptCard, TrustSnapshotCard } f
 import { ProofCard } from "@/components/beta/ProofComponents";
 import { Badge, ButtonLink, Card, EmptyState, HeroCard, PageHeader, ProgressBar, SectionLabel } from "@/components/beta/ui";
 import { InstallPwaCard } from "@/components/beta/InstallPwaCard";
+import { HomeConstellationPreview } from "@/components/constellation/HomeConstellationPreview";
 import { getNextPractice } from "@/lib/personalization";
 import { getGreeting } from "@/lib/greeting";
 
@@ -79,6 +80,7 @@ export default function HomePage() {
           </div>
 
           <aside className="space-y-6">
+            <HomeConstellationPreview />
             <TrustSnapshotCard trust={trustSummary} />
             <DirectionCard direction={featuredDirection} />
             <Card className="p-5">

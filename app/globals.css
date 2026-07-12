@@ -471,6 +471,87 @@ html[data-density="comfortable"] { --space-density: 1; }
   background-image: linear-gradient(100deg, #f5efe2 0%, #f5efe2 52%, #ffb000 100%);
 }
 
+/* ── Progress Constellation ───────────────────────────────────────────
+   Disc surfaces live here (not as arbitrary utilities) because their radial
+   gradients need real .dark variants — the hex-remap layer above only covers
+   listed utility classes. Motion is DOUBLE-gated like everything else:
+   OS prefers-reduced-motion AND html[data-motion="reduced"]. */
+
+.constellation-disc-hub {
+  background: radial-gradient(circle at 40% 32%, #fff7df 0%, #fff1c7 58%, #ffe7ae 100%);
+}
+.constellation-disc-available,
+.constellation-disc-attention {
+  background: radial-gradient(circle at 38% 30%, #fff7df 0%, #fffdf8 62%);
+}
+.constellation-disc-in-progress {
+  background: radial-gradient(circle at 38% 30%, #fff1c7 0%, #fffdf8 70%);
+}
+.constellation-disc-completed {
+  background: radial-gradient(circle at 38% 30%, #ffe7ae 0%, #fff1c7 74%);
+}
+.dark .constellation-disc-hub {
+  background: radial-gradient(circle at 40% 32%, #3a2f16 0%, var(--c-soft) 58%, #241d0e 100%);
+}
+.dark .constellation-disc-available,
+.dark .constellation-disc-attention {
+  background: radial-gradient(circle at 38% 30%, #2c2413 0%, var(--c-surface) 62%);
+}
+.dark .constellation-disc-in-progress {
+  background: radial-gradient(circle at 38% 30%, var(--c-soft) 0%, var(--c-surface) 70%);
+}
+.dark .constellation-disc-completed {
+  background: radial-gradient(circle at 38% 30%, #3a2f16 0%, var(--c-soft) 74%);
+}
+.dark .border-\[\#E3D9C6\] { border-color: var(--c-line) !important; }
+
+/* Hover tooltip: pointer devices only, 350ms intent delay, opacity/transform
+   only (no layout shift). */
+@media (hover: hover) {
+  .constellation-tooltip {
+    transform: translateY(2px);
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
+  }
+  .group:hover .constellation-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 350ms;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Recommended-node breathe: shadow alpha/radius only — LumenDeck's
+     node-pulse translated to warm gold. Paused when the tab is hidden. */
+  @keyframes constellation-breathe {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px rgba(242, 169, 0, 0.38),
+        0 0 22px rgba(242, 169, 0, 0.2),
+        0 10px 30px rgba(71, 52, 18, 0.1);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px rgba(242, 169, 0, 0.58),
+        0 0 36px rgba(242, 169, 0, 0.32),
+        0 10px 30px rgba(71, 52, 18, 0.1);
+    }
+  }
+  html:not([data-motion="reduced"]) .constellation-breathe {
+    animation: constellation-breathe 3.2s ease-in-out infinite;
+  }
+  html:not([data-motion="reduced"]) .constellation-stage[data-paused="true"] .constellation-breathe {
+    animation-play-state: paused;
+  }
+
+  @keyframes constellation-skeleton {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  html:not([data-motion="reduced"]) .constellation-skeleton-disc {
+    animation: constellation-skeleton 1.6s ease-in-out infinite;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   @keyframes mk-aurora-a {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1); }

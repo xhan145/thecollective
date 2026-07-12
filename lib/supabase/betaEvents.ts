@@ -17,7 +17,19 @@ export type BetaEventType =
   | "feedback_submitted"
   | "app_feedback_submitted"
   | "contribution_submitted"
-  | "contribution_accepted";
+  | "contribution_accepted"
+  // Progress Constellation (metadata carries keys/counts only, never content).
+  | "constellation_viewed"
+  | "constellation_mode_changed"
+  | "constellation_node_focused"
+  | "constellation_node_opened"
+  | "constellation_next_action_selected"
+  | "constellation_reset_view"
+  | "constellation_zoom_used"
+  | "constellation_list_fallback_used"
+  | "feedback_application_planned"
+  | "feedback_application_completed"
+  | "growth_loop_completed";
 
 /**
  * Insert a beta event. Never throws and never blocks the user flow — logging
