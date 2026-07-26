@@ -107,6 +107,9 @@ type BetaAppContextValue = {
   signOut: () => Promise<void>;
   completeOnboarding: (payload: OnboardingPayload) => Promise<void>;
   updateProfile: (fields: { displayName?: string; username?: string; bio?: string; mentorOptIn?: boolean; headline?: string | null; currentFocusSkill?: string | null; introductionSummary?: string | null; openToIntroductions?: boolean }) => Promise<void>;
+  // Reflect an intro-clip set/clear in the snapshot (the DB write already happened
+  // via introClipRepository + the set_intro_clip / clear_intro_clip RPCs).
+  applyIntroClip: (clip: { path: string; kind: "audio" | "video"; durationSeconds: number } | null) => void;
   completePractice: (promptId: string) => void;
   submitProof: (input: ProofDraftInput) => Promise<{ proof: Proof | null; error: string | null }>;
   logEvent: (eventType: BetaEventType, metadata?: Record<string, unknown>) => void;
@@ -546,6 +549,24 @@ export function BetaAppProvider({ children }: { children: React.ReactNode }) {
         });
         const uid = authUid();
         if (writesEnabled && uid) await updateProfileRow(supabase!, uid, fields).catch(() => {});
+      },
+      applyIntroClip(clip) {
+        setSnapshot((current) => {
+          if (!current.currentUserId) return current;
+          return {
+            ...current,
+            users: current.users.map((u) =>
+              u.id === current.currentUserId
+                ? {
+                    ...u,
+                    introClipPath: clip?.path ?? null,
+                    introClipKind: clip?.kind ?? null,
+                    introClipDurationSeconds: clip?.durationSeconds ?? null,
+                  }
+                : u,
+            ),
+          };
+        });
       },
       completePractice(promptId) {
         let label = "a practice";

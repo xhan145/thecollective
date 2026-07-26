@@ -45,6 +45,11 @@ export type UserProfile = {
   currentFocusSkill?: string | null;
   introductionSummary?: string | null;
   openToIntroductions?: boolean;
+  // 30-second voice/video introduction clip (050). Path is a private-bucket
+  // object key, useless without a signed URL; server-only writable.
+  introClipPath?: string | null;
+  introClipKind?: "audio" | "video" | null;
+  introClipDurationSeconds?: number | null;
   onboardingCompleted?: boolean;
   trustScore?: number;
   mentorOptIn?: boolean;

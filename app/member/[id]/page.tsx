@@ -7,6 +7,7 @@ import { AppShell } from "@/components/beta/AppShell";
 import { Avatar } from "@/components/beta/Avatar";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { IntroductionCard } from "@/components/beta/PassportComponents";
+import { IntroClipPlayer } from "@/components/beta/IntroClipPlayer";
 import { Button, Card, EmptyState, PageHeader, SectionLabel, TextArea, TrustPill } from "@/components/beta/ui";
 import { trustLevelForPoints } from "@/lib/betaTrust";
 import { getSupabaseClient } from "@/lib/supabase/client";
@@ -116,6 +117,13 @@ export default function MemberPage() {
           </Card>
         ) : (
           <>
+            {member.introClipPath && details && (
+              <IntroClipPlayer
+                path={member.introClipPath}
+                kind={member.introClipKind ?? null}
+                durationSeconds={member.introClipDurationSeconds ?? null}
+              />
+            )}
             {details && <IntroductionCard details={details} editHref="" />}
 
             {supabaseEnabled && member.openToIntroductions && !isSelf && (
