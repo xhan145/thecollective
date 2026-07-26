@@ -19,6 +19,7 @@ import {
 } from "@/components/beta/PassportComponents";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getProfileDetails, listPinnedProofIds, type ProfileDetails } from "@/lib/supabase/passportRepository";
+import { IntroClipPlayer } from "@/components/beta/IntroClipPlayer";
 import { evaluateLocalBadges } from "@/lib/badges/types";
 import { resolveStarterPromptId } from "@/lib/mastery";
 import { listReceivedPendingIntros, respondIntroductionRequest, type IntroRequest } from "@/lib/supabase/memberRepository";
@@ -189,6 +190,21 @@ export default function PassportPage() {
         />
 
         <IntroductionCard details={details} editHref="/passport/edit-introduction" />
+
+        {currentUser.introClipPath ? (
+          <IntroClipPlayer
+            path={currentUser.introClipPath}
+            kind={currentUser.introClipKind ?? null}
+            durationSeconds={currentUser.introClipDurationSeconds ?? null}
+          />
+        ) : supabaseEnabled ? (
+          <Link href="/passport/edit-introduction" className="block">
+            <Card className="p-4 text-sm leading-6 text-[#6E6E6E]">
+              Add a short introduction so people can hear who you are.{" "}
+              <span className="font-extrabold text-[#7A5300]">Record a clip →</span>
+            </Card>
+          </Link>
+        ) : null}
 
         <PassportTabs active={tab} onChange={setTab} />
 

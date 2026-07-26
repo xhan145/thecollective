@@ -24,3 +24,4 @@ export function getSupabaseClient(): SupabaseClient | null {
 }
 
 export const PROOF_BUCKET = "collective-proof-media";
+export const INTRO_CLIP_BUCKET = "collective-intro-clips";

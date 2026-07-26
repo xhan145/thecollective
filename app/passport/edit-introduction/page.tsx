@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/beta/AppShell";
 import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { Button, Card, PageHeader, SectionLabel } from "@/components/beta/ui";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getProfileDetails, saveProfileDetails } from "@/lib/supabase/passportRepository";
+import { clearIntroClip } from "@/lib/supabase/introClipRepository";
+import { IntroClipRecorder, type SavedIntroClip } from "@/components/beta/IntroClipRecorder";
+import { IntroClipPlayer } from "@/components/beta/IntroClipPlayer";
 
 function Field({ label, value, onChange, placeholder, multiline }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; multiline?: boolean }) {
   return (
@@ -34,7 +37,9 @@ function Field({ label, value, onChange, placeholder, multiline }: { label: stri
 
 export default function EditIntroductionPage() {
   const router = useRouter();
-  const { currentUser, updateProfile, supabaseEnabled } = useBetaApp();
+  const { currentUser, updateProfile, supabaseEnabled, applyIntroClip } = useBetaApp();
+  const clipClient = useMemo(() => (supabaseEnabled ? getSupabaseClient() : null), [supabaseEnabled]);
+  const [removingClip, setRemovingClip] = useState(false);
   const [headline, setHeadline] = useState("");
   const [focusSkill, setFocusSkill] = useState("");
   const [openToIntro, setOpenToIntro] = useState(true);
@@ -107,6 +112,44 @@ export default function EditIntroductionPage() {
           <Field label="I'd like feedback on" value={wantsFeedbackOn} onChange={setWantsFeedbackOn} placeholder="Tone, clarity, and pacing." multiline />
           <Field label="I can help with" value={canHelpWith} onChange={setCanHelpWith} placeholder="Encouragement and beginner-friendly feedback." multiline />
         </Card>
+
+        {clipClient && currentUser?.id && (
+          <>
+            <SectionLabel title="Introduction clip" />
+            <Card className="space-y-3 p-5">
+              <p className="text-sm leading-6 text-[#6E6E6E]">
+                Add a short voice or video introduction — up to 30 seconds. People see it when they visit your passport.
+              </p>
+              {currentUser.introClipPath && (
+                <>
+                  <IntroClipPlayer
+                    path={currentUser.introClipPath}
+                    kind={currentUser.introClipKind ?? null}
+                    durationSeconds={currentUser.introClipDurationSeconds ?? null}
+                  />
+                  <Button
+                    variant="secondary"
+                    disabled={removingClip}
+                    onClick={async () => {
+                      setRemovingClip(true);
+                      await clearIntroClip(clipClient, currentUser.introClipPath ?? null);
+                      applyIntroClip(null);
+                      setRemovingClip(false);
+                    }}
+                  >
+                    {removingClip ? "Removing…" : "Remove clip"}
+                  </Button>
+                </>
+              )}
+              <IntroClipRecorder
+                client={clipClient}
+                userId={currentUser.id}
+                existingPath={currentUser.introClipPath ?? null}
+                onSaved={(clip: SavedIntroClip) => applyIntroClip(clip)}
+              />
+            </Card>
+          </>
+        )}
 
         <SectionLabel title="Introductions" />
         <Card className="space-y-3 p-5">
