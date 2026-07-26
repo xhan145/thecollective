@@ -72,6 +72,8 @@ export function IntroClipRecorder({
   const kindRef = useRef<IntroClipKind>("audio");
   // Latest elapsed seconds, read by recorder.onstop without a stale closure.
   const elapsedRef = useRef(0);
+  const mountedRef = useRef(true);
+  const startingRef = useRef(false); // reentrancy guard for the getUserMedia await window
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -94,10 +96,26 @@ export function IntroClipRecorder({
     setStaged(null);
   }, []);
 
-  // Cleanup on unmount.
+  // Cleanup on unmount: tear the recorder down first so a stream-end doesn't fire
+  // onstop (allocating a leaked blob URL) after we've gone.
   useEffect(() => {
+    mountedRef.current = true;
     return () => {
+      mountedRef.current = false;
       clearTimer();
+      const rec = recorderRef.current;
+      if (rec) {
+        rec.onstop = null;
+        rec.ondataavailable = null;
+        if (rec.state !== "inactive") {
+          try {
+            rec.stop();
+          } catch {
+            /* already stopping */
+          }
+        }
+        recorderRef.current = null;
+      }
       stopStream();
       setPreviewUrl((cur) => {
         if (cur) URL.revokeObjectURL(cur);
@@ -114,11 +132,14 @@ export function IntroClipRecorder({
 
   const startRecording = useCallback(
     async (kind: IntroClipKind) => {
+      if (startingRef.current) return; // ignore rapid re-clicks during the getUserMedia await
+      startingRef.current = true;
       setError(null);
       resetPreview();
       const mimeType = pickRecorderMimeType(kind);
       if (!mimeType) {
         setError("Recording isn't supported in this browser. You can upload a clip instead.");
+        startingRef.current = false;
         return;
       }
       let stream: MediaStream;
@@ -128,6 +149,13 @@ export function IntroClipRecorder({
         );
       } catch {
         setError("We couldn't reach your microphone or camera. Check permissions, or upload a clip instead.");
+        startingRef.current = false;
+        return;
+      }
+      // Unmounted during the await? Stop the fresh stream and bail.
+      if (!mountedRef.current) {
+        stream.getTracks().forEach((t) => t.stop());
+        startingRef.current = false;
         return;
       }
       streamRef.current = stream;
@@ -135,11 +163,20 @@ export function IntroClipRecorder({
       chunksRef.current = [];
 
       // Cap bitrate so 30s stays well under the 20 MB bucket limit (~9 MB video).
-      const recorder = new MediaRecorder(stream, {
-        mimeType,
-        audioBitsPerSecond: 128_000,
-        ...(kind === "video" ? { videoBitsPerSecond: 2_500_000 } : {}),
-      });
+      // isTypeSupported doesn't guarantee the constructor accepts these options.
+      let recorder: MediaRecorder;
+      try {
+        recorder = new MediaRecorder(stream, {
+          mimeType,
+          audioBitsPerSecond: 128_000,
+          ...(kind === "video" ? { videoBitsPerSecond: 2_500_000 } : {}),
+        });
+      } catch {
+        stopStream();
+        setError("Recording isn't supported in this browser. You can upload a clip instead.");
+        startingRef.current = false;
+        return;
+      }
       recorderRef.current = recorder;
       recorder.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) chunksRef.current.push(e.data);
@@ -148,6 +185,7 @@ export function IntroClipRecorder({
         clearTimer();
         const seconds = elapsedRef.current;
         stopStream();
+        if (!mountedRef.current) return; // unmounted mid-recording: don't allocate a leaked URL
         const blob = new Blob(chunksRef.current, { type: mimeType });
         if (blob.size === 0) {
           setError("That recording was empty. Please try again.");
@@ -180,6 +218,7 @@ export function IntroClipRecorder({
         setElapsed(s);
         if (s >= MAX_INTRO_CLIP_SECONDS) stopRecording();
       }, 200);
+      startingRef.current = false;
     },
     [clearTimer, resetPreview, stopRecording, stopStream],
   );
@@ -256,7 +295,7 @@ export function IntroClipRecorder({
                 </Button>
               </>
             )}
-            <label className="inline-flex cursor-pointer items-center rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-4 py-2.5 text-sm font-extrabold text-[#7A5300] transition-colors hover:bg-[#FFF1C7]">
+            <label className="inline-flex cursor-pointer items-center rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-4 py-2.5 text-sm font-extrabold text-[#7A5300] transition-colors hover:bg-[#FFF1C7] focus-within:ring-2 focus-within:ring-[#F2A900]/40">
               Upload a clip
               <input
                 type="file"

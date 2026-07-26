@@ -12,8 +12,10 @@
 --     profile_details_select_members gate exactly (owner-always; else the
 --     owner's introduction is members/public-visible AND no block either way).
 --   * The clip is signed-in-members-only. 'public' intro text still means
---     members-only for the clip (it is voice/face) — anon never reaches the
---     read policy (authenticated-only) and can_view returns false without a uid.
+--     members-only for the clip (it is voice/face): the read policy is
+--     authenticated-only and can_view_intro_clip is revoked from anon. (051
+--     additionally hardens can_view_intro_clip to return a clean false for a
+--     null uid, and restricts reads to the profile's CURRENT clip object.)
 --
 -- CROSS-PACKAGE DEPENDENCY (documented, not silently dropped): when Package 4's
 -- delete_own_account (currently an open PR, not on main) merges, it MUST also

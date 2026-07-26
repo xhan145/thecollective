@@ -41,13 +41,18 @@ export async function setIntroClip(
   return { error: error ? "That clip couldn't be saved. Please try again." : null };
 }
 
-/** Delete a clip object (best-effort; own-folder only). Orphans are harmless. */
+/**
+ * Delete a clip object (best-effort; own-folder only). A leftover orphan is
+ * unreadable regardless: migration 051's read policy only authorizes the object
+ * the profile currently points at (intro_clip_path), so a swallowed failure here
+ * can't leave a "removed"/replaced clip retrievable.
+ */
 export async function removeIntroClipObject(client: SupabaseClient, path: string | null): Promise<void> {
   if (!path) return;
   try {
     await client.storage.from(INTRO_CLIP_BUCKET).remove([path]);
   } catch {
-    /* ignore — a leftover object is harmless in a private bucket */
+    /* ignore — the 051 current-path read policy makes any orphan unreadable */
   }
 }
 
