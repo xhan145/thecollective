@@ -23,17 +23,17 @@ export function DashboardProofs() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <Pill tone="accent">{proof.pathTitle}</Pill>
-              <h3 className="mt-3 font-black">{proof.promptTitle}</h3>
-              <p className="mt-1 text-xs text-[#8f887e]">{new Date(proof.createdAt).toLocaleString()} · {proof.visibility}</p>
+              <h3 className="mt-3 font-semibold">{proof.promptTitle}</h3>
+              <p className="mt-1 text-caption text-muted">{new Date(proof.createdAt).toLocaleString()} · {proof.visibility}</p>
             </div>
             <ProofTypeBadge proofType={proof.proofType} mediaKind={proof.mediaKind} />
           </div>
           <div className="mt-3">
             <ProofMediaCard proof={proof} />
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-            <p className="surface-row px-3 py-2 text-[#8f887e]">Proof: <span className="font-bold text-white">{proof.status}</span></p>
-            <p className="surface-row px-3 py-2 text-[#8f887e]">Feedback: <span className="font-bold text-white">{proof.feedbackStatus}</span></p>
+          <div className="mt-3 grid grid-cols-2 gap-2 text-caption">
+            <p className="surface-row px-3 py-2 text-muted">Proof: <span className="font-medium text-white">{proof.status}</span></p>
+            <p className="surface-row px-3 py-2 text-muted">Feedback: <span className="font-medium text-white">{proof.feedbackStatus}</span></p>
           </div>
         </article>
       ))}

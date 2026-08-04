@@ -9,7 +9,7 @@ import { redeemInvite } from "@/lib/beta/redeemInvite";
 import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
 const field =
-  "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-center text-lg font-extrabold tracking-[0.18em] text-[#111111] outline-none focus:border-[#F2A900]";
+  "w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-center text-heading tracking-[0.18em] text-content outline-none focus:border-accent";
 
 export default function AccessPage() {
   const router = useRouter();
@@ -43,13 +43,13 @@ export default function AccessPage() {
   }
 
   return (
-    <main className="relative mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-12 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
+    <main className="relative mx-auto min-h-screen max-w-[430px] bg-bg px-5 pb-12 pt-[calc(58px+env(safe-area-inset-top,0px))] text-content">
       <AmbientBackdrop />
       <div className="relative z-[1]">
       <div className="text-center">
         <CollectiveMark className="mx-auto h-[88px] w-[180px]" />
-        <h1 className="mt-5 text-[28px] font-extrabold leading-tight">You’re almost in.</h1>
-        <p className="mt-3 text-sm leading-6 text-[#6E6E6E]">
+        <h1 className="mt-5 text-title leading-tight">You’re almost in.</h1>
+        <p className="mt-3 text-body leading-6 text-muted">
           Collective is in closed beta. Enter your invite code to join. Small steps. Real progress.
         </p>
       </div>
@@ -64,12 +64,12 @@ export default function AccessPage() {
             autoComplete="one-time-code"
             aria-label="Invite code"
           />
-          {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
+          {error && <p className="rounded-2xl bg-surface-soft p-3 text-body font-medium leading-6 text-accent-text">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading || !code.trim()}>
             {loading ? "Checking…" : "Join the beta"}
           </Button>
         </form>
-        <p className="text-center text-xs leading-5 text-[#9B958B]">
+        <p className="text-center text-caption leading-5 text-muted">
           Don’t have a code? Ask whoever invited you for a new one.
         </p>
       </Card>

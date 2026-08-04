@@ -21,21 +21,21 @@ export function BadgeCard({ badge, earned, nextAction }: { badge: Achievement; e
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       className={`flex flex-col items-center rounded-3xl border p-4 text-center transition-colors ${
-        earned ? "elev-2 border-[#EFE7D8] bg-[#FFFDF8]" : "border-dashed border-[#EFE7D8] bg-[#FFF8EE]"
+        earned ? "elev-2 border-line bg-surface" : "border-dashed border-line bg-bg"
       }`}
     >
       <div
         className={`grid h-14 w-14 place-items-center rounded-2xl ${
-          earned ? "bg-[#FFF1C7] text-[#F2A900]" : "bg-[#F1ECE1] text-[#B6AE9F]"
+          earned ? "bg-surface-soft text-accent" : "bg-surface-soft text-subtle"
         }`}
       >
         <Icon size={26} strokeWidth={earned ? 2.4 : 2} />
       </div>
-      <p className={`mt-3 text-sm font-extrabold ${earned ? "text-[#111111]" : "text-[#8D877F]"}`}>{badge.name}</p>
-      <p className="mt-1 text-[11px] leading-4 text-[#6E6E6E]">
+      <p className={`mt-3 text-body font-semibold ${earned ? "text-content" : "text-muted"}`}>{badge.name}</p>
+      <p className="mt-1 text-overline leading-4 text-muted">
         {earned ? badge.description : nextAction ?? "Keep practicing."}
       </p>
-      <span className="mt-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#B6AE9F]">
+      <span className="mt-2 text-overline uppercase tracking-[0.14em] text-subtle">
         {earned ? badge.rarity : "Locked"}
       </span>
     </motion.div>

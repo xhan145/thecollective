@@ -25,13 +25,13 @@ export default function LearningPage() {
               <Card key={t.id} className="flex items-center gap-3 p-4">
                 <Avatar name={t.displayName} avatarUrl={t.avatarUrl} size={40} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-extrabold text-[#111111]">{t.displayName}</p>
-                  {t.bio && <p className="truncate text-xs text-[#6E6E6E]">{t.bio}</p>}
+                  <p className="truncate text-body font-semibold text-content">{t.displayName}</p>
+                  {t.bio && <p className="truncate text-caption text-muted">{t.bio}</p>}
                 </div>
                 <button
                   type="button"
                   onClick={() => toggleLearnFrom(t.id)}
-                  className="shrink-0 rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-3.5 py-2 text-xs font-extrabold text-[#6E6E6E]"
+                  className="shrink-0 rounded-full border border-line bg-surface px-3.5 py-2 text-caption font-semibold text-muted"
                 >
                   Stop learning from
                 </button>

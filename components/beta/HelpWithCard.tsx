@@ -27,13 +27,13 @@ export function HelpWithCard() {
         title="What you can help with"
         action={
           isSteward ? (
-            <span className="rounded-full bg-[#FFF1C7] px-2.5 py-1 text-[11px] font-black text-[#7A5300]">
+            <span className="rounded-full bg-surface-soft px-2.5 py-1 text-overline text-accent-text">
               ★ Steward
             </span>
           ) : undefined
         }
       />
-      <p className="mt-2 text-sm text-[#38322A]">{HELP_SUMMARY[tier]}</p>
+      <p className="mt-2 text-body text-secondary">{HELP_SUMMARY[tier]}</p>
       {caps.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {caps.filter((c) => c !== "steward").map((c) => (
@@ -42,8 +42,8 @@ export function HelpWithCard() {
         </div>
       )}
       {next && (
-        <p className="mt-3 text-xs text-[#6E6E6E]">
-          At <span className="font-bold">{next.tier}</span>, you can also{" "}
+        <p className="mt-3 text-caption text-muted">
+          At <span className="font-medium">{next.tier}</span>, you can also{" "}
           {next.capabilities.map((c) => CAP_LABEL[c].toLowerCase()).join(" and ")}.
         </p>
       )}

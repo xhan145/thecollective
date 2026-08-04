@@ -17,13 +17,13 @@ export default function HeroShowcase() {
       </div>
 
       {/* Floating chips — hidden below lg so mobile stays simple. */}
-      <div className="mk-float absolute -left-2 top-[18%] hidden rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8]/95 p-3 shadow-[0_14px_36px_rgba(71,52,18,0.12)] backdrop-blur lg:block">
-        <p className="text-[11px] font-extrabold text-[#15803D]">✓ Practice done</p>
-        <p className="mt-0.5 text-[12px] font-bold text-[#38322A]">Said the first sentence</p>
+      <div className="mk-float absolute -left-2 top-[18%] hidden rounded-2xl border border-line bg-surface/95 p-3 shadow-[0_14px_36px_rgba(71,52,18,0.12)] backdrop-blur lg:block">
+        <p className="text-overline text-success-text">✓ Practice done</p>
+        <p className="mt-0.5 text-caption font-medium text-secondary">Said the first sentence</p>
       </div>
-      <div className="mk-float-late absolute -right-3 bottom-[20%] hidden rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8]/95 p-3 shadow-[0_14px_36px_rgba(71,52,18,0.12)] backdrop-blur lg:block">
-        <p className="text-[11px] font-extrabold text-[#B07A00]">Feedback</p>
-        <p className="mt-0.5 max-w-[170px] text-[12px] font-bold leading-4 text-[#38322A]">&ldquo;Clear intro — try a slower pace next.&rdquo;</p>
+      <div className="mk-float-late absolute -right-3 bottom-[20%] hidden rounded-2xl border border-line bg-surface/95 p-3 shadow-[0_14px_36px_rgba(71,52,18,0.12)] backdrop-blur lg:block">
+        <p className="text-overline text-accent-text">Feedback</p>
+        <p className="mt-0.5 max-w-[170px] text-caption font-medium leading-4 text-secondary">&ldquo;Clear intro — try a slower pace next.&rdquo;</p>
       </div>
     </div>
   );

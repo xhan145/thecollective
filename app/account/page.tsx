@@ -44,7 +44,7 @@ export default function AccountPage() {
   }
 
   const field =
-    "min-h-12 w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 text-sm text-[#111111] outline-none focus:border-[#F2A900]";
+    "min-h-12 w-full rounded-2xl border border-line bg-surface-input px-4 text-body text-content outline-none focus:border-accent";
 
   return (
     <AppShell>
@@ -54,23 +54,23 @@ export default function AccountPage() {
         <Card className="flex items-center gap-4 p-5">
           <Avatar name={displayName || currentUser?.displayName} avatarUrl={currentUser?.avatarUrl} size={56} />
           <div className="min-w-0">
-            <p className="truncate text-lg font-extrabold text-[#111111]">{displayName || "You"}</p>
-            {email && <p className="truncate text-sm text-[#6E6E6E]">{email}</p>}
+            <p className="truncate text-heading text-content">{displayName || "You"}</p>
+            {email && <p className="truncate text-body text-muted">{email}</p>}
           </div>
         </Card>
 
         <SectionLabel title="Profile" />
         <Card className="space-y-3 p-4">
           <label className="block">
-            <span className="mb-1.5 block text-sm font-extrabold text-[#111111]">Display name</span>
+            <span className="mb-1.5 block text-body font-semibold text-content">Display name</span>
             <input className={field} value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your name" />
           </label>
           <label className="block">
-            <span className="mb-1.5 block text-sm font-extrabold text-[#111111]">Username</span>
+            <span className="mb-1.5 block text-body font-semibold text-content">Username</span>
             <input className={field} value={username} onChange={(e) => setUsername(e.target.value)} placeholder="username" />
           </label>
           <label className="block">
-            <span className="mb-1.5 block text-sm font-extrabold text-[#111111]">Bio</span>
+            <span className="mb-1.5 block text-body font-semibold text-content">Bio</span>
             <TextArea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} placeholder="What you're practicing right now." />
           </label>
           <Button className="w-full" onClick={save} disabled={saving}>
@@ -79,11 +79,11 @@ export default function AccountPage() {
         </Card>
 
         {supabaseEnabled && (
-          <button onClick={() => void signOut()} className="w-full rounded-full px-4 py-3 text-sm font-extrabold text-[#C2413F]">
+          <button onClick={() => void signOut()} className="w-full rounded-full px-4 py-3 text-body font-semibold text-danger">
             Sign out
           </button>
         )}
-        <Link href="/settings" className="block rounded-full px-4 py-3 text-center text-sm font-extrabold text-[#6E6E6E]">
+        <Link href="/settings" className="block rounded-full px-4 py-3 text-center text-body font-semibold text-muted">
           Back to settings
         </Link>
       </div>

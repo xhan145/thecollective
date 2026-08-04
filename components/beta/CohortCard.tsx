@@ -8,10 +8,10 @@ import type { Cohort, CohortVisibility } from "@/lib/cohorts/types";
 
 // Small warm accent palette. Keyed by cohort.accent string.
 const ACCENT_GRADIENTS: Record<string, string> = {
-  gold: "from-[#FFF1C7] to-[#FFF8EE]",
-  rose: "from-[#FFF0F3] to-[#FFF8EE]",
-  sage: "from-[#EDF6F0] to-[#F7FEFA]",
-  sky: "from-[#EBF4FD] to-[#F5FAFF]",
+  gold: "from-surface-soft to-bg",
+  rose: "from-danger-soft to-bg",
+  sage: "from-success-soft to-success-soft",
+  sky: "from-info-soft to-info-soft",
 };
 
 const DEFAULT_GRADIENT = ACCENT_GRADIENTS.gold;
@@ -49,7 +49,7 @@ export function CohortCard({ cohort }: { cohort: Cohort }) {
         transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
         whileHover={{ y: -3, boxShadow: ELEVATION_HOVER }}
         whileTap={{ scale: 0.99 }}
-        className={`overflow-hidden rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] ${ELEVATION}`}
+        className={`overflow-hidden rounded-[22px] border border-line bg-surface ${ELEVATION}`}
       >
         {/* Accent banner */}
         <div
@@ -59,20 +59,20 @@ export function CohortCard({ cohort }: { cohort: Cohort }) {
 
         <div className="px-5 pb-5 pt-3">
           {/* Name */}
-          <h3 className="font-display text-[19px] font-bold leading-tight tracking-tight text-[#111111]">
+          <h3 className="font-display text-heading leading-tight tracking-tight text-content">
             {cohort.name}
           </h3>
 
           {/* Direction "what it's for" line */}
           {direction && (
-            <p className="mt-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#9B958B]">
+            <p className="mt-1 text-caption font-medium uppercase tracking-[0.12em] text-muted">
               {direction.title}
             </p>
           )}
 
           {/* Description */}
           {cohort.description && (
-            <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#6E6E6E]">
+            <p className="mt-2 line-clamp-2 text-body leading-6 text-muted">
               {cohort.description}
             </p>
           )}

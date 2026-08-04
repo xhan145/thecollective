@@ -31,8 +31,8 @@ export default function AdminPage() {
           <SectionHeader eyebrow="Operations" title="Proof by media type" />
           <div className="mt-3 grid grid-cols-2 gap-2">
             {byType.map((row) => (
-              <p key={row.type} className="surface-row px-3 py-2 text-xs text-[#c8c2b8]">
-                {proofTypeLabels[row.type]} <span className="font-black text-white">{row.count}</span>
+              <p key={row.type} className="surface-row px-3 py-2 text-caption text-subtle">
+                {proofTypeLabels[row.type]} <span className="font-semibold text-accent-on">{row.count}</span>
               </p>
             ))}
           </div>
@@ -41,15 +41,15 @@ export default function AdminPage() {
           <SectionHeader eyebrow="Media safety" title="Recent uploads" />
           <div className="mt-3 space-y-2">
             {demoProofSubmissions.map((proof) => (
-              <p key={proof.id} className="surface-row px-3 py-2 text-sm text-[#c8c2b8]">
+              <p key={proof.id} className="surface-row px-3 py-2 text-body text-subtle">
                 {proofTypeLabels[proof.proofType]} - {proof.promptTitle} - {proof.visibility}
               </p>
             ))}
           </div>
         </div>
         <div className="soft-card p-5">
-          <h2 className="font-black">Storage and moderation reminders</h2>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#c8c2b8]">
+          <h2 className="font-semibold">Storage and moderation reminders</h2>
+          <ul className="mt-3 space-y-2 text-body leading-6 text-subtle">
             <li>Create a private Supabase Storage bucket named proof-media.</li>
             <li>Store storage paths in the database, not public URLs.</li>
             <li>Use signed URLs for temporary viewing later.</li>

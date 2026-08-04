@@ -18,8 +18,8 @@ export default function GiveFeedbackPage() {
         <Card className="p-5 pixel-card">
           <ul className="space-y-2">
             {PROMPTS.map((p) => (
-              <li key={p} className="flex items-start gap-2 text-sm leading-6 text-[#38322A]">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#F2A900]" aria-hidden />
+              <li key={p} className="flex items-start gap-2 text-body leading-6 text-secondary">
+                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
                 {p}
               </li>
             ))}

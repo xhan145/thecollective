@@ -55,7 +55,7 @@ export function CollectiveWordmark() {
   return (
     <div className="flex items-center gap-2.5" aria-label="Collective">
       <CollectiveMiniMark className="h-8 w-8" />
-      <span className="text-[18px] font-extrabold tracking-tight text-[#111111]">Collective</span>
+      <span className="text-heading tracking-tight text-content">Collective</span>
     </div>
   );
 }
@@ -64,15 +64,15 @@ export function CollectiveSheetHeader({ title, subtitle }: { title: string; subt
   return (
     <div className="text-center">
       <CollectiveMiniMark className="mx-auto h-10 w-10" />
-      <h2 className="mt-3 text-[24px] font-extrabold leading-tight text-[#111111]">{title}</h2>
-      {subtitle && <p className="mx-auto mt-2 max-w-[300px] text-sm leading-6 text-[#6E6E6E]">{subtitle}</p>}
+      <h2 className="mt-3 text-title leading-tight text-content">{title}</h2>
+      {subtitle && <p className="mx-auto mt-2 max-w-[300px] text-body leading-6 text-muted">{subtitle}</p>}
     </div>
   );
 }
 
 export function CollectiveSuccessMark({ children }: { children?: ReactNode }) {
   return (
-    <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-[#FFF1C7] text-[#F2A900] shadow-[0_18px_48px_rgba(242,169,0,0.18)]">
+    <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-surface-soft text-accent shadow-[0_18px_48px_rgba(242,169,0,0.18)]">
       {children || <CollectiveMiniMark className="h-12 w-12" />}
     </div>
   );

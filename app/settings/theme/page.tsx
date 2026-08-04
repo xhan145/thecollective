@@ -28,15 +28,15 @@ export default function ThemePage() {
                 onClick={() => setTheme(t.key)}
                 aria-pressed={active}
                 className={`flex w-full items-center gap-3 rounded-2xl border p-4 text-left transition-colors ${
-                  active ? "border-[#F2A900]/60 bg-[#FFF1C7]/50" : "border-[#EFE7D8] bg-[#FFFDF8] hover:border-[#F2A900]/30"
+                  active ? "border-accent/60 bg-surface-soft/50" : "border-line bg-surface hover:border-accent/30"
                 }`}
               >
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#FFF1C7] text-[#C8861A] pixel-icon-tile">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-surface-soft text-accent-text pixel-icon-tile">
                   <Icon size={16} />
                 </span>
                 <span>
-                  <span className="block text-sm font-extrabold text-[#111111]">{t.label}</span>
-                  <span className="block text-xs text-[#6E6E6E]">{t.hint}</span>
+                  <span className="block text-body font-semibold text-content">{t.label}</span>
+                  <span className="block text-caption text-muted">{t.hint}</span>
                 </span>
               </button>
             );

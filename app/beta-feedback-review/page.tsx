@@ -19,7 +19,7 @@ export default function BetaFeedbackReviewPage() {
         ) : (
           <>
             <section className="space-y-3">
-              <h2 className="text-lg font-extrabold text-[#111111]">AI Feedback Review</h2>
+              <h2 className="text-heading text-content">AI Feedback Review</h2>
               {aiFeedback.length ? (
                 aiFeedback.map((item) => {
                   const interaction = aiInteractions.find((entry) => entry.id === item.aiInteractionId);
@@ -30,13 +30,13 @@ export default function BetaFeedbackReviewPage() {
                           <Badge>{item.feature.replaceAll("_", " ").toLowerCase()}</Badge>
                           <Badge tone={item.helpfulness === "YES" ? "green" : "gold"}>{item.helpfulness.replace("_", " ").toLowerCase()}</Badge>
                         </div>
-                        <span className="text-xs font-bold text-[#6E6E6E]">{new Date(item.createdAt).toLocaleDateString()}</span>
+                        <span className="text-caption font-medium text-muted">{new Date(item.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <p className="mt-3 text-sm font-extrabold text-[#111111]">{item.userDisplayName}</p>
-                      {item.issueType && <p className="mt-1 text-xs font-bold text-[#6E6E6E]">Issue: {item.issueType.replaceAll("_", " ").toLowerCase()}</p>}
-                      {item.comment && <p className="mt-3 text-sm leading-6 text-[#38322A]">{item.comment}</p>}
+                      <p className="mt-3 text-body font-semibold text-content">{item.userDisplayName}</p>
+                      {item.issueType && <p className="mt-1 text-caption font-medium text-muted">Issue: {item.issueType.replaceAll("_", " ").toLowerCase()}</p>}
+                      {item.comment && <p className="mt-3 text-body leading-6 text-secondary">{item.comment}</p>}
                       {interaction && (
-                        <p className="mt-3 rounded-[16px] bg-[#FFF8EE] p-3 text-xs leading-5 text-[#6E6E6E]">
+                        <p className="mt-3 rounded-[16px] bg-bg p-3 text-caption leading-5 text-muted">
                           Source: {interaction.sourceType.replaceAll("_", " ").toLowerCase()} · {interaction.inputSummary}
                         </p>
                       )}
@@ -49,16 +49,16 @@ export default function BetaFeedbackReviewPage() {
             </section>
 
             <section className="space-y-3">
-              <h2 className="text-lg font-extrabold text-[#111111]">App feedback</h2>
+              <h2 className="text-heading text-content">App feedback</h2>
               {snapshot.appFeedback.length ? (
                 snapshot.appFeedback.map((item) => (
                   <Card key={item.id} className="p-4">
                     <div className="flex items-start justify-between gap-3">
                       <Badge>{item.category}</Badge>
-                      <span className="text-xs font-bold text-[#6E6E6E]">{new Date(item.createdAt).toLocaleDateString()}</span>
+                      <span className="text-caption font-medium text-muted">{new Date(item.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-[#38322A]">{item.body}</p>
-                    {item.route && <p className="mt-2 text-xs text-[#6E6E6E]">{item.route}</p>}
+                    <p className="mt-3 text-body leading-6 text-secondary">{item.body}</p>
+                    {item.route && <p className="mt-2 text-caption text-muted">{item.route}</p>}
                   </Card>
                 ))
               ) : (

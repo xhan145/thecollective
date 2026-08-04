@@ -46,21 +46,21 @@ export default function PinnedProofsPage() {
         <PageHeader title="Pinned proofs" subtitle={`Highlight up to ${MAX_PINS} proofs on your Passport.`} />
 
         {!client && (
-          <Card className="p-4 text-sm text-[#6E6E6E]">Pinning saves to your account — connect Collective to use it. In demo mode you can still explore your proof below.</Card>
+          <Card className="p-4 text-body text-muted">Pinning saves to your account — connect Collective to use it. In demo mode you can still explore your proof below.</Card>
         )}
 
         {myProofs.length === 0 ? (
-          <Card className="p-5 text-sm text-[#6E6E6E]">You don’t have any proof yet. Once you submit proof, you can pin your favorites here.</Card>
+          <Card className="p-5 text-body text-muted">You don’t have any proof yet. Once you submit proof, you can pin your favorites here.</Card>
         ) : (
           <div className="space-y-2">
             {myProofs.map((p) => {
               const isPinned = pinned.has(p.id);
               const atLimit = !isPinned && pinned.size >= MAX_PINS;
               return (
-                <div key={p.id} className="flex items-center gap-3 rounded-2xl bg-[#FFFDF8] p-3 pixel-card">
+                <div key={p.id} className="flex items-center gap-3 rounded-2xl bg-surface p-3 pixel-card">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-extrabold text-[#111111]">{p.title}</p>
-                    <p className="text-xs text-[#6E6E6E]">{MEDIA_LABEL[p.mediaType] ?? "Proof"}</p>
+                    <p className="truncate text-body font-semibold text-content">{p.title}</p>
+                    <p className="text-caption text-muted">{MEDIA_LABEL[p.mediaType] ?? "Proof"}</p>
                   </div>
                   <button
                     type="button"
@@ -68,8 +68,8 @@ export default function PinnedProofsPage() {
                     disabled={!client || busy || atLimit}
                     aria-pressed={isPinned}
                     aria-label={isPinned ? "Unpin proof" : "Pin proof"}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-extrabold transition-colors disabled:opacity-40 ${
-                      isPinned ? "bg-[#FFF1C7] text-[#7A5300]" : "bg-[#FFF8EE] text-[#6E6E6E] hover:text-[#111111]"
+                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-caption font-semibold transition-colors disabled:opacity-40 ${
+                      isPinned ? "bg-surface-soft text-accent-text" : "bg-bg text-muted hover:text-content"
                     }`}
                   >
                     {isPinned ? "Unpin" : atLimit ? "Limit" : "Pin"}

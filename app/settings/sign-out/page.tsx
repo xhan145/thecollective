@@ -21,7 +21,7 @@ export default function SignOutPage() {
       <div className="space-y-5">
         <PageHeader title={isDemoUser ? "Leave demo" : "Sign out"} subtitle="You can always come back to your progress." />
         <Card className="space-y-4 p-5 pixel-card">
-          <p className="text-sm leading-6 text-[#6E6E6E]">
+          <p className="text-body leading-6 text-muted">
             {isDemoUser
               ? "Leaving demo mode returns you to the start. Your demo exploration isn’t saved."
               : "Signing out keeps everything safe — your proof, feedback, and trust will be here when you return."}
@@ -29,7 +29,7 @@ export default function SignOutPage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full rounded-full bg-[#DC2626] px-4 py-3 text-center text-sm font-extrabold text-white transition-colors hover:bg-[#b91c1c]"
+            className="w-full rounded-full bg-danger px-4 py-3 text-center text-body font-semibold text-accent-on transition-colors hover:bg-danger"
           >
             {isDemoUser ? "Leave demo" : "Sign out"}
           </button>

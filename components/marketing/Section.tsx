@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
 const BG: Record<string, string> = {
-  cream: "bg-[#FFF8EE]",
-  surface: "bg-[#FFFDF8]",
-  gold: "bg-[#FFF1C7]",
+  cream: "bg-bg",
+  surface: "bg-surface",
+  gold: "bg-surface-soft",
 };
 
 export default function Section({

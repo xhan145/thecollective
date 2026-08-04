@@ -34,12 +34,12 @@ export default function NotesPage() {
                     <Avatar name={other?.displayName} avatarUrl={other?.avatarUrl} size={40} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="truncate text-sm font-extrabold text-[#111111]">{other?.displayName || "A member"}</span>
+                        <span className="truncate text-body font-semibold text-content">{other?.displayName || "A member"}</span>
                         <Badge tone={c.kind === "feedback_request" ? "gold" : "muted"}>
                           {c.kind === "feedback_request" ? "Feedback request" : "Peer note"}
                         </Badge>
                       </div>
-                      {last && <p className="mt-0.5 truncate text-xs text-[#6E6E6E]">{last.body}</p>}
+                      {last && <p className="mt-0.5 truncate text-caption text-muted">{last.body}</p>}
                     </div>
                   </Card>
                 </Link>

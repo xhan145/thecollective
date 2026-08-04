@@ -43,21 +43,21 @@ export default function PracticePage() {
 
         {nextPrompt && (
           <HeroCard>
-            <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#B07A00]">Your next step</p>
-            <h2 className="mt-1.5 font-display text-[22px] font-bold leading-snug text-[#111111]">
+            <p className="text-caption font-semibold uppercase tracking-[0.14em] text-accent-text">Your next step</p>
+            <h2 className="mt-1.5 font-display text-heading leading-snug text-content">
               {masteryMode && nextPrompt.levelName ? nextPrompt.levelName : nextPrompt.title}
             </h2>
             {masteryMode && nextPrompt.masteryGoal ? (
-              <p className="mt-1.5 text-sm leading-6 text-[#6E6E6E]">{nextPrompt.masteryGoal}</p>
+              <p className="mt-1.5 text-body leading-6 text-muted">{nextPrompt.masteryGoal}</p>
             ) : (
-              <p className="mt-1.5 text-sm leading-6 text-[#6E6E6E]">{nextPrompt.description || nextPrompt.prompt}</p>
+              <p className="mt-1.5 text-body leading-6 text-muted">{nextPrompt.description || nextPrompt.prompt}</p>
             )}
-            <p className="mt-2 text-xs font-bold text-[#9B958B]">
+            <p className="mt-2 text-caption font-medium text-muted">
               {nextPrompt.estimatedMinutes} min{nextPrompt.difficulty ? ` · ${nextPrompt.difficulty}` : ""} · low pressure
             </p>
             <Link
               href={`/proof/new/${nextPrompt.id}`}
-              className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-[#FFB000] to-[#F2A900] px-5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)] transition-all hover:-translate-y-[1px]"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent-strong to-accent px-5 text-body font-semibold text-accent-on shadow-[0_10px_24px_rgba(242,169,0,0.32)] transition-all hover:-translate-y-[1px]"
             >
               Begin
             </Link>
@@ -95,7 +95,7 @@ export default function PracticePage() {
             {tips.length > 0 ? (
               tips.map((tip) => <TipCard key={tip.id} tip={tip} />)
             ) : (
-              <p className="text-sm leading-6 text-[#6E6E6E]">
+              <p className="text-body leading-6 text-muted">
                 {canShareTip ? "No tips yet — be the first to share what helped." : "No tips yet."}
               </p>
             )}

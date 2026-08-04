@@ -31,7 +31,7 @@ export function Avatar({
   return (
     <span
       style={{ width: px, height: px, fontSize: Math.max(10, Math.round(size * 0.4)) }}
-      className="grid shrink-0 place-items-center rounded-full bg-[#FFF1C7] font-extrabold text-[#8A5D00]"
+      className="grid shrink-0 place-items-center rounded-full bg-surface-soft font-semibold text-accent-text"
     >
       {initial}
     </span>

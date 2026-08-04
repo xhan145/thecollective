@@ -8,9 +8,9 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-b border-[#EFE7D8]/60 py-3 last:border-b-0">
-      <span className="text-xs font-bold text-[#9B958B]">{label}</span>
-      <span className="text-right text-sm font-extrabold text-[#111111]">{value}</span>
+    <div className="flex items-center justify-between gap-3 border-b border-line/60 py-3 last:border-b-0">
+      <span className="text-caption font-medium text-muted">{label}</span>
+      <span className="text-right text-body font-semibold text-content">{value}</span>
     </div>
   );
 }
@@ -41,7 +41,7 @@ export default function AccountInformationPage() {
           <Row label="Beta access" value={currentUser?.betaAccess ? "Active" : "—"} />
           <Row label="Joined" value={joined ? new Date(joined).toLocaleDateString() : "—"} />
         </Card>
-        <p className="px-1 text-xs leading-5 text-[#9B958B]">Update your password under Settings → Change password.</p>
+        <p className="px-1 text-caption leading-5 text-muted">Update your password under Settings → Change password.</p>
       </div>
     </AppShell>
   );

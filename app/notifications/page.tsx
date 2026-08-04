@@ -55,7 +55,7 @@ export default function NotificationsPage() {
           subtitle="When members engage with your practice, it shows up here."
           action={
             unread > 0 ? (
-              <button onClick={() => markAllNotificationsRead()} className="text-sm font-extrabold text-[#F2A900]">
+              <button onClick={() => markAllNotificationsRead()} className="text-body font-semibold text-accent">
                 Mark all read
               </button>
             ) : undefined
@@ -72,20 +72,20 @@ export default function NotificationsPage() {
               const actor = actorFor(n.actorId);
               return (
                 <Link key={n.id} href={hrefFor(n)} onClick={() => markNotificationRead(n.id)}>
-                  <Card interactive className={`flex items-center gap-3 p-4 ${!n.readAt ? "ring-1 ring-[#F2A900]/40" : ""}`}>
+                  <Card interactive className={`flex items-center gap-3 p-4 ${!n.readAt ? "ring-1 ring-accent/40" : ""}`}>
                     <div className="relative">
                       <Avatar name={actor?.displayName} avatarUrl={actor?.avatarUrl} size={40} />
-                      <span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-[#FFF1C7] text-[#7A5300]">
+                      <span className="absolute -bottom-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-surface-soft text-accent-text">
                         {iconFor(String(n.type))}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-extrabold text-[var(--ink,#111111)]">{n.title}</p>
-                      {n.body && <p className="truncate text-xs text-[var(--muted,#6E6E6E)]">{n.body}</p>}
+                      <p className="truncate text-body font-semibold text-content">{n.title}</p>
+                      {n.body && <p className="truncate text-caption text-muted">{n.body}</p>}
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <span className="text-[11px] text-[var(--muted,#6E6E6E)]">{timeAgo(n.createdAt)}</span>
-                      {!n.readAt && <span className="h-2 w-2 rounded-full bg-[#F2A900]" />}
+                      <span className="text-overline text-muted">{timeAgo(n.createdAt)}</span>
+                      {!n.readAt && <span className="h-2 w-2 rounded-full bg-accent" />}
                     </div>
                   </Card>
                 </Link>

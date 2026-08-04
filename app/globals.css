@@ -2,24 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Legacy variable names, kept as ALIASES of the semantic tokens defined below
+   (custom properties resolve lazily, so forward references are fine). This makes
+   every rule in this file theme-aware instead of light-only, and leaves exactly
+   one source of truth. Do not add new colours here — add a --c-* token. */
 :root {
-  color-scheme: light;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --bg: #fff8ee;
-  --surface-elevated: #fffdf8;
-  --surface-soft: #fff1c7;
-  --surface-card: rgba(255, 253, 248, 0.9);
-  --surface-muted: rgba(255, 241, 199, 0.55);
-  --text-primary: #111111;
-  --text-secondary: #38322a;
-  --text-tertiary: #6e6e6e;
-  --accent: #f2a900;
-  --accent-soft: #fff1c7;
-  --success: #22c55e;
-  --warning: #ffb000;
-  --error: #c2413f;
-  --line: #efe7d8;
-  --overlay: rgba(255, 248, 238, 0.76);
+  --bg: var(--c-bg);
+  --surface-elevated: var(--c-surface);
+  --surface-soft: var(--c-surface-soft);
+  --surface-card: color-mix(in srgb, var(--c-surface) 90%, transparent);
+  --surface-muted: color-mix(in srgb, var(--c-surface-soft) 55%, transparent);
+  --text-primary: var(--c-text);
+  --text-secondary: var(--c-text-secondary);
+  --text-tertiary: var(--c-text-muted);
+  --accent: var(--c-accent);
+  --accent-soft: var(--c-accent-soft);
+  --success: var(--c-success);
+  --warning: var(--c-accent);
+  --error: var(--c-danger);
+  --line: var(--c-line);
+  --overlay: color-mix(in srgb, var(--c-bg) 76%, transparent);
 }
 
 * { box-sizing: border-box; }
@@ -29,10 +32,13 @@ html { background: var(--bg); }
 body {
   margin: 0;
   min-height: 100vh;
-  background: #fff8ee;
+  background: var(--c-bg);
   color: var(--text-primary);
   font-feature-settings: "ss01" on, "cv01" on;
   text-rendering: optimizeLegibility;
+  /* Fraunces carries a real optical-size axis; let the browser use it so large
+     display sizes get tighter, more refined letterforms automatically. */
+  font-optical-sizing: auto;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -119,6 +125,8 @@ button, input, textarea, select { font: inherit; }
   transition: transform .16s ease, opacity .16s ease, background .16s ease, border-color .16s ease;
 }
 
+/* LEGACY (pre-beta dark design, used only by legacy routes — see R8 legacy-route
+   removal). Left literal on purpose; not part of the semantic token system. */
 .btn-primary {
   background: linear-gradient(135deg, #f6f3ec, #d8d4ff);
   color: #11151d;
@@ -193,7 +201,7 @@ button, input, textarea, select { font: inherit; }
 
 .pill-neutral { background: rgba(255, 255, 255, .055); color: var(--text-secondary); }
 .pill-muted { background: rgba(255, 255, 255, .04); color: var(--text-tertiary); }
-.pill-accent { background: rgba(141, 138, 251, .15); color: var(--accent-soft); }
+.pill-accent { background: rgba(141, 138, 251, .15); color: var(--c-accent-text); }
 .pill-success { background: rgba(117, 209, 163, .12); color: var(--success); }
 .pill-warning { background: rgba(233, 182, 107, .12); color: var(--warning); }
 
@@ -210,7 +218,7 @@ button, input, textarea, select { font: inherit; }
   font-weight: 900;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--accent-soft);
+  color: var(--c-accent-text);
 }
 
 .section-title {
@@ -253,59 +261,116 @@ button, input, textarea, select { font: inherit; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ============================================================
-   Theme layer — light (default) + dark. The beta UI uses literal
-   brand hex utilities (e.g. bg-[#FFFDF8]); under .dark we remap the
-   common ones to warm-dark tokens, which themes the core surfaces in
-   bulk. Brand gold (#F2A900 / #FFB000) stays constant in both modes.
+   SEMANTIC THEME TOKENS — the single source of truth for colour.
+   Components consume these through Tailwind utilities (bg-surface,
+   text-muted, border-line ...) and must NEVER hardcode a hex.
+   `npm run check:design` fails the build if they do.
+
+   Both themes are first-class: switching .dark flips the token values
+   wholesale, so a surface can never be "missed" the way it was under
+   the old per-hex remap (the root cause of issue #8 / PR #20).
+
+   Contrast is asserted numerically in scripts/check-design-tokens.ts —
+   every text/background pair here is verified >=4.5:1 (body) or
+   >=3:1 (large/secondary) in BOTH themes.
    ============================================================ */
 :root {
-  --c-bg: #FFF8EE;
-  --c-surface: #FFFDF8;
-  --c-soft: #FFF1C7;
-  --c-ink: #111111;
-  --c-muted: #6E6E6E;
-  --c-line: #EFE7D8;
-  --c-input: #FFFFFF;
+  color-scheme: light;
+  --c-bg-rgb: 255 248 238;
+  --c-bg: rgb(var(--c-bg-rgb));
+  --c-surface-rgb: 255 253 248;
+  --c-surface: rgb(var(--c-surface-rgb));
+  --c-surface-soft-rgb: 255 241 199;
+  --c-surface-soft: rgb(var(--c-surface-soft-rgb));
+  --c-surface-input-rgb: 255 255 255;
+  --c-surface-input: rgb(var(--c-surface-input-rgb));
+  --c-text-rgb: 17 17 17;
+  --c-text: rgb(var(--c-text-rgb));
+  --c-text-secondary-rgb: 56 50 42;
+  --c-text-secondary: rgb(var(--c-text-secondary-rgb));
+  --c-text-muted-rgb: 92 87 79;   /* was #6E6E6E/#9B958B — #9B958B failed AA at 2.92 */
+  --c-text-muted: rgb(var(--c-text-muted-rgb));
+  --c-text-subtle-rgb: 110 110 110;
+  --c-text-subtle: rgb(var(--c-text-subtle-rgb));
+  --c-accent-rgb: 242 169 0;       /* fills/indicators only — fails as text on light */
+  --c-accent: rgb(var(--c-accent-rgb));
+  --c-accent-text-rgb: 122 83 0;  /* accent-coloured TEXT (AA-safe) */
+  --c-accent-text: rgb(var(--c-accent-text-rgb));
+  --c-accent-soft-rgb: 255 241 199;
+  --c-accent-soft: rgb(var(--c-accent-soft-rgb));
+  --c-on-accent-rgb: 42 29 0;   /* text ON an accent fill; white fails (2.01) */
+  --c-on-accent: rgb(var(--c-on-accent-rgb));
+  --c-scrim-rgb: 0 0 0;         /* modal/media backdrop — black in BOTH themes by design */
+  --c-scrim: rgb(var(--c-scrim-rgb));
+  --c-accent-strong-rgb: 255 176 0;  /* 2nd gold stop, so CTA gradients aren't flat */
+  --c-accent-strong: rgb(var(--c-accent-strong-rgb));
+  --c-line-rgb: 223 211 188;   /* was #EFE7D8 — only 1.21 vs surface, effectively invisible */
+  --c-line: rgb(var(--c-line-rgb));
+  --c-success-rgb: 34 197 94;
+  --c-success: rgb(var(--c-success-rgb));
+  --c-success-text-rgb: 21 128 61;
+  --c-success-text: rgb(var(--c-success-text-rgb));
+  --c-success-soft-rgb: 232 248 238;
+  --c-success-soft: rgb(var(--c-success-soft-rgb));
+  --c-danger-rgb: 194 65 63;
+  --c-danger: rgb(var(--c-danger-rgb));
+  --c-danger-text-rgb: 180 68 63;
+  --c-danger-text: rgb(var(--c-danger-text-rgb));
+  --c-danger-soft-rgb: 255 240 243;
+  --c-danger-soft: rgb(var(--c-danger-soft-rgb));
+  --c-info-soft-rgb: 235 244 253;
+  --c-info-soft: rgb(var(--c-info-soft-rgb));
 }
 .dark {
   color-scheme: dark;
-  --c-bg: #15110A;
-  --c-surface: #211B12;
-  --c-soft: #2C2413;
-  --c-ink: #F6F1E7;
-  --c-muted: #B7AC99;
-  --c-line: #352D20;
-  --c-input: #1C1710;
+  --c-bg-rgb: 21 17 10;
+  --c-bg: rgb(var(--c-bg-rgb));
+  --c-surface-rgb: 33 27 18;
+  --c-surface: rgb(var(--c-surface-rgb));
+  --c-surface-soft-rgb: 58 47 24;   /* lifted from #2C2413 for real separation */
+  --c-surface-soft: rgb(var(--c-surface-soft-rgb));
+  --c-surface-input-rgb: 28 23 16;
+  --c-surface-input: rgb(var(--c-surface-input-rgb));
+  --c-text-rgb: 246 241 231;
+  --c-text: rgb(var(--c-text-rgb));
+  --c-text-secondary-rgb: 214 206 190;
+  --c-text-secondary: rgb(var(--c-text-secondary-rgb));
+  --c-text-muted-rgb: 183 172 153;
+  --c-text-muted: rgb(var(--c-text-muted-rgb));
+  --c-text-subtle-rgb: 156 146 133;
+  --c-text-subtle: rgb(var(--c-text-subtle-rgb));
+  --c-accent-rgb: 255 206 92;         /* desaturated/lightened per dark-mode guidance */
+  --c-accent: rgb(var(--c-accent-rgb));
+  --c-accent-text-rgb: 255 206 92;
+  --c-accent-text: rgb(var(--c-accent-text-rgb));
+  --c-accent-soft-rgb: 58 47 24;
+  --c-accent-soft: rgb(var(--c-accent-soft-rgb));
+  --c-on-accent-rgb: 42 29 0;   /* accent stays a bright gold in dark, so ink stays dark */
+  --c-on-accent: rgb(var(--c-on-accent-rgb));
+  --c-scrim-rgb: 0 0 0;
+  --c-scrim: rgb(var(--c-scrim-rgb));
+  --c-accent-strong-rgb: 232 175 60;
+  --c-accent-strong: rgb(var(--c-accent-strong-rgb));
+  --c-line-rgb: 74 63 44;           /* was #352D20 — invisible at 1.26 vs surface */
+  --c-line: rgb(var(--c-line-rgb));
+  --c-success-rgb: 74 222 128;
+  --c-success: rgb(var(--c-success-rgb));
+  --c-success-text-rgb: 134 239 172;
+  --c-success-text: rgb(var(--c-success-text-rgb));
+  --c-success-soft-rgb: 22 48 31;
+  --c-success-soft: rgb(var(--c-success-soft-rgb));
+  --c-danger-rgb: 248 113 113;
+  --c-danger: rgb(var(--c-danger-rgb));
+  --c-danger-text-rgb: 252 165 165;
+  --c-danger-text: rgb(var(--c-danger-text-rgb));
+  --c-danger-soft-rgb: 58 26 26;
+  --c-danger-soft: rgb(var(--c-danger-soft-rgb));
+  --c-info-soft-rgb: 22 35 58;
+  --c-info-soft: rgb(var(--c-info-soft-rgb));
 }
 /* .dark sits on <html>; paint both so the area around the phone frame is never light. */
 .dark, .dark body { background-color: var(--c-bg); }
-.dark body { color: var(--c-ink); }
-
-/* Backgrounds */
-.dark .bg-\[\#FFF8EE\],
-.dark .bg-\[\#FFF8EE\]\/92,
-.dark .bg-\[\#FFF8EE\]\/95 { background-color: var(--c-bg) !important; }
-.dark .bg-\[\#FFFDF8\],
-.dark .bg-\[\#FFFDF8\]\/95,
-.dark .bg-\[\#FFFDF8\]\/90 { background-color: var(--c-surface) !important; }
-.dark .bg-\[\#FFF1C7\] { background-color: var(--c-soft) !important; }
-.dark .bg-\[\#FFE7AE\] { background-color: var(--c-soft) !important; }
-.dark .bg-white { background-color: var(--c-input) !important; }
-
-/* Text */
-.dark .text-\[\#111111\],
-.dark .text-\[\#38322A\] { color: var(--c-ink) !important; }
-.dark .text-\[\#6E6E6E\] { color: var(--c-muted) !important; }
-
-/* Borders + rings */
-.dark .border-\[\#EFE7D8\],
-.dark .border-\[\#EFE7D8\]\/70 { border-color: var(--c-line) !important; }
-.dark .border-\[\#F6E7C8\] { border-color: var(--c-line) !important; }
-
-/* HeroCard gradient (Slice-1 redesign) — keep it a warm-dark surface in dark mode
-   so remapped near-white text stays legible (not light-on-cream). */
-.dark .from-\[\#FFF1C7\] { --tw-gradient-from: var(--c-soft) var(--tw-gradient-from-position) !important; }
-.dark .to-\[\#FFFDF8\] { --tw-gradient-to: var(--c-surface) var(--tw-gradient-to-position) !important; }
+.dark body { color: var(--c-text); }
 
 /* ============================================================
    Pixel-soft layer — a subtle retro-handheld influence, configurable via
@@ -348,7 +413,7 @@ html[data-pixel-grid="off"] .pixel-grid-bg { background-image: none; }
 
 /* Opt-in utility classes (components adopt these as screens are updated). */
 .pixel-card {
-  border: var(--pixel-border-size) solid #efe7d8;
+  border: var(--pixel-border-size) solid var(--c-line);
   box-shadow: var(--retro-shadow);
   border-radius: calc(24px - var(--pixel-radius-step));
 }
@@ -356,7 +421,7 @@ html[data-pixel-grid="off"] .pixel-grid-bg { background-image: none; }
   box-shadow: var(--retro-shadow);
 }
 .pixel-icon-tile {
-  border: var(--pixel-border-size) solid #efe7d8;
+  border: var(--pixel-border-size) solid var(--c-line);
   border-radius: calc(16px - var(--pixel-radius-step));
 }
 .pixel-corner {
@@ -369,7 +434,7 @@ html[data-pixel-grid="off"] .pixel-grid-bg { background-image: none; }
   right: 5px;
   width: 4px;
   height: 4px;
-  background: #f2a900;
+  background: var(--c-accent);
   opacity: var(--pixel-intensity);
   pointer-events: none;
 }
@@ -462,7 +527,7 @@ html[data-density="comfortable"] { --space-density: 1; }
 
 /* Gradient heading utility — static, contrast-safe (ink → deep gold). */
 .text-gradient-gold {
-  background-image: linear-gradient(100deg, #111111 0%, #111111 52%, #8a5d00 100%);
+  background-image: linear-gradient(100deg, var(--c-text) 0%, var(--c-text) 52%, #8a5d00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

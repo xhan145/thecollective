@@ -60,26 +60,26 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
     }
   }
 
-  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold transition";
+  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-caption font-semibold transition";
 
   return (
     <Card className="p-4 space-y-3">
       {/* Author row */}
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs font-extrabold text-[#111111]">{authorName}</span>
-        <span className="text-[#D9CDB8]">·</span>
-        <span className="text-xs text-[#9B958B]">
+        <span className="text-caption font-semibold text-content">{authorName}</span>
+        <span className="text-subtle">·</span>
+        <span className="text-caption text-muted">
           <TimeAgo iso={tip.createdAt} />
         </span>
 
         {/* Level chip — only shown if author is ahead or at same level */}
         {relation === "ahead" && (
-          <span className="inline-flex w-fit items-center rounded-full bg-[#FFF1C7] px-2.5 py-0.5 text-[10px] font-extrabold text-[#7A5300]">
+          <span className="inline-flex w-fit items-center rounded-full bg-surface-soft px-2.5 py-0.5 text-overline text-accent-text">
             ▲ Learn from
           </span>
         )}
         {relation === "same" && (
-          <span className="inline-flex w-fit items-center rounded-full bg-[#F1F0EC] px-2.5 py-0.5 text-[10px] font-extrabold text-[#6E6E6E]">
+          <span className="inline-flex w-fit items-center rounded-full bg-surface-soft px-2.5 py-0.5 text-overline text-muted">
             ● Around your level
           </span>
         )}
@@ -87,7 +87,7 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
       </div>
 
       {/* Tip body */}
-      <p className="text-sm leading-6 text-[#38322A]">{tip.body}</p>
+      <p className="text-body leading-6 text-secondary">{tip.body}</p>
 
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
@@ -96,7 +96,7 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
             type="button"
             onClick={() => toggleUseful(tip.id, "clear", "tip")}
             aria-pressed={useful}
-            className={`${base} ${useful ? "bg-[#F2A900] text-white" : "bg-[#FFF1C7] text-[#7A5300]"}`}
+            className={`${base} ${useful ? "bg-accent text-accent-on" : "bg-surface-soft text-accent-text"}`}
           >
             {useful ? "Marked useful" : "Useful"}
           </button>
@@ -106,13 +106,13 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
           <button
             type="button"
             onClick={handleReport}
-            className={`${base} border border-[#EFE7D8] bg-[#FFFDF8] text-[#9B958B]`}
+            className={`${base} border border-line bg-surface text-muted`}
           >
             Report
           </button>
         )}
         {reported && (
-          <span className="text-xs text-[#9B958B] py-1.5 px-3">Reported</span>
+          <span className="text-caption text-muted py-1.5 px-3">Reported</span>
         )}
       </div>
     </Card>

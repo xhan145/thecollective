@@ -20,10 +20,10 @@ import type { Proof } from "@/lib/betaTypes";
 
 // Accent gradients keyed by cohort.accent — mirrors CohortCard
 const ACCENT_GRADIENTS: Record<string, string> = {
-  gold: "from-[#FFF1C7] to-[#FFF8EE]",
-  rose: "from-[#FFF0F3] to-[#FFF8EE]",
-  sage: "from-[#EDF6F0] to-[#F7FEFA]",
-  sky: "from-[#EBF4FD] to-[#F5FAFF]",
+  gold: "from-surface-soft to-bg",
+  rose: "from-danger-soft to-bg",
+  sage: "from-success-soft to-success-soft",
+  sky: "from-info-soft to-info-soft",
 };
 const DEFAULT_GRADIENT = ACCENT_GRADIENTS.gold;
 
@@ -159,26 +159,26 @@ export default function CohortDetailPage() {
       <div className="space-y-6">
         {/* ---- Header ---- */}
         <Reveal>
-          <div className="overflow-hidden rounded-[22px] border border-[#EFE7D8] bg-[#FFFDF8] shadow-[0_1px_2px_rgba(71,52,18,0.06),0_10px_30px_rgba(71,52,18,0.08)]">
+          <div className="overflow-hidden rounded-[22px] border border-line bg-surface shadow-[0_1px_2px_rgba(71,52,18,0.06),0_10px_30px_rgba(71,52,18,0.08)]">
             {/* Accent banner */}
             <div className={`h-14 w-full bg-gradient-to-r ${gradient}`} aria-hidden />
 
             <div className="px-5 pb-5 pt-4">
               {/* Name */}
-              <h1 className="font-display text-[26px] font-bold leading-tight tracking-tight text-[#111111]">
+              <h1 className="font-display text-title leading-tight tracking-tight text-content">
                 {cohort.name}
               </h1>
 
               {/* Direction "what it's for" */}
               {direction && (
-                <p className="mt-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#9B958B]">
+                <p className="mt-1 text-caption font-medium uppercase tracking-[0.12em] text-muted">
                   {direction.title}
                 </p>
               )}
 
               {/* Description */}
               {cohort.description && (
-                <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{cohort.description}</p>
+                <p className="mt-2 text-body leading-6 text-muted">{cohort.description}</p>
               )}
 
               {/* Milestone stamp */}
@@ -191,7 +191,7 @@ export default function CohortDetailPage() {
               {/* Join / membership controls */}
               <div className="mt-4">
                 {actionError && (
-                  <p className="mb-3 text-sm text-[#C0392B]" role="alert">
+                  <p className="mb-3 text-body text-danger" role="alert">
                     {actionError}
                   </p>
                 )}
@@ -232,7 +232,7 @@ export default function CohortDetailPage() {
                       </Button>
                     )}
                     {cohort.visibility === "invite" && (
-                      <p className="text-sm text-[#9B958B]">
+                      <p className="text-body text-muted">
                         This cohort is invite only. Ask a member to share a code.
                       </p>
                     )}
@@ -240,7 +240,7 @@ export default function CohortDetailPage() {
                 )}
 
                 {!isMember && requestSent && (
-                  <p className="text-sm font-semibold text-[#17743B]">
+                  <p className="text-body font-semibold text-success-text">
                     Request sent — the owner will review it shortly.
                   </p>
                 )}
@@ -248,7 +248,7 @@ export default function CohortDetailPage() {
                 {isMember && !isOwner && (
                   <Button
                     variant="quiet"
-                    className="text-[#9B958B]"
+                    className="text-muted"
                     disabled={busy === "leave"}
                     onClick={() =>
                       doAction("leave", () => leaveCohortAction(cohort.id))
@@ -259,7 +259,7 @@ export default function CohortDetailPage() {
                 )}
 
                 {isOwner && (
-                  <p className="text-sm text-[#9B958B]">You host this cohort.</p>
+                  <p className="text-body text-muted">You host this cohort.</p>
                 )}
               </div>
             </div>
@@ -307,11 +307,11 @@ export default function CohortDetailPage() {
                     const displayName = requester?.displayName ?? "Someone";
                     return (
                       <Card key={req.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                        <span className="text-sm font-semibold text-[#111111]">{displayName}</span>
+                        <span className="text-body font-semibold text-content">{displayName}</span>
                         <div className="flex gap-2">
                           <Button
                             variant="primary"
-                            className="min-h-9 px-4 text-xs"
+                            className="min-h-9 px-4 text-caption"
                             disabled={busy === `approve-${req.id}`}
                             onClick={() =>
                               doAction(`approve-${req.id}`, () =>
@@ -323,7 +323,7 @@ export default function CohortDetailPage() {
                           </Button>
                           <Button
                             variant="secondary"
-                            className="min-h-9 px-4 text-xs"
+                            className="min-h-9 px-4 text-caption"
                             disabled={busy === `decline-${req.id}`}
                             onClick={() =>
                               doAction(`decline-${req.id}`, () =>
@@ -356,7 +356,7 @@ export default function CohortDetailPage() {
                         className="flex items-center justify-between gap-3 px-4 py-3"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-[#111111]">
+                          <span className="text-body font-semibold text-content">
                             {displayName}
                           </span>
                           {isThisOwner && (
@@ -376,7 +376,7 @@ export default function CohortDetailPage() {
                               return (
                                 <Button
                                   variant="quiet"
-                                  className="min-h-9 px-3 text-xs text-[#9B958B]"
+                                  className="min-h-9 px-3 text-caption text-muted"
                                   disabled={busy === `guide-${m.userId}`}
                                   onClick={() =>
                                     doAction(`guide-${m.userId}`, () =>
@@ -390,7 +390,7 @@ export default function CohortDetailPage() {
                             })()}
                             <Button
                               variant="quiet"
-                              className="min-h-9 px-3 text-xs text-[#9B958B]"
+                              className="min-h-9 px-3 text-caption text-muted"
                               disabled={busy === `remove-${m.userId}`}
                               onClick={() =>
                                 doAction(`remove-${m.userId}`, () =>

@@ -32,19 +32,19 @@ export default function BlockedUsersPage() {
       <div className="space-y-5">
         <PageHeader title="Blocked members" subtitle="Blocked members can’t see your profile or proof, or send you requests." />
         {!client ? (
-          <Card className="p-5 text-sm text-[#6E6E6E]">Blocking is available once your account is connected.</Card>
+          <Card className="p-5 text-body text-muted">Blocking is available once your account is connected.</Card>
         ) : rows.length === 0 ? (
-          <Card className="p-5 text-sm text-[#6E6E6E]">You haven’t blocked anyone. You can block a member from their passport or proof.</Card>
+          <Card className="p-5 text-body text-muted">You haven’t blocked anyone. You can block a member from their passport or proof.</Card>
         ) : (
           <div className="space-y-2">
             {rows.map((r) => (
-              <div key={r.blockedId} className="flex items-center gap-3 rounded-2xl bg-[#FFFDF8] p-3 pixel-card">
+              <div key={r.blockedId} className="flex items-center gap-3 rounded-2xl bg-surface p-3 pixel-card">
                 <Avatar name={nameFor(r.blockedId)} avatarUrl={avatarFor(r.blockedId)} size={40} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-extrabold text-[#111111]">{nameFor(r.blockedId)}</p>
-                  <p className="text-xs text-[#6E6E6E]">{[r.reason ?? "Blocked", new Date(r.createdAt).toLocaleDateString()].join(" · ")}</p>
+                  <p className="truncate text-body font-semibold text-content">{nameFor(r.blockedId)}</p>
+                  <p className="text-caption text-muted">{[r.reason ?? "Blocked", new Date(r.createdAt).toLocaleDateString()].join(" · ")}</p>
                 </div>
-                <button type="button" onClick={() => unblock(r.blockedId)} className="rounded-full bg-[#FFF1C7] px-4 py-2 text-xs font-extrabold text-[#7A5300] hover:bg-[#FFE9A8]">
+                <button type="button" onClick={() => unblock(r.blockedId)} className="rounded-full bg-surface-soft px-4 py-2 text-caption font-semibold text-accent-text hover:bg-accent-soft">
                   Unblock
                 </button>
               </div>

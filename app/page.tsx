@@ -19,7 +19,7 @@ import MarketingFooter from "@/components/marketing/MarketingFooter";
 
 export default function LandingPage() {
   return (
-    <main className="w-full bg-[#FFF8EE] text-[#111111]">
+    <main className="w-full bg-bg text-content">
       {/* Returning members with a live session skip the marketing page. */}
       <AuthedRedirect />
       <MarketingNav />

@@ -51,7 +51,7 @@ export default function DirectionsPage() {
                 <Card key={m.id} className="flex items-center justify-between gap-3 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar name={m.displayName} avatarUrl={m.avatarUrl} />
-                    <span className="text-sm font-bold text-[#111111]">{m.displayName}</span>
+                    <span className="text-body font-medium text-content">{m.displayName}</span>
                   </div>
                   <Button variant="quiet" onClick={() => toggleLearnFrom(m.id)}>
                     {isLearningFrom(m.id) ? "Learning" : "Learn from"}
@@ -65,16 +65,16 @@ export default function DirectionsPage() {
         {newcomers.length > 0 && (
           <section className="space-y-3">
             <SectionLabel title="Say hi to someone new" />
-            <p className="text-xs text-[#6E6E6E]">A short, kind note goes a long way.</p>
+            <p className="text-caption text-muted">A short, kind note goes a long way.</p>
             <div className="space-y-2">
               {newcomers.map((n) => (
                 <Card key={n.id} className="flex items-center justify-between gap-3 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <Avatar name={n.displayName} avatarUrl={n.avatarUrl} />
-                    <span className="text-sm font-bold text-[#111111]">{n.displayName}</span>
+                    <span className="text-body font-medium text-content">{n.displayName}</span>
                   </div>
                   {sentIds.has(n.id) ? (
-                    <span className="text-sm text-[#6E6E6E]">Sent</span>
+                    <span className="text-body text-muted">Sent</span>
                   ) : (
                     <Button variant="quiet" onClick={() => handleSayHi(n)}>
                       Say hi

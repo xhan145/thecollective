@@ -90,18 +90,18 @@ export default function MemberPage() {
 
         <Card className="pixel-card p-5">
           <div className="flex items-center gap-4">
-            <span className="inline-grid rounded-full p-[3px] ring-2 ring-[#F2A900]/45">
+            <span className="inline-grid rounded-full p-[3px] ring-2 ring-accent/45">
               <Avatar name={member.displayName} avatarUrl={member.avatarUrl} size={60} />
             </span>
             <div className="min-w-0">
-              <h2 className="truncate text-xl font-extrabold text-[#111111]">{member.displayName}</h2>
-              {member.headline && <p className="mt-0.5 text-sm leading-snug text-[#6E6E6E]">{member.headline}</p>}
+              <h2 className="truncate text-heading text-content">{member.displayName}</h2>
+              {member.headline && <p className="mt-0.5 text-body leading-snug text-muted">{member.headline}</p>}
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                {direction && <span className="rounded-full bg-[#FFF1C7] px-3 py-1 text-xs font-extrabold text-[#7A5300]">{direction.title}</span>}
+                {direction && <span className="rounded-full bg-surface-soft px-3 py-1 text-caption font-semibold text-accent-text">{direction.title}</span>}
                 <TrustPill label={trustLevelForPoints(member.trustScore ?? 0)} />
                 {member.openToIntroductions && !blocked && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECFDF3] px-3 py-1 text-xs font-bold text-[#15803D]">
-                    <span className="h-2 w-2 rounded-full bg-[#22C55E]" aria-hidden /> Open to introductions
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-success-soft px-3 py-1 text-caption font-medium text-success-text">
+                    <span className="h-2 w-2 rounded-full bg-success" aria-hidden /> Open to introductions
                   </span>
                 )}
               </div>
@@ -111,7 +111,7 @@ export default function MemberPage() {
 
         {blocked ? (
           <Card className="p-5">
-            <p className="text-sm leading-6 text-[#6E6E6E]">You&rsquo;ve blocked this member. Their proof and requests stay hidden from you.</p>
+            <p className="text-body leading-6 text-muted">You&rsquo;ve blocked this member. Their proof and requests stay hidden from you.</p>
             <Button variant="secondary" className="mt-3 w-full" onClick={() => void unblockMember(memberId)}>Unblock</Button>
           </Card>
         ) : (
@@ -121,14 +121,14 @@ export default function MemberPage() {
             {supabaseEnabled && member.openToIntroductions && !isSelf && (
               <Card className="space-y-3 p-5">
                 {accepted ? (
-                  <p className="text-sm font-bold text-[#15803D]">You&rsquo;re introduced — say hello in <Link href="/notes" className="underline">Notes</Link>.</p>
+                  <p className="text-body font-medium text-success-text">You&rsquo;re introduced — say hello in <Link href="/notes" className="underline">Notes</Link>.</p>
                 ) : pendingSent ? (
-                  <p className="text-sm font-bold text-[#7A5300]">Introduction requested — they&rsquo;ll see it in their notifications.</p>
+                  <p className="text-body font-medium text-accent-text">Introduction requested — they&rsquo;ll see it in their notifications.</p>
                 ) : askOpen ? (
                   <>
-                    <label className="block text-sm font-extrabold text-[#111111]" htmlFor="intro-msg">Why would you like to connect?</label>
+                    <label className="block text-body font-semibold text-content" htmlFor="intro-msg">Why would you like to connect?</label>
                     <TextArea id="intro-msg" value={message} onChange={(e) => setMessage(e.target.value)} placeholder="I'm practicing the same skill and your proof helped me…" className="min-h-20" />
-                    {sendError && <p className="text-sm font-bold text-[#B4443F]">{sendError}</p>}
+                    {sendError && <p className="text-body font-medium text-danger-text">{sendError}</p>}
                     <div className="flex gap-2">
                       <Button className="flex-1" disabled={busy || !message.trim()} onClick={handleSend}>{busy ? "Sending…" : "Send request"}</Button>
                       <Button variant="secondary" onClick={() => setAskOpen(false)}>Cancel</Button>
@@ -142,13 +142,13 @@ export default function MemberPage() {
 
             <SectionLabel title="Recent proof" />
             {recentProofs.length === 0 ? (
-              <Card className="p-4 text-sm text-[#6E6E6E]">No shared proof yet.</Card>
+              <Card className="p-4 text-body text-muted">No shared proof yet.</Card>
             ) : (
               <div className="space-y-2">
                 {recentProofs.map((p) => (
-                  <Link key={p.id} href={`/proof/${p.id}`} className="elev-1 elev-hover block rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8] p-3.5">
-                    <p className="truncate text-sm font-extrabold text-[#111111]">{p.title}</p>
-                    <p className="mt-0.5 text-xs text-[#6E6E6E]">{p.mediaType}</p>
+                  <Link key={p.id} href={`/proof/${p.id}`} className="elev-1 elev-hover block rounded-2xl border border-line bg-surface p-3.5">
+                    <p className="truncate text-body font-semibold text-content">{p.title}</p>
+                    <p className="mt-0.5 text-caption text-muted">{p.mediaType}</p>
                   </Link>
                 ))}
               </div>
@@ -162,7 +162,7 @@ export default function MemberPage() {
                     void blockMember(memberId);
                   }
                 }}
-                className="w-full rounded-full px-4 py-3 text-center text-sm font-extrabold text-[#B4443F] transition-colors hover:bg-[#B4443F]/5"
+                className="w-full rounded-full px-4 py-3 text-center text-body font-semibold text-danger-text transition-colors hover:bg-danger-text/5"
               >
                 Block this member
               </button>

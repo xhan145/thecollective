@@ -13,8 +13,8 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
           <Link href="/" className="flex items-center gap-2.5" aria-label="Collective home">
             <div className="brand-mark">C</div>
             <div>
-              <p className="text-sm font-black leading-none tracking-tight">Collective</p>
-              <p className="mt-1 text-[11px] text-[#8f887e]">practice · proof · feedback</p>
+              <p className="text-body font-semibold leading-none tracking-tight">Collective</p>
+              <p className="mt-1 text-overline text-muted">practice · proof · feedback</p>
             </div>
           </Link>
           <Link href="/setup" className="pill pill-muted">Setup</Link>
@@ -22,8 +22,8 @@ export function AppShell({ children, title, subtitle }: { children: ReactNode; t
         {title && (
           <div className="mt-5">
             <p className="section-eyebrow">Collective</p>
-            <h1 className="text-[28px] font-black leading-tight tracking-tight">{title}</h1>
-            {subtitle && <p className="mt-2 text-sm leading-6 text-[#c8c2b8]">{subtitle}</p>}
+            <h1 className="text-title font-semibold leading-tight tracking-tight">{title}</h1>
+            {subtitle && <p className="mt-2 text-body leading-6 text-subtle">{subtitle}</p>}
           </div>
         )}
       </header>
@@ -52,7 +52,7 @@ function BottomNav() {
             <Link
               key={href}
               href={href}
-              className={`flex min-h-[54px] flex-col items-center justify-center gap-1 rounded-[22px] px-1 text-[10px] font-bold transition ${active ? "bg-white/[0.08] text-[#f6f3ec]" : "text-[#8f887e] active:bg-white/[0.05]"}`}
+              className={`flex min-h-[54px] flex-col items-center justify-center gap-1 rounded-[22px] px-1 text-overline font-medium transition ${active ? "bg-white/[0.08] text-surface-soft" : "text-muted active:bg-white/[0.05]"}`}
               aria-current={active ? "page" : undefined}
             >
               <Icon size={18} strokeWidth={active ? 2.6 : 2} />

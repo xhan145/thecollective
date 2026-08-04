@@ -58,7 +58,7 @@ export default function ProofDetailPage() {
               />
             )}
             {!proof.isDemo && <ButtonLink href={`/proof/${proof.id}/feedback`} className="w-full">Give feedback</ButtonLink>}
-            <Link href="/feed" className="block rounded-full px-4 py-3 text-center text-sm font-extrabold text-[#6E6E6E]">Back to feed</Link>
+            <Link href="/feed" className="block rounded-full px-4 py-3 text-center text-body font-semibold text-muted">Back to feed</Link>
           </>
         ) : (
           <EmptyState title="Proof not found" body="This local proof is not available in the current beta session." cta={<ButtonLink href="/feed">Open feed</ButtonLink>} />
@@ -73,11 +73,11 @@ function OwnerOpenControl({ proof, toggle }: { proof: import("@/lib/betaTypes").
   const open = !!proof.openForContributions;
   return (
     <Card className="space-y-3 p-4">
-      <p className="text-sm font-extrabold text-[#111111]">Open for contributions</p>
-      <p className="text-xs leading-5 text-[#6E6E6E]">Invite focused help. Members suggest one observation and one next step; you accept what helps.</p>
+      <p className="text-body font-semibold text-content">Open for contributions</p>
+      <p className="text-caption leading-5 text-muted">Invite focused help. Members suggest one observation and one next step; you accept what helps.</p>
       {!open ? (
         <>
-          <input className="w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-sm text-[#111111] outline-none focus:border-[#F2A900]"
+          <input className="w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-body text-content outline-none focus:border-accent"
             value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="Optional focus, e.g. 'make the opening clearer'" />
           <Button className="w-full" onClick={() => toggle(proof.id, true, focus.trim() || undefined)}>Open this proof</Button>
         </>

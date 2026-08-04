@@ -19,7 +19,7 @@ function OptionGroup<T extends string>({
 }) {
   return (
     <div>
-      <p className="text-sm font-bold text-[#38322A]">{label}</p>
+      <p className="text-body font-medium text-secondary">{label}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         {options.map((o) => {
           const active = o.value === value;
@@ -29,8 +29,8 @@ function OptionGroup<T extends string>({
               type="button"
               aria-pressed={active}
               onClick={() => onChange(o.value)}
-              className={`rounded-full px-4 py-2 text-xs font-extrabold transition-colors focus-visible:ring-2 focus-visible:ring-[#F2A900]/40 ${
-                active ? "bg-[#FFF1C7] text-[#7A5300]" : "bg-[#FFFDF8] text-[#8D877F] hover:text-[#111111]"
+              className={`rounded-full px-4 py-2 text-caption font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-accent/40 ${
+                active ? "bg-surface-soft text-accent-text" : "bg-surface text-muted hover:text-content"
               }`}
             >
               {o.label}
@@ -46,14 +46,14 @@ function ToggleRow({ label, hint, checked, onChange }: { label: string; hint?: s
   return (
     <label className="flex items-center justify-between gap-3">
       <span>
-        <span className="block text-sm font-bold text-[#38322A]">{label}</span>
-        {hint && <span className="mt-0.5 block text-xs text-[#6E6E6E]">{hint}</span>}
+        <span className="block text-body font-medium text-secondary">{label}</span>
+        {hint && <span className="mt-0.5 block text-caption text-muted">{hint}</span>}
       </span>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-5 w-5 shrink-0 accent-[#F2A900]"
+        className="h-5 w-5 shrink-0 accent-accent"
         aria-label={label}
       />
     </label>
@@ -71,15 +71,15 @@ export default function CustomizationPage() {
 
         {/* Live preview */}
         <Card className="pixel-card pixel-corner p-5">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#B6AE9F]">Preview</p>
+          <p className="text-overline uppercase tracking-[0.16em] text-subtle">Preview</p>
           <div className="mt-3 flex items-center gap-3">
             <CollectiveMiniMark className="h-9 w-9" />
             <div>
-              <p className={`text-sm font-extrabold text-[#111111] ${c.fontMode === "retroLabels" ? "pixel-soft" : ""}`}>Your Passport</p>
-              <p className="text-xs text-[#6E6E6E]">Confident Communication · Level 2</p>
+              <p className={`text-body font-semibold text-content ${c.fontMode === "retroLabels" ? "pixel-soft" : ""}`}>Your Passport</p>
+              <p className="text-caption text-muted">Confident Communication · Level 2</p>
             </div>
           </div>
-          <p className="mt-3 text-xs leading-5 text-[#6E6E6E]">
+          <p className="mt-3 text-caption leading-5 text-muted">
             This card reflects your pixel style, grid, and roundness so you can see changes instantly.
           </p>
         </Card>
@@ -152,7 +152,7 @@ export default function CustomizationPage() {
               { value: "reduced", label: "Reduced motion" },
             ]}
           />
-          <p className="mt-2 text-xs text-[#6E6E6E]">Reduced motion is also honored automatically from your device settings.</p>
+          <p className="mt-2 text-caption text-muted">Reduced motion is also honored automatically from your device settings.</p>
         </Card>
 
         <SectionLabel title="Tone" />
@@ -171,7 +171,7 @@ export default function CustomizationPage() {
           />
         </Card>
 
-        <p className="px-1 text-xs leading-5 text-[#9B958B]">
+        <p className="px-1 text-caption leading-5 text-muted">
           Light / dark color mode lives in Settings → Theme. These preferences are saved on this device.
         </p>
       </div>

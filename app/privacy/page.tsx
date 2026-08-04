@@ -39,17 +39,17 @@ const SECTIONS: { h: string; body: string[] }[] = [
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen w-full bg-[#FFF8EE] text-[#111111]">
+    <main className="min-h-screen w-full bg-bg text-content">
       <div className="mx-auto w-full max-w-2xl px-5 py-12">
-        <Link href="/" className="text-sm font-bold text-[#6E6E6E] hover:text-[#111111]">← Back to home</Link>
-        <h1 className="mt-6 font-display text-[34px] font-bold">Privacy</h1>
-        <p className="mt-2 text-sm text-[#9B958B]">Closed beta · last updated July 2026 · draft — under review before public launch.</p>
+        <Link href="/" className="text-body font-medium text-muted hover:text-content">← Back to home</Link>
+        <h1 className="mt-6 font-display text-display">Privacy</h1>
+        <p className="mt-2 text-body text-muted">Closed beta · last updated July 2026 · draft — under review before public launch.</p>
         <div className="mt-8 space-y-8">
           {SECTIONS.map((s) => (
             <section key={s.h}>
-              <h2 className="text-lg font-extrabold">{s.h}</h2>
+              <h2 className="text-heading">{s.h}</h2>
               {s.body.map((p, i) => (
-                <p key={i} className="mt-2 text-[15px] leading-7 text-[#38322A]">{p}</p>
+                <p key={i} className="mt-2 text-body leading-7 text-secondary">{p}</p>
               ))}
             </section>
           ))}
