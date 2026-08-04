@@ -65,7 +65,7 @@ export default function IntroductionPreferencesPage() {
             }}
           />
         </Card>
-        <p className="px-1 text-xs leading-5 text-[#9B958B]">
+        <p className="px-1 text-caption leading-5 text-muted">
           Others see what you wrote in your introduction. Edit that on your passport.
         </p>
       </div>

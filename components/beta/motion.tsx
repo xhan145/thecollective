@@ -68,7 +68,7 @@ export function CountUp({ value, className }: { value: number; className?: strin
 /** Shimmering skeleton placeholder for loading states. */
 export function Skeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`relative overflow-hidden rounded-[18px] bg-[#F2E9D8] ${className}`}>
+    <div className={`relative overflow-hidden rounded-[18px] bg-surface-soft ${className}`}>
       <motion.div
         className="absolute inset-0"
         style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)" }}
@@ -100,9 +100,9 @@ export function ScreenSkeleton() {
 export function AnimatedBar({ value, className = "" }: { value: number; className?: string }) {
   const pct = Math.max(0, Math.min(100, value));
   return (
-    <div className={`h-2 overflow-hidden rounded-full bg-[#EFE7D8] ${className}`}>
+    <div className={`h-2 overflow-hidden rounded-full bg-line ${className}`}>
       <motion.div
-        className="h-full rounded-full bg-[#F2A900]"
+        className="h-full rounded-full bg-accent"
         initial={{ width: 0 }}
         animate={{ width: `${pct}%` }}
         transition={{ duration: 0.9, ease: easeOut }}

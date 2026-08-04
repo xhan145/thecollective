@@ -32,7 +32,7 @@ export function NotificationSettingsGroup({ title, subtitle, toggles, lockedKeys
             );
           })}
         </Card>
-        <p className="px-1 text-xs leading-5 text-[#9B958B]">Changes save automatically on this device or your account.</p>
+        <p className="px-1 text-caption leading-5 text-muted">Changes save automatically on this device or your account.</p>
       </div>
     </AppShell>
   );

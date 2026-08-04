@@ -30,9 +30,9 @@ export default function SavedPage() {
                 <SectionLabel title="Practices" />
                 {practices.map((p) => (
                   <Card key={p.id} className="p-4">
-                    <p className="text-sm font-extrabold text-[#111111]">{p.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-[#6E6E6E]">{p.description}</p>
-                    <Link href={`/proof/new/${p.id}`} className="mt-3 inline-block text-xs font-extrabold text-[#F2A900]">
+                    <p className="text-body font-semibold text-content">{p.title}</p>
+                    <p className="mt-1 text-caption leading-5 text-muted">{p.description}</p>
+                    <Link href={`/proof/new/${p.id}`} className="mt-3 inline-block text-caption font-semibold text-accent">
                       Start practice →
                     </Link>
                   </Card>

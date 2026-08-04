@@ -48,7 +48,7 @@ function NotificationsButton({ unread, className = "" }: { unread: number; class
     >
       <Bell size={18} />
       {unread > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-[#F2A900] px-1 text-[10px] font-black text-white">
+        <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-white">
           {unread > 9 ? "9+" : unread}
         </span>
       )}
@@ -109,11 +109,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [authReady, currentUser, isProtected, supabaseEnabled, pathname, router]);
 
   return (
-    <div className="min-h-screen bg-[#FFF8EE] text-[#111111] lg:flex">
+    <div className="min-h-screen bg-bg text-content lg:flex">
       <DesktopSidebar starterId={starterId} unread={unread} showDemoBadge={showDemoBadge} demoLabel={showDemoBadge ? "Demo data" : isMockMode ? firebaseMode : null} />
-      <main className="pixel-grid-bg relative mx-auto min-h-screen w-full max-w-[430px] bg-[#FFF8EE] text-[#111111] shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
+      <main className="pixel-grid-bg relative mx-auto min-h-screen w-full max-w-[430px] bg-bg text-content shadow-[0_0_0_1px_rgba(239,231,216,0.8)] lg:max-w-none lg:flex-1 lg:shadow-none">
         <AmbientBackdrop />
-        <header className="sticky top-0 z-30 border-b border-[#EFE7D8]/70 bg-[#FFF8EE]/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-line/70 bg-bg/92 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top,0px))] backdrop-blur-xl lg:hidden">
           <div className="flex items-center justify-between gap-3">
             <Link href="/home" aria-label="Collective home">
               <CollectiveWordmark />
@@ -128,7 +128,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="relative z-[1] px-5 pb-[calc(110px+env(safe-area-inset-bottom,0px))] pt-5 lg:mx-auto lg:max-w-4xl lg:px-8 lg:py-8">
           {loading ? (
             <div className="space-y-4">
-              <p className="text-center text-sm font-extrabold text-[#6E6E6E]">Getting your space ready…</p>
+              <p className="text-center text-body font-semibold text-muted">Getting your space ready…</p>
               <ScreenSkeleton />
             </div>
           ) : (
@@ -157,14 +157,14 @@ function BottomNav({ starterId }: { starterId: string }) {
         <motion.div whileTap={{ scale: 0.92 }} className="pointer-events-auto">
           <Link
             href={`/proof/new/${starterId}`}
-            className="grid h-[58px] w-[58px] place-items-center rounded-full bg-[#F2A900] text-white shadow-[0_10px_26px_rgba(242,169,0,0.45)] outline-none transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.55)] focus-visible:ring-4 focus-visible:ring-[#F2A900]/40"
+            className="grid h-[58px] w-[58px] place-items-center rounded-full bg-accent text-white shadow-[0_10px_26px_rgba(242,169,0,0.45)] outline-none transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.55)] focus-visible:ring-4 focus-visible:ring-accent/40"
             aria-label="Submit proof"
           >
             <Plus size={27} strokeWidth={2.6} />
           </Link>
         </motion.div>
       </div>
-      <div className="grid grid-cols-4 rounded-[28px] border border-[#EFE7D8] bg-[#FFFDF8]/95 p-2 shadow-[0_16px_44px_rgba(71,52,18,0.10)] backdrop-blur">
+      <div className="grid grid-cols-4 rounded-[28px] border border-line bg-surface/95 p-2 shadow-[0_16px_44px_rgba(71,52,18,0.10)] backdrop-blur">
         {NAV_ITEMS.map((item, index) => {
           const Icon = item.icon;
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -174,12 +174,12 @@ function BottomNav({ starterId }: { starterId: string }) {
               href={item.href}
               aria-current={active ? "page" : undefined}
               aria-label={item.label}
-              className={`relative flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-[22px] text-[11px] font-bold transition-colors ${index === 1 ? "mr-6" : index === 2 ? "ml-6" : ""} ${active ? "text-[#F2A900]" : "text-[#8D877F]"}`}
+              className={`relative flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-[22px] text-overline font-medium transition-colors ${index === 1 ? "mr-6" : index === 2 ? "ml-6" : ""} ${active ? "text-accent" : "text-muted"}`}
             >
               {active && (
                 <motion.span
                   layoutId="nav-active-pill"
-                  className="absolute inset-x-1 inset-y-0 rounded-[20px] bg-[#FFF1C7]"
+                  className="absolute inset-x-1 inset-y-0 rounded-[20px] bg-surface-soft"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -202,7 +202,7 @@ function BottomNav({ starterId }: { starterId: string }) {
 function DesktopSidebar({ starterId, unread, showDemoBadge, demoLabel }: { starterId: string; unread: number; showDemoBadge: boolean; demoLabel: string | null }) {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 z-10 hidden h-screen w-64 shrink-0 flex-col border-r border-[#EFE7D8] bg-[#FFFDF8] px-4 py-6 shadow-[4px_0_24px_rgba(71,52,18,0.05)] lg:flex">
+    <aside className="sticky top-0 z-10 hidden h-screen w-64 shrink-0 flex-col border-r border-line bg-surface px-4 py-6 shadow-[4px_0_24px_rgba(71,52,18,0.05)] lg:flex">
       <Link href="/home" aria-label="Collective home" className="px-2">
         <CollectiveWordmark />
       </Link>
@@ -215,12 +215,12 @@ function DesktopSidebar({ starterId, unread, showDemoBadge, demoLabel }: { start
               key={item.href}
               href={item.href}
               aria-current={active ? "page" : undefined}
-              className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition-colors ${active ? "text-[#F2A900]" : "text-[#8D877F] hover:text-[#111111]"}`}
+              className={`relative flex items-center gap-3 rounded-2xl px-4 py-3 text-body font-medium transition-colors ${active ? "text-accent" : "text-muted hover:text-content"}`}
             >
               {active && (
                 <motion.span
                   layoutId="desktop-nav-pill"
-                  className="absolute inset-0 -z-10 rounded-2xl bg-[#FFF1C7]"
+                  className="absolute inset-0 -z-10 rounded-2xl bg-surface-soft"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -232,7 +232,7 @@ function DesktopSidebar({ starterId, unread, showDemoBadge, demoLabel }: { start
       </nav>
       <Link
         href={`/proof/new/${starterId}`}
-        className="mt-6 flex items-center justify-center gap-2 rounded-full bg-[#F2A900] px-4 py-3 text-sm font-extrabold text-white shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
+        className="mt-6 flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-body font-semibold text-white shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
       >
         <Plus size={18} strokeWidth={2.6} /> Submit proof
       </Link>

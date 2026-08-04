@@ -120,7 +120,7 @@ export default function CohortsPage() {
             </Button>
           </div>
           {inviteError && (
-            <p className="text-sm text-[#C0392B]" role="alert">
+            <p className="text-body text-danger" role="alert">
               {inviteError}
             </p>
           )}

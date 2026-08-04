@@ -21,7 +21,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
     e.preventDefault();
     e.stopPropagation();
   };
-  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-extrabold transition";
+  const base = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-caption font-semibold transition";
   return (
     <div className={`flex flex-wrap gap-2 ${compact ? "mt-2.5" : "mt-4"}`}>
       {!own && !proof.isDemo && (
@@ -29,7 +29,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
           type="button"
           onClick={(e) => { stop(e); toggleUseful(proof.id); }}
           aria-pressed={useful}
-          className={`${base} ${useful ? "bg-[#F2A900] text-white" : "bg-[#FFF1C7] text-[#7A5300]"}`}
+          className={`${base} ${useful ? "bg-accent text-white" : "bg-surface-soft text-accent-text"}`}
         >
           {useful ? "Marked useful" : "Useful"}
         </button>
@@ -38,7 +38,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
         type="button"
         onClick={(e) => { stop(e); toggleSaved("proof", proof.id); }}
         aria-pressed={saved}
-        className={`${base} ${saved ? "bg-[#111111] text-white" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}
+        className={`${base} ${saved ? "bg-content text-white" : "border border-line bg-surface text-muted"}`}
       >
         {saved ? "Saved for practice" : "Save for practice"}
       </button>
@@ -66,7 +66,7 @@ export function mediaTypeLabel(type: ProofMediaType) {
   return mediaLabels[type];
 }
 
-export function ProofMediaIcon({ type, className = "text-[#F2A900]" }: { type: ProofMediaType; className?: string }) {
+export function ProofMediaIcon({ type, className = "text-accent" }: { type: ProofMediaType; className?: string }) {
   const Icon = type === "image" ? Image : type === "video" ? PlaySquare : type === "audio" ? FileAudio : FileText;
   return <Icon className={className} size={20} />;
 }
@@ -98,12 +98,12 @@ export function AttachmentPicker({
 
   if (mediaType === "text") {
     return (
-      <div className="rounded-[18px] border border-[#EFE7D8] bg-[#FFF8EE] p-4">
+      <div className="rounded-[18px] border border-line bg-bg p-4">
         <div className="flex items-center gap-3">
           <ProofMediaIcon type="text" />
           <div>
-            <p className="text-sm font-extrabold text-[#111111]">Text reflection selected</p>
-            <p className="text-xs text-[#6E6E6E]">Proof can stay simple while you practice.</p>
+            <p className="text-body font-semibold text-content">Text reflection selected</p>
+            <p className="text-caption text-muted">Proof can stay simple while you practice.</p>
           </div>
         </div>
       </div>
@@ -115,15 +115,15 @@ export function AttachmentPicker({
   }
 
   return (
-    <label className="block cursor-pointer rounded-[18px] border border-dashed border-[#E0CFAE] bg-[#FFF8EE] p-4 transition active:scale-[0.99]" aria-label={`Attach ${mediaType} proof`}>
+    <label className="block cursor-pointer rounded-[18px] border border-dashed border-subtle bg-bg p-4 transition active:scale-[0.99]" aria-label={`Attach ${mediaType} proof`}>
       <input type="file" className="sr-only" accept={mediaAccept[mediaType]} onChange={onFileChange} />
       <div className="flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#FFF1C7] text-[#F2A900]">
+        <div className="grid h-11 w-11 place-items-center rounded-2xl bg-surface-soft text-accent">
           <Upload size={20} />
         </div>
         <div>
-          <p className="text-sm font-extrabold text-[#111111]">Attach {mediaType}</p>
-          <p className="text-xs leading-5 text-[#6E6E6E]">Optional. Only share what you are comfortable sharing.</p>
+          <p className="text-body font-semibold text-content">Attach {mediaType}</p>
+          <p className="text-caption leading-5 text-muted">Optional. Only share what you are comfortable sharing.</p>
         </div>
       </div>
     </label>
@@ -132,9 +132,9 @@ export function AttachmentPicker({
 
 export function AttachmentPreview({ attachment, onRemove }: { attachment: AttachmentDraft | ProofAttachment; onRemove?: () => void }) {
   return (
-    <div className="rounded-[18px] border border-[#EFE7D8] bg-white p-3">
+    <div className="rounded-[18px] border border-line bg-white p-3">
       <div className="flex items-center gap-3">
-        <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-[#FFF1C7] text-[#F2A900]">
+        <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-surface-soft text-accent">
           {attachment.mediaType === "image" && attachment.localUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={attachment.localUrl} alt="Proof thumbnail" className="h-full w-full object-cover" />
@@ -143,11 +143,11 @@ export function AttachmentPreview({ attachment, onRemove }: { attachment: Attach
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-extrabold text-[#111111]">{mediaTypeLabel(attachment.mediaType)} attached</p>
-          <p className="truncate text-xs text-[#6E6E6E]">{attachment.fileName}</p>
+          <p className="truncate text-body font-semibold text-content">{mediaTypeLabel(attachment.mediaType)} attached</p>
+          <p className="truncate text-caption text-muted">{attachment.fileName}</p>
         </div>
         {onRemove && (
-          <button type="button" onClick={onRemove} className="grid h-11 w-11 place-items-center rounded-full bg-[#FFF8EE] text-[#6E6E6E]" aria-label="Remove attachment">
+          <button type="button" onClick={onRemove} className="grid h-11 w-11 place-items-center rounded-full bg-bg text-muted" aria-label="Remove attachment">
             <X size={18} />
           </button>
         )}
@@ -170,11 +170,11 @@ export function ProofTypeSelector({ value, onChange, allowed }: { value: ProofMe
             key={type}
             type="button"
             onClick={() => onChange(type)}
-            className={`min-h-16 rounded-[16px] border p-2 text-center transition active:scale-[0.98] ${active ? "border-[#F2A900] bg-[#FFF1C7] text-[#111111]" : "border-[#EFE7D8] bg-white text-[#6E6E6E]"}`}
+            className={`min-h-16 rounded-[16px] border p-2 text-center transition active:scale-[0.98] ${active ? "border-accent bg-surface-soft text-content" : "border-line bg-white text-muted"}`}
             aria-label={`Select ${mediaTypeLabel(type)}`}
           >
-            <ProofMediaIcon type={type} className={active ? "mx-auto text-[#F2A900]" : "mx-auto text-[#8D877F]"} />
-            <span className="mt-1 block text-[11px] font-extrabold capitalize">{type}</span>
+            <ProofMediaIcon type={type} className={active ? "mx-auto text-accent" : "mx-auto text-muted"} />
+            <span className="mt-1 block text-overline capitalize">{type}</span>
           </button>
         );
       })}
@@ -225,27 +225,27 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
         <div className="mb-2.5 flex items-center gap-2">
           <Link
             href={`/member/${proof.userId}`}
-            className="pointer-events-auto relative z-[3] flex min-w-0 items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-[#F2A900]/40"
+            className="pointer-events-auto relative z-[3] flex min-w-0 items-center gap-2 rounded-full focus-visible:ring-2 focus-visible:ring-accent/40"
             aria-label={`View ${name}'s passport`}
           >
             <Avatar name={name} avatarUrl={authorAvatarUrl} size={28} />
-            <span className="truncate text-xs font-extrabold text-[#111111] hover:underline">{name}</span>
+            <span className="truncate text-caption font-semibold text-content hover:underline">{name}</span>
           </Link>
-          <span className="text-[#D9CDB8]">•</span>
-          <span className="shrink-0 text-xs text-[#9B958B]"><TimeAgo iso={proof.createdAt} /></span>
+          <span className="text-subtle">•</span>
+          <span className="shrink-0 text-caption text-muted"><TimeAgo iso={proof.createdAt} /></span>
           {showDemoBadge && (
-            <span className="ml-auto shrink-0 rounded-full bg-[#FFF8EE] px-2 py-0.5 text-[10px] font-bold text-[#9B958B]">Example</span>
+            <span className="ml-auto shrink-0 rounded-full bg-bg px-2 py-0.5 text-overline text-muted">Example</span>
           )}
         </div>
         {relation && (
-          <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${
-            relation === "ahead" ? "bg-[#FFF1C7] text-[#7A5300]" : relation === "behind" ? "bg-[#FFF8EE] text-[#6E6E6E]" : "bg-[#F1F0EC] text-[#6E6E6E]"
+          <span className={`inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-overline font-semibold ${
+            relation === "ahead" ? "bg-surface-soft text-accent-text" : relation === "behind" ? "bg-bg text-muted" : "bg-surface-soft text-muted"
           }`}>
             {relation === "ahead" ? "▲ Learn from" : relation === "behind" ? "▼ You're ahead here" : "● Around your level"}
           </span>
         )}
         <div className="flex gap-3">
-          <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-[#FFF1C7] to-[#FFD986] text-[#8A5D00]">
+          <div className="grid h-[72px] w-[76px] shrink-0 place-items-center overflow-hidden rounded-[16px] bg-gradient-to-br from-surface-soft to-accent-soft text-accent-text">
             {imageThumb ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={imageThumb} alt="Proof thumbnail" className="h-full w-full object-cover" />
@@ -253,13 +253,13 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
               // #t=0.1 nudges browsers to paint an early frame as the poster.
               <video src={`${videoThumb}#t=0.1`} muted playsInline preload="metadata" className="h-full w-full object-cover" />
             ) : (
-              <ProofMediaIcon type={proof.mediaType} className="text-[#8A5D00]" />
+              <ProofMediaIcon type={proof.mediaType} className="text-accent-text" />
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="line-clamp-2 text-sm font-extrabold leading-5 text-[#111111]">{proof.title}</h3>
-            <p className="mt-1 text-xs text-[#6E6E6E]">{mediaTypeLabel(proof.mediaType)}</p>
-            <p className="mt-2 text-xs font-bold text-[#F2A900]">{feedbackCount ? `${feedbackCount} feedback note${feedbackCount === 1 ? "" : "s"}` : "No feedback yet"}</p>
+            <h3 className="line-clamp-2 text-body font-semibold leading-5 text-content">{proof.title}</h3>
+            <p className="mt-1 text-caption text-muted">{mediaTypeLabel(proof.mediaType)}</p>
+            <p className="mt-2 text-caption font-medium text-accent">{feedbackCount ? `${feedbackCount} feedback note${feedbackCount === 1 ? "" : "s"}` : "No feedback yet"}</p>
           </div>
         </div>
         <div className="pointer-events-auto">
@@ -269,13 +269,13 @@ export function ProofCard({ proof, feedbackCount, authorName, authorAvatarUrl, r
           <div className="pointer-events-auto mt-3 flex flex-wrap gap-2">
             {relation !== "behind" && (
               <button type="button" onClick={() => toggleLearnFrom(proof.userId)}
-                className={`rounded-full px-3 py-1.5 text-xs font-extrabold ${learning ? "bg-[#FFE7AE] text-[#7A5300]" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#6E6E6E]"}`}>
+                className={`rounded-full px-3 py-1.5 text-caption font-semibold ${learning ? "bg-accent-soft text-accent-text" : "border border-line bg-surface text-muted"}`}>
                 {learning ? "✓ Learning from" : "Learn from"}
               </button>
             )}
             {relation === "behind" && canGiveFeedback && (
               <Link href={`/proof/${proof.id}/feedback`}
-                className="rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-1.5 text-xs font-extrabold text-[#6E6E6E]">
+                className="rounded-full border border-line bg-surface px-3 py-1.5 text-caption font-semibold text-muted">
                 Give feedback
               </Link>
             )}
@@ -314,8 +314,8 @@ function PeerNoteComposer({ proof, authorName }: { proof: Proof; authorName: str
   }
   return (
     <Card className="space-y-3 p-4">
-      <p className="text-sm font-extrabold text-[#111111]">Peer note to {authorName}</p>
-      <p className="text-xs leading-5 text-[#6E6E6E]">Be specific and useful — one clear observation and a kind next step.</p>
+      <p className="text-body font-semibold text-content">Peer note to {authorName}</p>
+      <p className="text-caption leading-5 text-muted">Be specific and useful — one clear observation and a kind next step.</p>
       <TextArea value={body} onChange={(e) => setBody(e.target.value)} placeholder="What was clear, and one useful next step…" rows={3} />
       <div className="flex gap-2">
         <Button className="flex-1" onClick={send} disabled={sending || !body.trim()}>{sending ? "Sending…" : "Send note"}</Button>
@@ -336,17 +336,17 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
     <div className="space-y-4">
       <Card className="p-5">
         <div className="flex items-start gap-3">
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#FFF1C7] text-[#F2A900]">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-surface-soft text-accent">
             <ProofMediaIcon type={proof.mediaType} />
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#6E6E6E]">{mediaTypeLabel(proof.mediaType)}</p>
-            <h1 className="mt-1 text-[24px] font-extrabold leading-tight text-[#111111]">{proof.title}</h1>
+            <p className="text-caption font-medium uppercase tracking-[0.12em] text-muted">{mediaTypeLabel(proof.mediaType)}</p>
+            <h1 className="mt-1 text-title leading-tight text-content">{proof.title}</h1>
           </div>
         </div>
-        {proof.body && <p className="mt-4 rounded-[18px] bg-[#FFF8EE] p-4 text-sm leading-6 text-[#38322A]">{proof.body}</p>}
+        {proof.body && <p className="mt-4 rounded-[18px] bg-bg p-4 text-body leading-6 text-secondary">{proof.body}</p>}
         {proof.attachments[0]?.localUrl && (proof.mediaType === "image" || proof.mediaType === "video" || proof.mediaType === "audio") && (
-          <div className="mt-4 overflow-hidden rounded-[18px] border border-[#EFE7D8] bg-black/[0.02]">
+          <div className="mt-4 overflow-hidden rounded-[18px] border border-line bg-black/[0.02]">
             {proof.mediaType === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={proof.attachments[0].localUrl} alt={proof.title} className="max-h-[420px] w-full object-contain" />
@@ -368,26 +368,26 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
           </Link>
           <div className="min-w-0 flex-1">
             <Link href={`/member/${author.id}`} className="hover:underline">
-              <p className="truncate text-sm font-extrabold text-[#111111]">{author.displayName}</p>
+              <p className="truncate text-body font-semibold text-content">{author.displayName}</p>
             </Link>
             {(author.selectedBadges?.length ?? 0) > 0 && (
               <span className="mt-1 flex flex-wrap gap-1">
                 {author.selectedBadges!.slice(0, 3).map((slug) => {
                   const b = DEMO_ACHIEVEMENTS.find((a) => a.slug === slug);
                   return b ? (
-                    <span key={slug} className="rounded-full bg-[#FFF1C7] px-2 py-0.5 text-[10px] font-extrabold text-[#7A5300]">{b.name}</span>
+                    <span key={slug} className="rounded-full bg-surface-soft px-2 py-0.5 text-overline text-accent-text">{b.name}</span>
                   ) : null;
                 })}
               </span>
             )}
-            {author.bio && <p className="truncate text-xs text-[#6E6E6E]">{author.bio}</p>}
+            {author.bio && <p className="truncate text-caption text-muted">{author.bio}</p>}
           </div>
           {!own && !proof.isDemo && (
             <button
               type="button"
               onClick={() => toggleLearnFrom(proof.userId)}
               aria-pressed={learning}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-extrabold transition ${learning ? "bg-[#F2A900] text-white" : "border border-[#EFE7D8] bg-[#FFFDF8] text-[#7A5300]"}`}
+              className={`shrink-0 rounded-full px-3.5 py-2 text-caption font-semibold transition ${learning ? "bg-accent text-white" : "border border-line bg-surface text-accent-text"}`}
             >
               {learning ? "Learning from" : "Learn from"}
             </button>
@@ -398,14 +398,14 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
       {author && !own && !proof.isDemo && <PeerNoteComposer proof={proof} authorName={author.displayName} />}
 
       <Card className="p-5">
-        <h2 className="text-lg font-extrabold text-[#111111]">Feedback</h2>
-        <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">Feedback helps you improve. It does not define you.</p>
+        <h2 className="text-heading text-content">Feedback</h2>
+        <p className="mt-1 text-body leading-6 text-muted">Feedback helps you improve. It does not define you.</p>
         <div className="mt-4 space-y-2">
           {feedback.length ? (
             feedback.map((item) => {
               const hasNotes = item.clarityNote || item.usefulNote || item.nextStepNote;
               return (
-                <div key={item.id} className="space-y-2 rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#38322A]">
+                <div key={item.id} className="space-y-2 rounded-[16px] bg-bg p-3 text-body leading-6 text-secondary">
                   {hasNotes ? (
                     <>
                       {item.clarityNote && <FeedbackNote label="What was clear" value={item.clarityNote} />}
@@ -416,7 +416,7 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
                     item.body
                   )}
                   {canReport && item.authorId !== currentUser?.id && (
-                    <button type="button" onClick={() => setReporting({ type: "feedback", id: item.id })} className="text-[11px] font-bold text-[#9B958B] hover:text-[#B4443F]">
+                    <button type="button" onClick={() => setReporting({ type: "feedback", id: item.id })} className="text-overline text-muted hover:text-danger-text">
                       Report this note
                     </button>
                   )}
@@ -424,13 +424,13 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
               );
             })
           ) : (
-            <p className="rounded-[16px] bg-[#FFF8EE] p-3 text-sm leading-6 text-[#6E6E6E]">No feedback yet. Feedback can come after proof.</p>
+            <p className="rounded-[16px] bg-bg p-3 text-body leading-6 text-muted">No feedback yet. Feedback can come after proof.</p>
           )}
         </div>
       </Card>
 
       {canReport && !own && (
-        <button type="button" onClick={() => setReporting({ type: "proof", id: proof.id })} className="w-full py-2 text-center text-xs font-bold text-[#9B958B] hover:text-[#B4443F]">
+        <button type="button" onClick={() => setReporting({ type: "proof", id: proof.id })} className="w-full py-2 text-center text-caption font-medium text-muted hover:text-danger-text">
           Report this proof
         </button>
       )}
@@ -443,8 +443,8 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
 function FeedbackNote({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[11px] font-extrabold uppercase tracking-wide text-[#9B958B]">{label}</p>
-      <p className="text-sm leading-6 text-[#38322A]">{value}</p>
+      <p className="text-overline uppercase tracking-wide text-muted">{label}</p>
+      <p className="text-body leading-6 text-secondary">{value}</p>
     </div>
   );
 }

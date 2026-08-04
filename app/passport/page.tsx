@@ -158,7 +158,7 @@ export default function PassportPage() {
     return (
       <AppShell>
         <PageHeader title="Passport" subtitle="Your progress, proof, and trust." />
-        <Card className="p-5 text-sm text-[#6E6E6E]">Sign in to see your Passport.</Card>
+        <Card className="p-5 text-body text-muted">Sign in to see your Passport.</Card>
       </AppShell>
     );
   }
@@ -202,19 +202,19 @@ export default function PassportPage() {
               usefulResponses={trustSummary.feedbackGiven}
             />
             <Card className="pixel-card p-5">
-              <h3 className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#B6AE9F]">Trust</h3>
-              <p className="mt-2 text-lg font-extrabold text-[#111111]">{trustSummary.levelLabel}</p>
-              <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">
+              <h3 className="text-body font-semibold uppercase tracking-[0.12em] text-subtle">Trust</h3>
+              <p className="mt-2 text-heading text-content">{trustSummary.levelLabel}</p>
+              <p className="mt-1 text-body leading-6 text-muted">
                 Earned through useful feedback, proof, and beginner-safe behavior — never bought or boosted.
               </p>
             </Card>
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <SectionLabel title="Pinned proofs" />
-                <Link href="/passport/pinned-proofs" className="text-xs font-extrabold text-[#7A5300] hover:underline">Manage</Link>
+                <Link href="/passport/pinned-proofs" className="text-caption font-semibold text-accent-text hover:underline">Manage</Link>
               </div>
               {pinnedProofs.length === 0 ? (
-                <Card className="p-4 text-sm text-[#6E6E6E]">Pin a proof you’re proud of so it leads your Passport.</Card>
+                <Card className="p-4 text-body text-muted">Pin a proof you’re proud of so it leads your Passport.</Card>
               ) : (
                 <div className="space-y-2">
                   {pinnedProofs.map((p) => (
@@ -231,8 +231,8 @@ export default function PassportPage() {
         {tab === "proof" && (
           <div className="space-y-2">
             {myProofs.length === 0 ? (
-              <Card className="p-5 text-sm text-[#6E6E6E]">
-                No proof yet. Practicing something? <Link href={`/proof/new/${starterId}`} className="font-extrabold text-[#7A5300] hover:underline">Submit your first proof</Link>.
+              <Card className="p-5 text-body text-muted">
+                No proof yet. Practicing something? <Link href={`/proof/new/${starterId}`} className="font-semibold text-accent-text hover:underline">Submit your first proof</Link>.
               </Card>
             ) : (
               myProofs.map((p) => (
@@ -246,9 +246,9 @@ export default function PassportPage() {
 
         {tab === "feedback" && (
           <Card className="pixel-card p-5">
-            <h3 className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#B6AE9F]">Feedback loops</h3>
-            <p className="mt-2 text-2xl font-extrabold text-[#111111]">{myFeedbackReceived}</p>
-            <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">
+            <h3 className="text-body font-semibold uppercase tracking-[0.12em] text-subtle">Feedback loops</h3>
+            <p className="mt-2 text-title text-content">{myFeedbackReceived}</p>
+            <p className="mt-1 text-body leading-6 text-muted">
               Feedback you’ve received on your proof. Apply it, and it becomes a loop — the clearest signal of growth here.
             </p>
             <ButtonLink href="/feed" variant="secondary" className="mt-3 w-full">Give useful feedback</ButtonLink>
@@ -257,9 +257,9 @@ export default function PassportPage() {
 
         {tab === "contribution" && (
           <Card className="pixel-card p-5">
-            <h3 className="text-sm font-extrabold uppercase tracking-[0.12em] text-[#B6AE9F]">Contribution</h3>
-            <p className="mt-2 text-2xl font-extrabold text-[#111111]">{currentUser.contributionCount ?? 0}</p>
-            <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">
+            <h3 className="text-body font-semibold uppercase tracking-[0.12em] text-subtle">Contribution</h3>
+            <p className="mt-2 text-title text-content">{currentUser.contributionCount ?? 0}</p>
+            <p className="mt-1 text-body leading-6 text-muted">
               Ways you’ve helped others move forward — observations and kind next steps on their proof.
             </p>
             <ButtonLink href="/contribute" variant="secondary" className="mt-3 w-full">See where you can help</ButtonLink>
@@ -274,11 +274,11 @@ export default function PassportPage() {
                 const sender = snapshot.users.find((u) => u.id === req.senderId);
                 return (
                   <Card key={req.id} className="p-4">
-                    <p className="text-sm font-extrabold text-[#111111]">{sender?.displayName ?? "A member"} asked for an introduction</p>
-                    {req.message && <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">&ldquo;{req.message}&rdquo;</p>}
+                    <p className="text-body font-semibold text-content">{sender?.displayName ?? "A member"} asked for an introduction</p>
+                    {req.message && <p className="mt-1 text-body leading-6 text-muted">&ldquo;{req.message}&rdquo;</p>}
                     <div className="mt-3 flex gap-2">
-                      <button type="button" onClick={() => void respondIntro(req, true)} className="flex-1 rounded-full bg-[#F2A900] px-4 py-2.5 text-sm font-extrabold text-white">Accept</button>
-                      <button type="button" onClick={() => void respondIntro(req, false)} className="flex-1 rounded-full border border-[#EFE7D8] bg-[#FFFDF8] px-4 py-2.5 text-sm font-extrabold text-[#6E6E6E]">Decline</button>
+                      <button type="button" onClick={() => void respondIntro(req, true)} className="flex-1 rounded-full bg-accent px-4 py-2.5 text-body font-semibold text-white">Accept</button>
+                      <button type="button" onClick={() => void respondIntro(req, false)} className="flex-1 rounded-full border border-line bg-surface px-4 py-2.5 text-body font-semibold text-muted">Decline</button>
                     </div>
                   </Card>
                 );
@@ -295,7 +295,7 @@ export default function PassportPage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full rounded-full px-4 py-3 text-center text-sm font-extrabold text-[#DC2626] transition-colors hover:bg-[#DC2626]/5"
+            className="w-full rounded-full px-4 py-3 text-center text-body font-semibold text-danger transition-colors hover:bg-danger/5"
           >
             {isDemoUser ? "Leave demo" : "Sign out"}
           </button>

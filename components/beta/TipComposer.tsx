@@ -16,7 +16,7 @@ export function TipComposer({ promptId, canShare }: { promptId: string; canShare
   if (!canShare) {
     // Calm hint — no pressure
     return (
-      <p className="text-xs leading-5 text-[#9B958B]">
+      <p className="text-caption leading-5 text-muted">
         Complete this practice to share a tip with others.
       </p>
     );
@@ -24,7 +24,7 @@ export function TipComposer({ promptId, canShare }: { promptId: string; canShare
 
   if (done) {
     return (
-      <p className="rounded-[18px] bg-[#E8F8EE] px-4 py-3 text-sm font-extrabold text-[#17743B]">
+      <p className="rounded-[18px] bg-success-soft px-4 py-3 text-body font-semibold text-success-text">
         Thanks — your tip was shared.
       </p>
     );
@@ -50,8 +50,8 @@ export function TipComposer({ promptId, canShare }: { promptId: string; canShare
 
   return (
     <Card className="space-y-3 p-4">
-      <p className="text-sm font-extrabold text-[#111111]">Share a tip</p>
-      <p className="text-xs leading-5 text-[#6E6E6E]">
+      <p className="text-body font-semibold text-content">Share a tip</p>
+      <p className="text-caption leading-5 text-muted">
         One concrete thing that helped — no pressure to be perfect.
       </p>
       <div className="relative">
@@ -65,14 +65,14 @@ export function TipComposer({ promptId, canShare }: { promptId: string; canShare
           aria-label="Tip body"
         />
         <span
-          className={`absolute bottom-3 right-3 text-[10px] font-bold ${overLimit ? "text-red-500" : remaining <= 40 ? "text-[#9B958B]" : "text-transparent"}`}
+          className={`absolute bottom-3 right-3 text-overline font-medium ${overLimit ? "text-red-500" : remaining <= 40 ? "text-muted" : "text-transparent"}`}
           aria-live="polite"
         >
           {remaining}
         </span>
       </div>
       {error && (
-        <p className="text-xs text-[#9B958B]">{error}</p>
+        <p className="text-caption text-muted">{error}</p>
       )}
       <Button
         className="w-full"

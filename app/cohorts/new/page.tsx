@@ -16,10 +16,10 @@ import type { CohortVisibility } from "@/lib/cohorts/types";
 
 // Small warm accent palette for the picker
 const ACCENTS: { key: string; label: string; swatch: string }[] = [
-  { key: "gold", label: "Gold", swatch: "bg-gradient-to-br from-[#FFF1C7] to-[#FFE080]" },
-  { key: "rose", label: "Rose", swatch: "bg-gradient-to-br from-[#FFF0F3] to-[#FFB3C6]" },
-  { key: "sage", label: "Sage", swatch: "bg-gradient-to-br from-[#EDF6F0] to-[#8FD3A8]" },
-  { key: "sky", label: "Sky", swatch: "bg-gradient-to-br from-[#EBF4FD] to-[#89C4E8]" },
+  { key: "gold", label: "Gold", swatch: "bg-gradient-to-br from-surface-soft to-accent-soft" },
+  { key: "rose", label: "Rose", swatch: "bg-gradient-to-br from-danger-soft to-danger-soft" },
+  { key: "sage", label: "Sage", swatch: "bg-gradient-to-br from-success-soft to-success" },
+  { key: "sky", label: "Sky", swatch: "bg-gradient-to-br from-info-soft to-info-soft" },
 ];
 
 const VISIBILITY_OPTIONS: { value: CohortVisibility; label: string; description: string }[] = [
@@ -50,16 +50,16 @@ export default function NewCohortPage() {
             subtitle="Bring people together around a shared practice."
           />
           <Card className="p-7 text-center">
-            <p className="font-display text-lg font-bold text-[#111111]">
+            <p className="font-display text-heading text-content">
               Keep going — you&apos;re getting there
             </p>
-            <p className="mx-auto mt-3 max-w-[280px] text-sm leading-6 text-[#6E6E6E]">
+            <p className="mx-auto mt-3 max-w-[280px] text-body leading-6 text-muted">
               Reach <strong>Reliable</strong> by practicing consistently and giving useful feedback.
               Once you&apos;re there, you can start your own cohort.
             </p>
             <button
               onClick={() => router.back()}
-              className="mt-5 text-sm font-bold text-[#7A5300] underline-offset-2 hover:underline"
+              className="mt-5 text-body font-medium text-accent-text underline-offset-2 hover:underline"
             >
               Back
             </button>
@@ -112,9 +112,9 @@ export default function NewCohortPage() {
           <div className="space-y-1.5">
             <label
               htmlFor="cohort-name"
-              className="block text-[13px] font-extrabold text-[#111111]"
+              className="block text-label text-content"
             >
-              Name <span aria-hidden className="text-[#F2A900]">*</span>
+              Name <span aria-hidden className="text-accent">*</span>
             </label>
             <TextInput
               id="cohort-name"
@@ -130,9 +130,9 @@ export default function NewCohortPage() {
           <div className="space-y-1.5">
             <label
               htmlFor="cohort-desc"
-              className="block text-[13px] font-extrabold text-[#111111]"
+              className="block text-label text-content"
             >
-              Description <span className="font-normal text-[#9B958B]">(optional)</span>
+              Description <span className="font-normal text-muted">(optional)</span>
             </label>
             <TextArea
               id="cohort-desc"
@@ -148,15 +148,15 @@ export default function NewCohortPage() {
             <div className="space-y-1.5">
               <label
                 htmlFor="cohort-direction"
-                className="block text-[13px] font-extrabold text-[#111111]"
+                className="block text-label text-content"
               >
-                Direction <span className="font-normal text-[#9B958B]">(optional)</span>
+                Direction <span className="font-normal text-muted">(optional)</span>
               </label>
               <select
                 id="cohort-direction"
                 value={directionId}
                 onChange={(e) => setDirectionId(e.target.value)}
-                className="min-h-12 w-full rounded-[18px] border border-[#EFE7D8] bg-white px-4 text-sm text-[#111111] outline-none transition placeholder:text-[#9B958B] focus:border-[#F2A900] focus:ring-4 focus:ring-[#FFF1C7]"
+                className="min-h-12 w-full rounded-[18px] border border-line bg-white px-4 text-body text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-surface-soft"
               >
                 <option value="">No specific direction</option>
                 {snapshot.directions.map((d) => (
@@ -170,15 +170,15 @@ export default function NewCohortPage() {
 
           {/* Visibility */}
           <div className="space-y-2">
-            <p className="block text-[13px] font-extrabold text-[#111111]">Who can join?</p>
+            <p className="block text-label text-content">Who can join?</p>
             <div className="space-y-2">
               {VISIBILITY_OPTIONS.map(({ value, label, description: desc }) => (
                 <label
                   key={value}
                   className={`flex cursor-pointer items-center gap-4 rounded-[18px] border p-4 transition-colors ${
                     visibility === value
-                      ? "border-[#F2A900] bg-[#FFF8EE]"
-                      : "border-[#EFE7D8] bg-white"
+                      ? "border-accent bg-bg"
+                      : "border-line bg-white"
                   }`}
                 >
                   <input
@@ -187,11 +187,11 @@ export default function NewCohortPage() {
                     value={value}
                     checked={visibility === value}
                     onChange={() => setVisibility(value)}
-                    className="accent-[#F2A900]"
+                    className="accent-accent"
                   />
                   <span>
-                    <span className="block text-sm font-extrabold text-[#111111]">{label}</span>
-                    <span className="block text-xs text-[#6E6E6E]">{desc}</span>
+                    <span className="block text-body font-semibold text-content">{label}</span>
+                    <span className="block text-caption text-muted">{desc}</span>
                   </span>
                 </label>
               ))}
@@ -200,7 +200,7 @@ export default function NewCohortPage() {
 
           {/* Accent picker */}
           <div className="space-y-2">
-            <p className="block text-[13px] font-extrabold text-[#111111]">Accent colour</p>
+            <p className="block text-label text-content">Accent colour</p>
             <div className="flex gap-3">
               {ACCENTS.map(({ key, label, swatch }) => (
                 <button
@@ -211,7 +211,7 @@ export default function NewCohortPage() {
                   aria-pressed={accent === key}
                   className={`h-10 w-10 rounded-full ${swatch} transition-shadow ${
                     accent === key
-                      ? "ring-2 ring-[#F2A900] ring-offset-2 shadow-[0_0_0_4px_rgba(242,169,0,0.18)]"
+                      ? "ring-2 ring-accent ring-offset-2 shadow-[0_0_0_4px_rgba(242,169,0,0.18)]"
                       : "opacity-70 hover:opacity-100"
                   }`}
                 />
@@ -221,7 +221,7 @@ export default function NewCohortPage() {
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-[#C0392B]" role="alert">
+            <p className="text-body text-danger" role="alert">
               {error}
             </p>
           )}

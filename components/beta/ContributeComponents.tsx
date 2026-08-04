@@ -6,7 +6,7 @@ import { useBetaApp } from "./AppStateProvider";
 import { Avatar } from "./Avatar";
 import { Button, Card, TextArea } from "./ui";
 
-const field = "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-sm text-[#111111] outline-none focus:border-[#F2A900]";
+const field = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-body text-content outline-none focus:border-accent";
 
 /** Composer shown to eligible non-owners on an open proof. */
 export function ContributeComposer({ proof }: { proof: Proof }) {
@@ -20,21 +20,21 @@ export function ContributeComposer({ proof }: { proof: Proof }) {
   const [busy, setBusy] = useState(false);
 
   if (already || done) {
-    return <Card className="p-4"><p className="text-sm font-extrabold text-[#111111]">Contribution sent.</p>
-      <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">The owner can accept it if it helps.</p></Card>;
+    return <Card className="p-4"><p className="text-body font-semibold text-content">Contribution sent.</p>
+      <p className="mt-1 text-body leading-6 text-muted">The owner can accept it if it helps.</p></Card>;
   }
   if (!eligible) {
-    return <Card className="p-4"><p className="text-sm leading-6 text-[#6E6E6E]">Contributing unlocks after your first proof and your first feedback.</p></Card>;
+    return <Card className="p-4"><p className="text-body leading-6 text-muted">Contributing unlocks after your first proof and your first feedback.</p></Card>;
   }
   return (
     <Card className="space-y-3 p-4">
-      <p className="text-sm font-extrabold text-[#111111]">Contribute a focused next step</p>
-      {proof.contributionFocus && <p className="text-xs leading-5 text-[#6E6E6E]">Focus: {proof.contributionFocus}</p>}
-      <label className="block"><span className="mb-1 block text-xs font-extrabold text-[#111111]">One specific observation</span>
+      <p className="text-body font-semibold text-content">Contribute a focused next step</p>
+      {proof.contributionFocus && <p className="text-caption leading-5 text-muted">Focus: {proof.contributionFocus}</p>}
+      <label className="block"><span className="mb-1 block text-caption font-semibold text-content">One specific observation</span>
         <input className={field} value={observation} onChange={(e) => setObservation(e.target.value)} placeholder="What worked or what you noticed…" /></label>
-      <label className="block"><span className="mb-1 block text-xs font-extrabold text-[#111111]">One concrete next step</span>
+      <label className="block"><span className="mb-1 block text-caption font-semibold text-content">One concrete next step</span>
         <TextArea value={nextStep} onChange={(e) => setNextStep(e.target.value)} rows={3} placeholder="A small, kind, specific suggestion…" /></label>
-      {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
+      {error && <p className="rounded-2xl bg-surface-soft p-3 text-body font-medium leading-6 text-accent-text">{error}</p>}
       <Button className="w-full" disabled={busy || !observation.trim() || !nextStep.trim()} onClick={async () => {
         setBusy(true); setError("");
         try {
@@ -51,7 +51,7 @@ export function ReceivedContributions({ proof }: { proof: Proof }) {
   const { getContributionsForProof, acceptContribution, snapshot } = useBetaApp();
   const items = getContributionsForProof(proof.id);
   if (items.length === 0) {
-    return <Card className="p-4"><p className="text-sm leading-6 text-[#6E6E6E]">No contributions yet. Open proofs invite focused help.</p></Card>;
+    return <Card className="p-4"><p className="text-body leading-6 text-muted">No contributions yet. Open proofs invite focused help.</p></Card>;
   }
   return (
     <div className="space-y-3">
@@ -61,11 +61,11 @@ export function ReceivedContributions({ proof }: { proof: Proof }) {
           <Card key={c.id} className="space-y-2 p-4">
             <div className="flex items-center gap-2">
               <Avatar name={author?.displayName} avatarUrl={author?.avatarUrl} size={24} />
-              <span className="text-xs font-extrabold text-[#111111]">{author?.displayName || "A member"}</span>
-              {c.status === "accepted" && <span className="ml-auto rounded-full bg-[#E8F6EC] px-2 py-0.5 text-[11px] font-bold text-[#15803D]">Accepted</span>}
+              <span className="text-caption font-semibold text-content">{author?.displayName || "A member"}</span>
+              {c.status === "accepted" && <span className="ml-auto rounded-full bg-success-soft px-2 py-0.5 text-overline text-success-text">Accepted</span>}
             </div>
-            <p className="text-sm leading-6 text-[#38322A]"><span className="font-bold">Observed:</span> {c.observation}</p>
-            <p className="text-sm leading-6 text-[#38322A]"><span className="font-bold">Next step:</span> {c.nextStep}</p>
+            <p className="text-body leading-6 text-secondary"><span className="font-medium">Observed:</span> {c.observation}</p>
+            <p className="text-body leading-6 text-secondary"><span className="font-medium">Next step:</span> {c.nextStep}</p>
             {c.status === "pending" && (
               <Button variant="secondary" className="w-full" onClick={() => void acceptContribution(c.id)}>Accept this contribution</Button>
             )}

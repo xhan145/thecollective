@@ -124,14 +124,14 @@ export default function NewProofPage() {
           cta={
             <div className="w-full space-y-2">
               {newBadges.length > 0 && (
-                <Link href="/badges" className="block rounded-2xl bg-[#FFF1C7] px-4 py-3 text-center text-sm font-extrabold text-[#7A5300]">
+                <Link href="/badges" className="block rounded-2xl bg-surface-soft px-4 py-3 text-center text-body font-semibold text-accent-text">
                   Badge earned: {newBadges.map((slug) => DEMO_ACHIEVEMENTS.find((b) => b.slug === slug)?.name ?? slug).join(", ")}
                 </Link>
               )}
               {nextLevel && (
                 <Link
                   href={`/proof/new/${nextLevel.id}`}
-                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-[#FFB000] to-[#F2A900] px-5 text-sm font-extrabold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent px-5 text-body font-semibold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]"
                 >
                   Next level unlocked: {nextLevel.levelName ?? nextLevel.title}
                 </Link>
@@ -152,29 +152,29 @@ export default function NewProofPage() {
         <PageHeader title="Submit proof" subtitle="Show what you practiced. It does not need to be perfect." />
         <Card className="p-5">
           {isMastery && skill ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF1C7] px-3 py-1 text-xs font-extrabold text-[#7A5300]">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-soft px-3 py-1 text-caption font-semibold text-accent-text">
               {skill.name} · Level {prompt?.levelNumber} · {prompt?.levelName}
             </span>
           ) : (
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#F2A900]">Practice prompt</p>
+            <p className="text-caption font-medium uppercase tracking-[0.14em] text-accent">Practice prompt</p>
           )}
-          <h2 className="mt-2 text-xl font-extrabold text-[#111111]">{prompt?.title || "Practice proof"}</h2>
+          <h2 className="mt-2 text-heading text-content">{prompt?.title || "Practice proof"}</h2>
           {isMastery && prompt?.masteryGoal && (
-            <p className="mt-2 rounded-2xl bg-[#FFF8EE] px-3.5 py-2.5 text-sm font-bold leading-6 text-[#38322A]">
+            <p className="mt-2 rounded-2xl bg-bg px-3.5 py-2.5 text-body font-medium leading-6 text-secondary">
               Goal: {prompt.masteryGoal}
             </p>
           )}
-          <p className="mt-2 text-sm leading-6 text-[#6E6E6E]">{prompt?.proofPrompt || prompt?.prompt || "Capture one small example of progress."}</p>
+          <p className="mt-2 text-body leading-6 text-muted">{prompt?.proofPrompt || prompt?.prompt || "Capture one small example of progress."}</p>
           {isMastery && prompt?.doesNotCount && (
-            <p className="mt-2 text-xs leading-5 text-[#9B958B]">
-              <span className="font-extrabold text-[#B07A00]">What doesn&rsquo;t count:</span> {prompt.doesNotCount}
+            <p className="mt-2 text-caption leading-5 text-muted">
+              <span className="font-semibold text-accent-text">What doesn&rsquo;t count:</span> {prompt.doesNotCount}
             </p>
           )}
           {isMastery && prompt?.safetyNote && (
-            <p className="mt-2 text-xs leading-5 text-[#9B958B]">{prompt.safetyNote}</p>
+            <p className="mt-2 text-caption leading-5 text-muted">{prompt.safetyNote}</p>
           )}
           {currentUser?.goalText && (
-            <p className="mt-2 text-xs leading-5 text-[#7A5300]">Toward your goal: "{currentUser.goalText}" — it doesn't need to be perfect.</p>
+            <p className="mt-2 text-caption leading-5 text-accent-text">Toward your goal: "{currentUser.goalText}" — it doesn't need to be perfect.</p>
           )}
         </Card>
         <AiSupportCard
@@ -201,8 +201,8 @@ export default function NewProofPage() {
         />
         <Card className="space-y-4 p-5">
           <div>
-            <h2 className="text-lg font-extrabold text-[#111111]">Proof type</h2>
-            <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">Proof is private in this prototype. You can share more later. Start with what feels safe.</p>
+            <h2 className="text-heading text-content">Proof type</h2>
+            <p className="mt-1 text-body leading-6 text-muted">Proof is private in this prototype. You can share more later. Start with what feels safe.</p>
           </div>
           <ProofTypeSelector
             value={mediaType}
@@ -214,12 +214,12 @@ export default function NewProofPage() {
             }}
           />
           {requiredType && requiredType !== "text" && (
-            <p className="text-xs leading-5 text-[#9B958B]">
+            <p className="text-caption leading-5 text-muted">
               This practice works best as {requiredType === "audio" ? "an audio clip" : requiredType === "video" ? "a short video" : `a ${requiredType}`} — text is fine too if that&rsquo;s easier today.
             </p>
           )}
           <div>
-            <label className="mb-2 block text-sm font-extrabold text-[#111111]">What did you practice or improve?</label>
+            <label className="mb-2 block text-body font-semibold text-content">What did you practice or improve?</label>
             <TextArea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Write a short reflection..." />
           </div>
           <AiSupportCard
@@ -245,8 +245,8 @@ export default function NewProofPage() {
             }
           />
           <AttachmentPicker mediaType={mediaType} attachment={attachment} onAttachment={setAttachment} onRemove={() => setAttachment(undefined)} />
-          {error && <p className="rounded-[18px] bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
-          <p className="text-center text-xs leading-5 text-[#6E6E6E]">Only share what you are comfortable sharing.</p>
+          {error && <p className="rounded-[18px] bg-surface-soft p-3 text-body font-medium leading-6 text-accent-text">{error}</p>}
+          <p className="text-center text-caption leading-5 text-muted">Only share what you are comfortable sharing.</p>
           <Button className="w-full" disabled={submitting} onClick={handleSubmit}>
             {submitting ? "Saving…" : "Submit proof"}
           </Button>

@@ -48,28 +48,28 @@ export default function ChangePasswordPage() {
         <PageHeader title="Change password" subtitle="Choose a strong, memorable password." />
         <Card className="space-y-3 p-5 pixel-card">
           <label className="block">
-            <span className="mb-1 block text-xs font-extrabold text-[#9B958B]">New password</span>
+            <span className="mb-1 block text-caption font-semibold text-muted">New password</span>
             <TextInput type="password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="••••••••" />
           </label>
           <label className="block">
-            <span className="mb-1 block text-xs font-extrabold text-[#9B958B]">Confirm new password</span>
+            <span className="mb-1 block text-caption font-semibold text-muted">Confirm new password</span>
             <TextInput type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" />
           </label>
           <ul className="space-y-1 pt-1">
             {RULES.map((r) => {
               const ok = r.test(pw);
               return (
-                <li key={r.label} className={`flex items-center gap-2 text-xs font-bold ${ok ? "text-[#15803D]" : "text-[#9B958B]"}`}>
+                <li key={r.label} className={`flex items-center gap-2 text-caption font-medium ${ok ? "text-success-text" : "text-muted"}`}>
                   <span aria-hidden>{ok ? "✓" : "○"}</span> {r.label}
                 </li>
               );
             })}
-            <li className={`flex items-center gap-2 text-xs font-bold ${match ? "text-[#15803D]" : "text-[#9B958B]"}`}>
+            <li className={`flex items-center gap-2 text-caption font-medium ${match ? "text-success-text" : "text-muted"}`}>
               <span aria-hidden>{match ? "✓" : "○"}</span> Passwords match
             </li>
           </ul>
         </Card>
-        {status && <p className="px-1 text-sm font-bold text-[#7A5300]">{status}</p>}
+        {status && <p className="px-1 text-body font-medium text-accent-text">{status}</p>}
         <Button onClick={submit} disabled={busy || !allPass || !match} className="w-full">
           {busy ? "Updating…" : "Update password"}
         </Button>

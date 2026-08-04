@@ -78,13 +78,13 @@ export default function BadgesPage() {
         <PageHeader title="Badges" subtitle="A record of what you've practiced — not a trophy wall." />
 
         {unlockedNames && (
-          <div className="flex items-center gap-3 rounded-2xl border border-[#F2A900]/30 bg-[#FFF1C7] p-4">
-            <Sparkles size={20} className="shrink-0 text-[#F2A900]" />
-            <p className="text-sm font-bold text-[#7A5300]">Just earned: {unlockedNames}.</p>
+          <div className="flex items-center gap-3 rounded-2xl border border-accent/30 bg-surface-soft p-4">
+            <Sparkles size={20} className="shrink-0 text-accent" />
+            <p className="text-body font-medium text-accent-text">Just earned: {unlockedNames}.</p>
           </div>
         )}
 
-        <p className="text-sm text-[#6E6E6E]">{earnedCount} of {achievements.length} earned.</p>
+        <p className="text-body text-muted">{earnedCount} of {achievements.length} earned.</p>
 
         <div className="-mx-1 flex flex-wrap gap-2">
           {categories.map((cat) => (
@@ -92,8 +92,8 @@ export default function BadgesPage() {
               key={cat}
               type="button"
               onClick={() => setFilter(cat)}
-              className={`rounded-full px-4 py-2 text-xs font-extrabold transition-colors ${
-                filter === cat ? "bg-[#FFF1C7] text-[#7A5300]" : "bg-[#FFFDF8] text-[#8D877F] hover:text-[#111111]"
+              className={`rounded-full px-4 py-2 text-caption font-semibold transition-colors ${
+                filter === cat ? "bg-surface-soft text-accent-text" : "bg-surface text-muted hover:text-content"
               }`}
             >
               {cat}
@@ -122,8 +122,8 @@ export default function BadgesPage() {
                     onClick={() =>
                       void setDisplayedBadges(pinned ? selected.filter((sl) => sl !== badge.slug) : [...selected, badge.slug])
                     }
-                    className={`absolute right-2 top-2 rounded-full px-2 py-1 text-[10px] font-extrabold transition-colors disabled:opacity-40 ${
-                      pinned ? "bg-[#F2A900] text-white" : "bg-[#FFF1C7] text-[#7A5300]"
+                    className={`absolute right-2 top-2 rounded-full px-2 py-1 text-overline font-semibold transition-colors disabled:opacity-40 ${
+                      pinned ? "bg-accent text-white" : "bg-surface-soft text-accent-text"
                     }`}
                   >
                     {pinned ? "On passport" : full ? "6 max" : "Show"}

@@ -7,10 +7,10 @@ export default function FounderStory() {
   return (
     <Section id="founder" bg="cream">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-[#F2A900]">{eyebrow}</p>
+        <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{eyebrow}</p>
         <div className="mt-4 space-y-4">
           {paragraphs.map((para, i) => (
-            <p key={i} className="text-[16px] leading-7 text-[#38322A] lg:text-[17px]">{para}</p>
+            <p key={i} className="text-body-lg leading-7 text-secondary lg:text-body-lg">{para}</p>
           ))}
         </div>
         <div className="mt-7 flex justify-center">

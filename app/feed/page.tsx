@@ -25,8 +25,8 @@ export default function FeedPage() {
       <div className="space-y-5">
         <PageHeader title="Feed" subtitle="Learn from people ahead, share with people behind. Usefulness over attention." />
         {ranked.length > 0 && (
-          <div className="flex items-center gap-2 rounded-full bg-[#FFF1C7] px-4 py-2 text-xs font-extrabold text-[#7A5300]">
-            <span className="inline-block h-2 w-2 rounded-full bg-[#22C55E]" />
+          <div className="flex items-center gap-2 rounded-full bg-surface-soft px-4 py-2 text-caption font-semibold text-accent-text">
+            <span className="inline-block h-2 w-2 rounded-full bg-success" />
             {realCount > 0 ? `${realCount} real proof${realCount === 1 ? "" : "s"} shown first` : "No real proof yet. Here are example proofs to help you start."}
           </div>
         )}

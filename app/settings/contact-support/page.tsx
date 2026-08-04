@@ -18,8 +18,8 @@ export default function ContactSupportPage() {
         <div className="space-y-3">
           {OPTIONS.map((o) => (
             <Card key={o.title} className="p-5 pixel-card">
-              <h3 className="text-sm font-extrabold text-[#111111]">{o.title}</h3>
-              <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">{o.body}</p>
+              <h3 className="text-body font-semibold text-content">{o.title}</h3>
+              <p className="mt-1 text-body leading-6 text-muted">{o.body}</p>
             </Card>
           ))}
         </div>

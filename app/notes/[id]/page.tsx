@@ -43,11 +43,11 @@ export default function NoteThreadPage() {
   return (
     <AppShell>
       <div className="space-y-4">
-        <Link href="/notes" className="text-sm font-extrabold text-[#6E6E6E]">← Notes</Link>
+        <Link href="/notes" className="text-body font-semibold text-muted">← Notes</Link>
         <div className="flex items-center gap-3">
           <Avatar name={other?.displayName} avatarUrl={other?.avatarUrl} size={40} />
           <div>
-            <p className="text-sm font-extrabold text-[#111111]">{other?.displayName || "A member"}</p>
+            <p className="text-body font-semibold text-content">{other?.displayName || "A member"}</p>
             <Badge tone={convo.kind === "feedback_request" ? "gold" : "muted"}>
               {convo.kind === "feedback_request" ? "Feedback request" : "Peer note"}
             </Badge>
@@ -60,8 +60,8 @@ export default function NoteThreadPage() {
             return (
               <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                 <p
-                  className={`max-w-[80%] rounded-[18px] px-4 py-2.5 text-sm leading-6 ${
-                    mine ? "bg-[#F2A900] text-white" : "bg-[#FFFDF8] text-[#38322A] border border-[#EFE7D8]"
+                  className={`max-w-[80%] rounded-[18px] px-4 py-2.5 text-body leading-6 ${
+                    mine ? "bg-accent text-white" : "bg-surface text-secondary border border-line"
                   }`}
                 >
                   {m.body}

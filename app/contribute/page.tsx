@@ -15,7 +15,7 @@ export default function ContributePage() {
       <div className="space-y-5">
         <PageHeader title="Contribute" subtitle="Help someone take one specific next step." />
         {!eligible && (
-          <Card className="p-4"><p className="text-sm leading-6 text-[#6E6E6E]">Contributing unlocks after your first proof and your first feedback. You can still read open requests.</p></Card>
+          <Card className="p-4"><p className="text-body leading-6 text-muted">Contributing unlocks after your first proof and your first feedback. You can still read open requests.</p></Card>
         )}
         {open.length === 0 ? (
           <EmptyState title="No open requests right now" body="Check back soon — members open proofs when they want focused help." />
@@ -28,10 +28,10 @@ export default function ContributePage() {
                   <Card interactive className="space-y-2 p-4">
                     <div className="flex items-center gap-2">
                       <Avatar name={owner?.displayName} avatarUrl={owner?.avatarUrl} size={24} />
-                      <span className="text-xs font-extrabold text-[#111111]">{owner?.displayName || "A member"}</span>
+                      <span className="text-caption font-semibold text-content">{owner?.displayName || "A member"}</span>
                     </div>
-                    <p className="text-sm font-extrabold leading-5 text-[#111111]">{p.title}</p>
-                    {p.contributionFocus && <p className="text-xs leading-5 text-[#6E6E6E]">Focus: {p.contributionFocus}</p>}
+                    <p className="text-body font-semibold leading-5 text-content">{p.title}</p>
+                    {p.contributionFocus && <p className="text-caption leading-5 text-muted">Focus: {p.contributionFocus}</p>}
                   </Card>
                 </Link>
               );

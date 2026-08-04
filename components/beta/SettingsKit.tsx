@@ -6,21 +6,21 @@ import type { ReactNode } from "react";
 export function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="space-y-2">
-      <p className="px-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#B6AE9F]">{title}</p>
-      <div className="elev-1 overflow-hidden rounded-3xl bg-[#FFFDF8] pixel-card">{children}</div>
+      <p className="px-1 text-overline uppercase tracking-[0.14em] text-subtle">{title}</p>
+      <div className="elev-1 overflow-hidden rounded-3xl bg-surface pixel-card">{children}</div>
     </div>
   );
 }
 
 export function SettingsRow({ icon, title, subtitle, href }: { icon: ReactNode; title: string; subtitle?: string; href: string }) {
   return (
-    <Link href={href} className="flex items-center gap-3 border-b border-[#EFE7D8]/60 px-4 py-3.5 transition-colors last:border-b-0 hover:bg-[#FFF1C7]/40">
-      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#FFF1C7] text-[#C8861A] pixel-icon-tile">{icon}</span>
+    <Link href={href} className="flex items-center gap-3 border-b border-line/60 px-4 py-3.5 transition-colors last:border-b-0 hover:bg-surface-soft/40">
+      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-soft text-accent-text pixel-icon-tile">{icon}</span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-extrabold text-[#111111]">{title}</span>
-        {subtitle && <span className="block truncate text-xs text-[#6E6E6E]">{subtitle}</span>}
+        <span className="block text-body font-semibold text-content">{title}</span>
+        {subtitle && <span className="block truncate text-caption text-muted">{subtitle}</span>}
       </span>
-      <span className="text-[#C9C2B5]" aria-hidden>›</span>
+      <span className="text-subtle" aria-hidden>›</span>
     </Link>
   );
 }
@@ -29,8 +29,8 @@ export function ToggleRow({ label, hint, checked, onChange, disabled }: { label:
   return (
     <label className={`flex items-center justify-between gap-3 ${disabled ? "opacity-60" : ""}`}>
       <span>
-        <span className="block text-sm font-bold text-[#38322A]">{label}</span>
-        {hint && <span className="mt-0.5 block text-xs text-[#6E6E6E]">{hint}</span>}
+        <span className="block text-body font-medium text-secondary">{label}</span>
+        {hint && <span className="mt-0.5 block text-caption text-muted">{hint}</span>}
       </span>
       <input
         type="checkbox"
@@ -38,7 +38,7 @@ export function ToggleRow({ label, hint, checked, onChange, disabled }: { label:
         disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
         aria-label={label}
-        className="h-5 w-5 shrink-0 accent-[#F2A900]"
+        className="h-5 w-5 shrink-0 accent-accent"
       />
     </label>
   );
@@ -51,15 +51,15 @@ export function RadioOptionCard({ label, hint, active, onSelect }: { label: stri
       onClick={onSelect}
       aria-pressed={active}
       className={`flex w-full items-start gap-3 rounded-2xl border p-3.5 text-left transition-colors ${
-        active ? "border-[#F2A900]/60 bg-[#FFF1C7]/50" : "border-[#EFE7D8] bg-[#FFFDF8] hover:border-[#F2A900]/30"
+        active ? "border-accent/60 bg-surface-soft/50" : "border-line bg-surface hover:border-accent/30"
       }`}
     >
-      <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 ${active ? "border-[#F2A900]" : "border-[#D6CDBC]"}`}>
-        {active && <span className="h-2.5 w-2.5 rounded-full bg-[#F2A900]" />}
+      <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 ${active ? "border-accent" : "border-line"}`}>
+        {active && <span className="h-2.5 w-2.5 rounded-full bg-accent" />}
       </span>
       <span>
-        <span className="block text-sm font-extrabold text-[#111111]">{label}</span>
-        {hint && <span className="mt-0.5 block text-xs leading-snug text-[#6E6E6E]">{hint}</span>}
+        <span className="block text-body font-semibold text-content">{label}</span>
+        {hint && <span className="mt-0.5 block text-caption leading-snug text-muted">{hint}</span>}
       </span>
     </button>
   );
@@ -71,8 +71,8 @@ export function PreferenceChip({ label, active, onToggle }: { label: string; act
       type="button"
       onClick={onToggle}
       aria-pressed={active}
-      className={`rounded-full px-3.5 py-2 text-xs font-extrabold transition-colors ${
-        active ? "bg-[#FFF1C7] text-[#7A5300]" : "bg-[#FFFDF8] text-[#8D877F] hover:text-[#111111]"
+      className={`rounded-full px-3.5 py-2 text-caption font-semibold transition-colors ${
+        active ? "bg-surface-soft text-accent-text" : "bg-surface text-muted hover:text-content"
       }`}
     >
       {label}

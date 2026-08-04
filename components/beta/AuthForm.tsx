@@ -10,7 +10,7 @@ import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 
 const field =
-  "w-full rounded-2xl border border-[#EFE7D8] bg-white px-4 py-3 text-[15px] text-[#111111] outline-none focus:border-[#F2A900]";
+  "w-full rounded-2xl border border-line bg-white px-4 py-3 text-body text-content outline-none focus:border-accent";
 
 // Official Google "G" mark, inlined locally (no external hotlink to gstatic).
 function GoogleGlyph({ className = "h-5 w-5 shrink-0" }: { className?: string }) {
@@ -117,15 +117,15 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
   }
 
   return (
-    <main className="relative mx-auto min-h-screen max-w-[430px] bg-[#FFF8EE] px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-[#111111]">
+    <main className="relative mx-auto min-h-screen max-w-[430px] bg-bg px-5 pb-10 pt-[calc(58px+env(safe-area-inset-top,0px))] text-content">
       <AmbientBackdrop />
       <div className="relative z-[1]">
       <div className="text-center">
         <CollectiveMark className="mx-auto h-[88px] w-[180px]" />
-        <h1 className="mt-5 font-display text-[32px] font-bold leading-tight text-[#111111]">
+        <h1 className="mt-5 font-display text-display leading-tight text-content">
           {mode === "signup" ? "Small steps. Real progress." : "Welcome back."}
         </h1>
-        <p className="mx-auto mt-3 max-w-[320px] text-sm leading-6 text-[#6E6E6E]">
+        <p className="mx-auto mt-3 max-w-[320px] text-body leading-6 text-muted">
           {mode === "signup"
             ? "Practice one small thing. Show your proof. Get useful feedback. Build trust over time — no likes, no followers."
             : "Small steps. Real progress."}
@@ -151,8 +151,8 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             {mode === "signup" && REQUIRE_INVITE && (
               <input className={field} placeholder="Invite code" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} autoComplete="one-time-code" aria-label="Invite code" />
             )}
-            {error && <p className="rounded-2xl bg-[#FFF1C7] p-3 text-sm font-bold leading-6 text-[#7A5300]">{error}</p>}
-            {notice && <p className="rounded-2xl bg-[#FFF8EE] p-3 text-sm font-bold leading-6 text-[#38322A]">{notice}</p>}
+            {error && <p className="rounded-2xl bg-surface-soft p-3 text-body font-medium leading-6 text-accent-text">{error}</p>}
+            {notice && <p className="rounded-2xl bg-bg p-3 text-body font-medium leading-6 text-secondary">{notice}</p>}
             <Button type="submit" className="w-full" disabled={loading || googleLoading}>
               {loading ? "One moment..." : mode === "signup" ? "Create account" : "Sign in"}
             </Button>
@@ -170,7 +170,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
           </Button>
           <button
             type="button"
-            className="w-full py-2 text-sm font-extrabold text-[#6E6E6E]"
+            className="w-full py-2 text-body font-semibold text-muted"
             onClick={() => {
               setMode(mode === "signup" ? "login" : "signup");
               setError(null);
@@ -180,9 +180,9 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
             {mode === "signup" ? "I already have an account" : "I need an account"}
           </button>
           <div className="flex items-center gap-3 py-1">
-            <span className="h-px flex-1 bg-[#EFE7D8]" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#9B958B]">or</span>
-            <span className="h-px flex-1 bg-[#EFE7D8]" />
+            <span className="h-px flex-1 bg-line" />
+            <span className="text-overline uppercase tracking-wider text-muted">or</span>
+            <span className="h-px flex-1 bg-line" />
           </div>
           <Button variant="secondary" className="w-full" onClick={() => { enterDemoBeta("user-alex"); router.push("/home"); }}>
             Explore the demo (no account)
@@ -190,7 +190,7 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
         </Card>
       ) : (
         <Card className="mt-8 space-y-4 p-5">
-          <p className="rounded-2xl bg-[#FFF8EE] p-3 text-sm leading-6 text-[#6E6E6E]">
+          <p className="rounded-2xl bg-bg p-3 text-body leading-6 text-muted">
             A backend is not configured. Explore the local demo to see the full loop.
           </p>
           <Button className="w-full" onClick={() => { enterDemoBeta("user-alex"); router.push("/home"); }}>
@@ -199,11 +199,11 @@ export function AuthForm({ initialMode }: { initialMode: "signup" | "login" }) {
         </Card>
       )}
 
-      <p className="mt-6 text-center text-xs text-[#9B958B]">
+      <p className="mt-6 text-center text-caption text-muted">
         {mode === "signup" ? (
-          <Link href="/login" className="font-bold text-[#6E6E6E]">Have an account? Log in</Link>
+          <Link href="/login" className="font-medium text-muted">Have an account? Log in</Link>
         ) : (
-          <Link href="/signup" className="font-bold text-[#6E6E6E]">New here? Create an account</Link>
+          <Link href="/signup" className="font-medium text-muted">New here? Create an account</Link>
         )}
       </p>
     </div>

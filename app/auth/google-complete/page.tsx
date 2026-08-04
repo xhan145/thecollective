@@ -51,9 +51,9 @@ export default function GoogleCompletePage() {
   }, [nextPath, authReady, currentUser, router]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-[#FFF8EE] px-5 text-[#111111]">
+    <main className="mx-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-bg px-5 text-content">
       <CollectiveMark className="h-[88px] w-[180px]" />
-      <p className="mt-6 text-sm font-bold text-[#6E6E6E]">Finishing Google sign-in…</p>
+      <p className="mt-6 text-body font-medium text-muted">Finishing Google sign-in…</p>
     </main>
   );
 }

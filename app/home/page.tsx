@@ -41,9 +41,9 @@ export default function HomePage() {
           title={`${greeting}${currentUser ? `, ${currentUser.displayName}` : ""}.`}
           subtitle={currentUser?.goalText ? `Working toward: ${currentUser.goalText}` : "Small steps. Real progress."}
           action={
-            <Link href="/feed" className="relative grid h-11 w-11 place-items-center rounded-full bg-[#FFFDF8] text-[#111111] shadow-[0_10px_30px_rgba(71,52,18,0.08)] lg:hidden" aria-label="Notifications">
+            <Link href="/feed" className="relative grid h-11 w-11 place-items-center rounded-full bg-surface text-content shadow-[0_10px_30px_rgba(71,52,18,0.08)] lg:hidden" aria-label="Notifications">
               <Bell size={19} />
-              <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#F2A900] px-1 text-[10px] font-black text-white">1</span>
+              <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-white">1</span>
             </Link>
           }
         />
@@ -52,9 +52,9 @@ export default function HomePage() {
         <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
           <div className="space-y-6 lg:col-span-2">
             <HeroCard>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#B07A00]">Your next step</p>
-              <h2 className="mt-1 font-display text-xl font-bold text-[#111111]">{nextPrompt.title}</h2>
-              <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">{nextPrompt.estimatedMinutes} min · low pressure</p>
+              <p className="text-overline uppercase tracking-[0.14em] text-accent-text">Your next step</p>
+              <h2 className="mt-1 font-display text-heading text-content">{nextPrompt.title}</h2>
+              <p className="mt-1 text-body leading-6 text-muted">{nextPrompt.estimatedMinutes} min · low pressure</p>
               <ButtonLink href={`/proof/new/${nextPrompt.id}`} className="mt-4 w-full">Begin →</ButtonLink>
               <div className="mt-4">
                 <ProgressBar value={66} label="This week" />
@@ -69,7 +69,7 @@ export default function HomePage() {
             </section>
 
             <section className="space-y-3">
-              <SectionLabel title="Recent Proof" action={<Link href="/passport?tab=proof" className="text-sm font-extrabold text-[#F2A900]">See all</Link>} />
+              <SectionLabel title="Recent Proof" action={<Link href="/passport?tab=proof" className="text-body font-semibold text-accent">See all</Link>} />
               {latestProof ? (
                 <ProofCard proof={latestProof} feedbackCount={getFeedbackForProof(latestProof.id).length} authorName={snapshot.users.find((u) => u.id === latestProof.userId)?.displayName} authorAvatarUrl={snapshot.users.find((u) => u.id === latestProof.userId)?.avatarUrl} />
               ) : (
@@ -83,12 +83,12 @@ export default function HomePage() {
             <DirectionCard direction={featuredDirection} />
             <Card className="p-5">
               <div className="flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[#E8F8EE] text-[#22C55E]">
+                <div className="grid h-11 w-11 place-items-center rounded-2xl bg-success-soft text-success">
                   <CheckCircle2 size={21} />
                 </div>
                 <div>
                   <Badge tone="green">Private beta</Badge>
-                  <p className="mt-1 text-sm leading-6 text-[#6E6E6E]">Proof is evidence of practice and progress, not content for clout.</p>
+                  <p className="mt-1 text-body leading-6 text-muted">Proof is evidence of practice and progress, not content for clout.</p>
                 </div>
               </div>
             </Card>

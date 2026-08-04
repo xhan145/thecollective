@@ -11,21 +11,21 @@ import { getProfileDetails, saveProfileDetails } from "@/lib/supabase/passportRe
 function Field({ label, value, onChange, placeholder, multiline }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; multiline?: boolean }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-extrabold text-[#9B958B]">{label}</span>
+      <span className="mb-1 block text-caption font-semibold text-muted">{label}</span>
       {multiline ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={2}
-          className="w-full resize-none rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2.5 text-sm text-[#111111] outline-none focus-visible:ring-2 focus-visible:ring-[#F2A900]/40"
+          className="w-full resize-none rounded-2xl border border-line bg-surface px-3 py-2.5 text-body text-content outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         />
       ) : (
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-2xl border border-[#EFE7D8] bg-[#FFFDF8] px-3 py-2.5 text-sm text-[#111111] outline-none focus-visible:ring-2 focus-visible:ring-[#F2A900]/40"
+          className="w-full rounded-2xl border border-line bg-surface px-3 py-2.5 text-body text-content outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         />
       )}
     </label>
@@ -111,16 +111,16 @@ export default function EditIntroductionPage() {
         <SectionLabel title="Introductions" />
         <Card className="space-y-3 p-5">
           <label className="flex items-center justify-between gap-3">
-            <span className="text-sm font-bold text-[#38322A]">Open to introductions</span>
-            <input type="checkbox" checked={openToIntro} onChange={(e) => setOpenToIntro(e.target.checked)} className="h-5 w-5 accent-[#F2A900]" />
+            <span className="text-body font-medium text-secondary">Open to introductions</span>
+            <input type="checkbox" checked={openToIntro} onChange={(e) => setOpenToIntro(e.target.checked)} className="h-5 w-5 accent-accent" />
           </label>
           <label className="flex items-center justify-between gap-3">
-            <span className="text-sm font-bold text-[#38322A]">Only people in my direction</span>
-            <input type="checkbox" checked={sameDirOnly} onChange={(e) => setSameDirOnly(e.target.checked)} className="h-5 w-5 accent-[#F2A900]" />
+            <span className="text-body font-medium text-secondary">Only people in my direction</span>
+            <input type="checkbox" checked={sameDirOnly} onChange={(e) => setSameDirOnly(e.target.checked)} className="h-5 w-5 accent-accent" />
           </label>
           <label className="flex items-center justify-between gap-3">
-            <span className="text-sm font-bold text-[#38322A]">Only trusted members</span>
-            <input type="checkbox" checked={trustedOnly} onChange={(e) => setTrustedOnly(e.target.checked)} className="h-5 w-5 accent-[#F2A900]" />
+            <span className="text-body font-medium text-secondary">Only trusted members</span>
+            <input type="checkbox" checked={trustedOnly} onChange={(e) => setTrustedOnly(e.target.checked)} className="h-5 w-5 accent-accent" />
           </label>
         </Card>
 

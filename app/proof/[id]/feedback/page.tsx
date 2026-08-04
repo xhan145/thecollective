@@ -92,7 +92,7 @@ export default function ProofFeedbackPage() {
               <FeedbackField label="What was clear?" value={clarity} onChange={setClarity} placeholder={rubric?.clarity ?? "Name one thing that landed."} />
               <FeedbackField label="What could be improved?" value={useful} onChange={setUseful} placeholder={rubric?.usefulness ?? "One specific, kind suggestion."} />
               <FeedbackField label="One useful next step" value={nextStep} onChange={setNextStep} placeholder={rubric?.next_step ?? "A small step they could try next."} />
-              <p className="text-center text-xs leading-5 text-[#9B958B]">
+              <p className="text-center text-caption leading-5 text-muted">
                 Be specific, useful, and kind. Feedback helps someone improve. It does not define them.
               </p>
               <Button type="submit" className="w-full" disabled={!canSend}>Send feedback</Button>
@@ -117,7 +117,7 @@ function FeedbackField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-extrabold text-[#111111]">{label}</span>
+      <span className="mb-1.5 block text-body font-semibold text-content">{label}</span>
       <TextArea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="min-h-20" />
     </label>
   );
