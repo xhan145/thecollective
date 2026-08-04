@@ -44,7 +44,7 @@ export default function AccountPage() {
   }
 
   const field =
-    "min-h-12 w-full rounded-2xl border border-line bg-white px-4 text-body text-content outline-none focus:border-accent";
+    "min-h-12 w-full rounded-2xl border border-line bg-surface-input px-4 text-body text-content outline-none focus:border-accent";
 
   return (
     <AppShell>

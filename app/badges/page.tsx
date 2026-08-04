@@ -123,7 +123,7 @@ export default function BadgesPage() {
                       void setDisplayedBadges(pinned ? selected.filter((sl) => sl !== badge.slug) : [...selected, badge.slug])
                     }
                     className={`absolute right-2 top-2 rounded-full px-2 py-1 text-overline font-semibold transition-colors disabled:opacity-40 ${
-                      pinned ? "bg-accent text-white" : "bg-surface-soft text-accent-text"
+                      pinned ? "bg-accent text-accent-on" : "bg-surface-soft text-accent-text"
                     }`}
                   >
                     {pinned ? "On passport" : full ? "6 max" : "Show"}

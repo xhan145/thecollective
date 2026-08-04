@@ -29,7 +29,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
           type="button"
           onClick={(e) => { stop(e); toggleUseful(proof.id); }}
           aria-pressed={useful}
-          className={`${base} ${useful ? "bg-accent text-white" : "bg-surface-soft text-accent-text"}`}
+          className={`${base} ${useful ? "bg-accent text-accent-on" : "bg-surface-soft text-accent-text"}`}
         >
           {useful ? "Marked useful" : "Useful"}
         </button>
@@ -38,7 +38,7 @@ export function ProofActions({ proof, compact = false }: { proof: Proof; compact
         type="button"
         onClick={(e) => { stop(e); toggleSaved("proof", proof.id); }}
         aria-pressed={saved}
-        className={`${base} ${saved ? "bg-content text-white" : "border border-line bg-surface text-muted"}`}
+        className={`${base} ${saved ? "bg-accent text-accent-on" : "border border-line bg-surface text-muted"}`}
       >
         {saved ? "Saved for practice" : "Save for practice"}
       </button>
@@ -132,7 +132,7 @@ export function AttachmentPicker({
 
 export function AttachmentPreview({ attachment, onRemove }: { attachment: AttachmentDraft | ProofAttachment; onRemove?: () => void }) {
   return (
-    <div className="rounded-[18px] border border-line bg-white p-3">
+    <div className="rounded-[18px] border border-line bg-surface-input p-3">
       <div className="flex items-center gap-3">
         <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-surface-soft text-accent">
           {attachment.mediaType === "image" && attachment.localUrl ? (
@@ -170,7 +170,7 @@ export function ProofTypeSelector({ value, onChange, allowed }: { value: ProofMe
             key={type}
             type="button"
             onClick={() => onChange(type)}
-            className={`min-h-16 rounded-[16px] border p-2 text-center transition active:scale-[0.98] ${active ? "border-accent bg-surface-soft text-content" : "border-line bg-white text-muted"}`}
+            className={`min-h-16 rounded-[16px] border p-2 text-center transition active:scale-[0.98] ${active ? "border-accent bg-surface-soft text-content" : "border-line bg-surface-input text-muted"}`}
             aria-label={`Select ${mediaTypeLabel(type)}`}
           >
             <ProofMediaIcon type={type} className={active ? "mx-auto text-accent" : "mx-auto text-muted"} />
@@ -346,12 +346,12 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
         </div>
         {proof.body && <p className="mt-4 rounded-[18px] bg-bg p-4 text-body leading-6 text-secondary">{proof.body}</p>}
         {proof.attachments[0]?.localUrl && (proof.mediaType === "image" || proof.mediaType === "video" || proof.mediaType === "audio") && (
-          <div className="mt-4 overflow-hidden rounded-[18px] border border-line bg-black/[0.02]">
+          <div className="mt-4 overflow-hidden rounded-[18px] border border-line bg-scrim/[0.02]">
             {proof.mediaType === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={proof.attachments[0].localUrl} alt={proof.title} className="max-h-[420px] w-full object-contain" />
             ) : proof.mediaType === "video" ? (
-              <video src={proof.attachments[0].localUrl} controls playsInline preload="metadata" className="max-h-[420px] w-full bg-black" />
+              <video src={proof.attachments[0].localUrl} controls playsInline preload="metadata" className="max-h-[420px] w-full bg-scrim" />
             ) : (
               <audio src={proof.attachments[0].localUrl} controls className="w-full p-3" />
             )}
@@ -387,7 +387,7 @@ export function ProofDetail({ proof, feedback }: { proof: Proof; feedback: Feedb
               type="button"
               onClick={() => toggleLearnFrom(proof.userId)}
               aria-pressed={learning}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-caption font-semibold transition ${learning ? "bg-accent text-white" : "border border-line bg-surface text-accent-text"}`}
+              className={`shrink-0 rounded-full px-3.5 py-2 text-caption font-semibold transition ${learning ? "bg-accent text-accent-on" : "border border-line bg-surface text-accent-text"}`}
             >
               {learning ? "Learning from" : "Learn from"}
             </button>

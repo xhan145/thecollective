@@ -43,7 +43,7 @@ export default function HomePage() {
           action={
             <Link href="/feed" className="relative grid h-11 w-11 place-items-center rounded-full bg-surface text-content shadow-[0_10px_30px_rgba(71,52,18,0.08)] lg:hidden" aria-label="Notifications">
               <Bell size={19} />
-              <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-white">1</span>
+              <span className="absolute right-1 top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-accent-on">1</span>
             </Link>
           }
         />

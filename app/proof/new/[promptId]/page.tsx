@@ -131,7 +131,7 @@ export default function NewProofPage() {
               {nextLevel && (
                 <Link
                   href={`/proof/new/${nextLevel.id}`}
-                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent px-5 text-body font-semibold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]"
+                  className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent-strong to-accent px-5 text-body font-semibold text-accent-on shadow-[0_10px_24px_rgba(242,169,0,0.32)]"
                 >
                   Next level unlocked: {nextLevel.levelName ?? nextLevel.title}
                 </Link>

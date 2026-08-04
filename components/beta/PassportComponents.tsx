@@ -251,7 +251,7 @@ export function PassportMenu({ open, onClose }: { open: boolean; onClose: () => 
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-label="Passport menu">
-      <button type="button" aria-label="Close menu" onClick={onClose} className="absolute inset-0 bg-black/30 backdrop-blur-[2px]" />
+      <button type="button" aria-label="Close menu" onClick={onClose} className="absolute inset-0 bg-scrim/30 backdrop-blur-[2px]" />
       <motion.div
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

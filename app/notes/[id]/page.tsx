@@ -61,7 +61,7 @@ export default function NoteThreadPage() {
               <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                 <p
                   className={`max-w-[80%] rounded-[18px] px-4 py-2.5 text-body leading-6 ${
-                    mine ? "bg-accent text-white" : "bg-surface text-secondary border border-line"
+                    mine ? "bg-accent text-accent-on" : "bg-surface text-secondary border border-line"
                   }`}
                 >
                   {m.body}

@@ -15,7 +15,7 @@ export default async function PracticePage({ params }: { params: Promise<{ promp
         <div className="glass-panel p-5">
           <p className="section-eyebrow">{prompt.estimatedMinutes} minute practice</p>
           <h2 className="mt-2 text-title leading-tight">{prompt.title}</h2>
-          <p className="mt-4 text-heading leading-8 text-white">{prompt.instruction}</p>
+          <p className="mt-4 text-heading leading-8 text-accent-on">{prompt.instruction}</p>
           <div className="mt-5 surface-row p-4">
             <p className="text-caption font-medium text-muted">Reflection question</p>
             <p className="mt-1 text-body leading-6 text-subtle">{prompt.reflectionQuestion}</p>

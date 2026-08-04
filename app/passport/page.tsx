@@ -277,7 +277,7 @@ export default function PassportPage() {
                     <p className="text-body font-semibold text-content">{sender?.displayName ?? "A member"} asked for an introduction</p>
                     {req.message && <p className="mt-1 text-body leading-6 text-muted">&ldquo;{req.message}&rdquo;</p>}
                     <div className="mt-3 flex gap-2">
-                      <button type="button" onClick={() => void respondIntro(req, true)} className="flex-1 rounded-full bg-accent px-4 py-2.5 text-body font-semibold text-white">Accept</button>
+                      <button type="button" onClick={() => void respondIntro(req, true)} className="flex-1 rounded-full bg-accent px-4 py-2.5 text-body font-semibold text-accent-on">Accept</button>
                       <button type="button" onClick={() => void respondIntro(req, false)} className="flex-1 rounded-full border border-line bg-surface px-4 py-2.5 text-body font-semibold text-muted">Decline</button>
                     </div>
                   </Card>

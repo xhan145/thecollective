@@ -201,7 +201,7 @@ button, input, textarea, select { font: inherit; }
 
 .pill-neutral { background: rgba(255, 255, 255, .055); color: var(--text-secondary); }
 .pill-muted { background: rgba(255, 255, 255, .04); color: var(--text-tertiary); }
-.pill-accent { background: rgba(141, 138, 251, .15); color: var(--accent-soft); }
+.pill-accent { background: rgba(141, 138, 251, .15); color: var(--c-accent-text); }
 .pill-success { background: rgba(117, 209, 163, .12); color: var(--success); }
 .pill-warning { background: rgba(233, 182, 107, .12); color: var(--warning); }
 
@@ -218,7 +218,7 @@ button, input, textarea, select { font: inherit; }
   font-weight: 900;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--accent-soft);
+  color: var(--c-accent-text);
 }
 
 .section-title {
@@ -276,47 +276,97 @@ button, input, textarea, select { font: inherit; }
    ============================================================ */
 :root {
   color-scheme: light;
-  --c-bg: #FFF8EE;
-  --c-surface: #FFFDF8;
-  --c-surface-soft: #FFF1C7;
-  --c-surface-input: #FFFFFF;
-  --c-text: #111111;
-  --c-text-secondary: #38322A;
-  --c-text-muted: #5C574F;   /* was #6E6E6E/#9B958B — #9B958B failed AA at 2.92 */
-  --c-text-subtle: #6E6E6E;
-  --c-accent: #F2A900;       /* fills/indicators only — fails as text on light */
-  --c-accent-text: #7A5300;  /* accent-coloured TEXT (AA-safe) */
-  --c-accent-soft: #FFF1C7;
-  --c-line: #DFD3BC;   /* was #EFE7D8 — only 1.21 vs surface, effectively invisible */
-  --c-success: #22C55E;
-  --c-success-text: #15803D;
-  --c-success-soft: #E8F8EE;
-  --c-danger: #C2413F;
-  --c-danger-text: #B4443F;
-  --c-danger-soft: #FFF0F3;
-  --c-info-soft: #EBF4FD;
+  --c-bg-rgb: 255 248 238;
+  --c-bg: rgb(var(--c-bg-rgb));
+  --c-surface-rgb: 255 253 248;
+  --c-surface: rgb(var(--c-surface-rgb));
+  --c-surface-soft-rgb: 255 241 199;
+  --c-surface-soft: rgb(var(--c-surface-soft-rgb));
+  --c-surface-input-rgb: 255 255 255;
+  --c-surface-input: rgb(var(--c-surface-input-rgb));
+  --c-text-rgb: 17 17 17;
+  --c-text: rgb(var(--c-text-rgb));
+  --c-text-secondary-rgb: 56 50 42;
+  --c-text-secondary: rgb(var(--c-text-secondary-rgb));
+  --c-text-muted-rgb: 92 87 79;   /* was #6E6E6E/#9B958B — #9B958B failed AA at 2.92 */
+  --c-text-muted: rgb(var(--c-text-muted-rgb));
+  --c-text-subtle-rgb: 110 110 110;
+  --c-text-subtle: rgb(var(--c-text-subtle-rgb));
+  --c-accent-rgb: 242 169 0;       /* fills/indicators only — fails as text on light */
+  --c-accent: rgb(var(--c-accent-rgb));
+  --c-accent-text-rgb: 122 83 0;  /* accent-coloured TEXT (AA-safe) */
+  --c-accent-text: rgb(var(--c-accent-text-rgb));
+  --c-accent-soft-rgb: 255 241 199;
+  --c-accent-soft: rgb(var(--c-accent-soft-rgb));
+  --c-on-accent-rgb: 42 29 0;   /* text ON an accent fill; white fails (2.01) */
+  --c-on-accent: rgb(var(--c-on-accent-rgb));
+  --c-scrim-rgb: 0 0 0;         /* modal/media backdrop — black in BOTH themes by design */
+  --c-scrim: rgb(var(--c-scrim-rgb));
+  --c-accent-strong-rgb: 255 176 0;  /* 2nd gold stop, so CTA gradients aren't flat */
+  --c-accent-strong: rgb(var(--c-accent-strong-rgb));
+  --c-line-rgb: 223 211 188;   /* was #EFE7D8 — only 1.21 vs surface, effectively invisible */
+  --c-line: rgb(var(--c-line-rgb));
+  --c-success-rgb: 34 197 94;
+  --c-success: rgb(var(--c-success-rgb));
+  --c-success-text-rgb: 21 128 61;
+  --c-success-text: rgb(var(--c-success-text-rgb));
+  --c-success-soft-rgb: 232 248 238;
+  --c-success-soft: rgb(var(--c-success-soft-rgb));
+  --c-danger-rgb: 194 65 63;
+  --c-danger: rgb(var(--c-danger-rgb));
+  --c-danger-text-rgb: 180 68 63;
+  --c-danger-text: rgb(var(--c-danger-text-rgb));
+  --c-danger-soft-rgb: 255 240 243;
+  --c-danger-soft: rgb(var(--c-danger-soft-rgb));
+  --c-info-soft-rgb: 235 244 253;
+  --c-info-soft: rgb(var(--c-info-soft-rgb));
 }
 .dark {
   color-scheme: dark;
-  --c-bg: #15110A;
-  --c-surface: #211B12;
-  --c-surface-soft: #3A2F18;   /* lifted from #2C2413 for real separation */
-  --c-surface-input: #1C1710;
-  --c-text: #F6F1E7;
-  --c-text-secondary: #D6CEBE;
-  --c-text-muted: #B7AC99;
-  --c-text-subtle: #9C9285;
-  --c-accent: #FFCE5C;         /* desaturated/lightened per dark-mode guidance */
-  --c-accent-text: #FFCE5C;
-  --c-accent-soft: #3A2F18;
-  --c-line: #4A3F2C;           /* was #352D20 — invisible at 1.26 vs surface */
-  --c-success: #4ADE80;
-  --c-success-text: #86EFAC;
-  --c-success-soft: #16301F;
-  --c-danger: #F87171;
-  --c-danger-text: #FCA5A5;
-  --c-danger-soft: #3A1A1A;
-  --c-info-soft: #16233A;
+  --c-bg-rgb: 21 17 10;
+  --c-bg: rgb(var(--c-bg-rgb));
+  --c-surface-rgb: 33 27 18;
+  --c-surface: rgb(var(--c-surface-rgb));
+  --c-surface-soft-rgb: 58 47 24;   /* lifted from #2C2413 for real separation */
+  --c-surface-soft: rgb(var(--c-surface-soft-rgb));
+  --c-surface-input-rgb: 28 23 16;
+  --c-surface-input: rgb(var(--c-surface-input-rgb));
+  --c-text-rgb: 246 241 231;
+  --c-text: rgb(var(--c-text-rgb));
+  --c-text-secondary-rgb: 214 206 190;
+  --c-text-secondary: rgb(var(--c-text-secondary-rgb));
+  --c-text-muted-rgb: 183 172 153;
+  --c-text-muted: rgb(var(--c-text-muted-rgb));
+  --c-text-subtle-rgb: 156 146 133;
+  --c-text-subtle: rgb(var(--c-text-subtle-rgb));
+  --c-accent-rgb: 255 206 92;         /* desaturated/lightened per dark-mode guidance */
+  --c-accent: rgb(var(--c-accent-rgb));
+  --c-accent-text-rgb: 255 206 92;
+  --c-accent-text: rgb(var(--c-accent-text-rgb));
+  --c-accent-soft-rgb: 58 47 24;
+  --c-accent-soft: rgb(var(--c-accent-soft-rgb));
+  --c-on-accent-rgb: 42 29 0;   /* accent stays a bright gold in dark, so ink stays dark */
+  --c-on-accent: rgb(var(--c-on-accent-rgb));
+  --c-scrim-rgb: 0 0 0;
+  --c-scrim: rgb(var(--c-scrim-rgb));
+  --c-accent-strong-rgb: 232 175 60;
+  --c-accent-strong: rgb(var(--c-accent-strong-rgb));
+  --c-line-rgb: 74 63 44;           /* was #352D20 — invisible at 1.26 vs surface */
+  --c-line: rgb(var(--c-line-rgb));
+  --c-success-rgb: 74 222 128;
+  --c-success: rgb(var(--c-success-rgb));
+  --c-success-text-rgb: 134 239 172;
+  --c-success-text: rgb(var(--c-success-text-rgb));
+  --c-success-soft-rgb: 22 48 31;
+  --c-success-soft: rgb(var(--c-success-soft-rgb));
+  --c-danger-rgb: 248 113 113;
+  --c-danger: rgb(var(--c-danger-rgb));
+  --c-danger-text-rgb: 252 165 165;
+  --c-danger-text: rgb(var(--c-danger-text-rgb));
+  --c-danger-soft-rgb: 58 26 26;
+  --c-danger-soft: rgb(var(--c-danger-soft-rgb));
+  --c-info-soft-rgb: 22 35 58;
+  --c-info-soft: rgb(var(--c-info-soft-rgb));
 }
 /* .dark sits on <html>; paint both so the area around the phone frame is never light. */
 .dark, .dark body { background-color: var(--c-bg); }

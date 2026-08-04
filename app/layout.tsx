@@ -15,6 +15,9 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
+  // Without requesting opsz, next/font ships a wght-only instance and the
+  // `font-optical-sizing: auto` in globals.css is inert.
+  axes: ["opsz"],
 });
 
 // Set the theme class before first paint to avoid a flash.

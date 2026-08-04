@@ -32,7 +32,7 @@ function ThemeToggleButton({ className = "" }: { className?: string }) {
       type="button"
       onClick={() => setTheme(resolved === "dark" ? "light" : "dark")}
       aria-label={resolved === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className={`grid h-10 w-10 place-items-center rounded-full bg-[var(--surface,#FFFDF8)] text-[var(--ink,#111111)] shadow-[0_6px_16px_rgba(71,52,18,0.08)] ${className}`}
+      className={`grid h-10 w-10 place-items-center rounded-full bg-surface text-content shadow-[0_6px_16px_rgba(71,52,18,0.08)] ${className}`}
     >
       {resolved === "dark" ? <Sun size={18} /> : <Moon size={18} />}
     </button>
@@ -44,11 +44,11 @@ function NotificationsButton({ unread, className = "" }: { unread: number; class
     <Link
       href="/notifications"
       aria-label={unread > 0 ? `Notifications, ${unread} unread` : "Notifications"}
-      className={`relative grid h-10 w-10 place-items-center rounded-full bg-[var(--surface,#FFFDF8)] text-[var(--ink,#111111)] shadow-[0_6px_16px_rgba(71,52,18,0.08)] ${className}`}
+      className={`relative grid h-10 w-10 place-items-center rounded-full bg-surface text-content shadow-[0_6px_16px_rgba(71,52,18,0.08)] ${className}`}
     >
       <Bell size={18} />
       {unread > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-white">
+        <span className="absolute -right-0.5 -top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-overline text-accent-on">
           {unread > 9 ? "9+" : unread}
         </span>
       )}
@@ -157,7 +157,7 @@ function BottomNav({ starterId }: { starterId: string }) {
         <motion.div whileTap={{ scale: 0.92 }} className="pointer-events-auto">
           <Link
             href={`/proof/new/${starterId}`}
-            className="grid h-[58px] w-[58px] place-items-center rounded-full bg-accent text-white shadow-[0_10px_26px_rgba(242,169,0,0.45)] outline-none transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.55)] focus-visible:ring-4 focus-visible:ring-accent/40"
+            className="grid h-[58px] w-[58px] place-items-center rounded-full bg-accent text-accent-on shadow-[0_10px_26px_rgba(242,169,0,0.45)] outline-none transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.55)] focus-visible:ring-4 focus-visible:ring-accent/40"
             aria-label="Submit proof"
           >
             <Plus size={27} strokeWidth={2.6} />
@@ -232,7 +232,7 @@ function DesktopSidebar({ starterId, unread, showDemoBadge, demoLabel }: { start
       </nav>
       <Link
         href={`/proof/new/${starterId}`}
-        className="mt-6 flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-body font-semibold text-white shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
+        className="mt-6 flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-3 text-body font-semibold text-accent-on shadow-[0_10px_26px_rgba(242,169,0,0.35)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,169,0,0.5)]"
       >
         <Plus size={18} strokeWidth={2.6} /> Submit proof
       </Link>

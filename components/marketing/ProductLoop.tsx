@@ -16,7 +16,7 @@ export default function ProductLoop() {
           >
             <div className="grid h-8 w-8 place-items-center rounded-full bg-surface-soft text-caption font-semibold text-accent-text">{s.n}</div>
             <h3 className="mt-2.5 font-display text-body-lg font-medium text-content">{s.title}</h3>
-            <p className="mt-1 text-label leading-5 text-muted">{s.body}</p>
+            <p className="mt-1 text-label font-normal leading-5 text-muted">{s.body}</p>
           </div>
         ))}
       </div>

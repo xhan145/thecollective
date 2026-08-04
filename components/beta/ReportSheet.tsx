@@ -38,13 +38,13 @@ export function ReportSheet({
   const label = targetType === "proof" ? "proof" : "feedback note";
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/30 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={`Report this ${label}`}>
-      <div className="w-full max-w-[430px] rounded-t-[24px] bg-[var(--surface,#FFFDF8)] p-5 shadow-[0_-8px_40px_rgba(71,52,18,0.18)] sm:rounded-[24px]">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-scrim/30 p-0 sm:items-center sm:p-4" role="dialog" aria-modal="true" aria-label={`Report this ${label}`}>
+      <div className="w-full max-w-[430px] rounded-t-[24px] bg-surface p-5 shadow-[0_-8px_40px_rgba(71,52,18,0.18)] sm:rounded-[24px]">
         {done ? (
           <div className="py-4 text-center">
             <p className="text-body font-semibold text-content">Thanks — our team will review this.</p>
             <p className="mt-1 text-body text-muted">You won&rsquo;t hear back on every report, but every one helps keep this space safe.</p>
-            <button type="button" onClick={onClose} className="mt-4 w-full rounded-full bg-content px-4 py-3 text-body font-semibold text-white">Done</button>
+            <button type="button" onClick={onClose} className="mt-4 w-full rounded-full bg-content px-4 py-3 text-body font-semibold text-accent-on">Done</button>
           </div>
         ) : (
           <>
@@ -68,7 +68,7 @@ export function ReportSheet({
                     className={`flex w-full items-start gap-3 rounded-2xl border p-3 text-left transition ${active ? "border-accent bg-surface-soft" : "border-line bg-surface"}`}
                   >
                     <span className={`mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full border ${active ? "border-accent bg-accent" : "border-subtle"}`}>
-                      {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                      {active && <span className="h-1.5 w-1.5 rounded-full bg-surface-input" />}
                     </span>
                     <span className="min-w-0">
                       <span className="block text-body font-semibold text-content">{r.label}</span>
@@ -91,7 +91,7 @@ export function ReportSheet({
               type="button"
               disabled={!reason || busy}
               onClick={submit}
-              className="mt-3 w-full rounded-full bg-accent px-4 py-3 text-body font-semibold text-white disabled:opacity-40"
+              className="mt-3 w-full rounded-full bg-accent px-4 py-3 text-body font-semibold text-accent-on disabled:opacity-40"
             >
               {busy ? "Sending…" : "Send report"}
             </button>

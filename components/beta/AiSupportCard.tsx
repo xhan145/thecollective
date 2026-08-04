@@ -112,7 +112,7 @@ export function AiSupportCard({
       {error && <p className="rounded-[18px] bg-surface-soft p-3 text-body font-medium leading-6 text-accent-text">{error}</p>}
 
       {response && (
-        <div className="rounded-[20px] border border-line bg-white p-4">
+        <div className="rounded-[20px] border border-line bg-surface-input p-4">
           <h3 className="text-body font-semibold text-content">{response.title}</h3>
           <p className="mt-2 text-body leading-6 text-secondary">{response.summary}</p>
           <ul className="mt-3 space-y-2">
@@ -140,7 +140,7 @@ export function AiSupportCard({
                 key={option.value}
                 type="button"
                 onClick={() => setHelpfulness(option.value)}
-                className={`min-h-11 rounded-full border px-2 text-caption font-semibold ${helpfulness === option.value ? "border-accent bg-surface-soft text-content" : "border-line bg-white text-muted"}`}
+                className={`min-h-11 rounded-full border px-2 text-caption font-semibold ${helpfulness === option.value ? "border-accent bg-surface-soft text-content" : "border-line bg-surface-input text-muted"}`}
               >
                 {option.label}
               </button>
@@ -151,7 +151,7 @@ export function AiSupportCard({
               <select
                 value={issueType}
                 onChange={(event) => setIssueType(event.target.value as AiIssueType | "")}
-                className="min-h-11 w-full rounded-[16px] border border-line bg-white px-3 text-body font-medium text-secondary"
+                className="min-h-11 w-full rounded-[16px] border border-line bg-surface-input px-3 text-body font-medium text-secondary"
                 aria-label="AI feedback issue type"
               >
                 <option value="">Issue type optional</option>

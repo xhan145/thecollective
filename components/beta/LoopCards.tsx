@@ -45,7 +45,7 @@ export function PracticePromptCard({ prompt, completed = false }: { prompt: Prac
         </div>
         <Link
           href={`/proof/new/${prompt.id}`}
-          className="rounded-full bg-accent px-3 py-2 text-caption font-semibold text-white transition active:scale-95 hover:-translate-y-[1px]"
+          className="rounded-full bg-accent px-3 py-2 text-caption font-semibold text-accent-on transition active:scale-95 hover:-translate-y-[1px]"
           aria-label={`Submit proof for ${prompt.title}`}
         >
           Prove

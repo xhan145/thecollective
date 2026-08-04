@@ -32,7 +32,7 @@ export default function AdminPage() {
           <div className="mt-3 grid grid-cols-2 gap-2">
             {byType.map((row) => (
               <p key={row.type} className="surface-row px-3 py-2 text-caption text-subtle">
-                {proofTypeLabels[row.type]} <span className="font-semibold text-white">{row.count}</span>
+                {proofTypeLabels[row.type]} <span className="font-semibold text-accent-on">{row.count}</span>
               </p>
             ))}
           </div>

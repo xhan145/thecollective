@@ -29,12 +29,20 @@ const ALLOW = [
   "components/MediaPreview", "components/MediaProofSwipe", "components/PracticeAreaSelector",
   "components/ProofComposer", "components/ProofMediaCard", "components/SetupChecklist",
   "components/TrustBadge", "components/UploadProgressBar", "components/VisibilitySelector",
+  "components/PathCard", "components/DashboardProofs",   // rendered only by legacy routes
   // Brand/OG image routes render via satori, which cannot resolve CSS variables.
   "opengraph-image", "apple-icon", "icon.tsx",
 ];
 
-const HEX_CLASS =
-  /\b(?:bg|text|border|ring|from|to|via|fill|stroke|decoration|outline|shadow|divide|placeholder|caret|accent)-\[#[0-9A-Fa-f]{3,8}\](?:\/\d{1,3})?/g;
+const PROP = "bg|text|border|ring|from|to|via|fill|stroke|decoration|outline|shadow|divide|placeholder|caret|accent";
+// `bg-[#FFF]`, `text-[#111111]/70`
+const HEX_CLASS = new RegExp(`\\b(?:${PROP})-\\[#[0-9A-Fa-f]{3,8}\\](?:\\/\\d{1,3})?`, "g");
+// `bg-[var(--surface,#FFFDF8)]` — a literal colour hiding inside a var() fallback.
+// The original guard was blind to these and certified 6 unmigrated surfaces clean.
+const VAR_FALLBACK_HEX = new RegExp(`\\b(?:${PROP})-\\[var\\([^\\]]*#[0-9A-Fa-f]{3,8}[^\\]]*\\)\\]`, "g");
+// Named literals. `.dark .bg-white` used to remap these; with that rule deleted a
+// plain bg-white is a pure-white box in dark mode (unreadable inputs).
+const NAMED_COLOR = new RegExp(`\\b(?:${PROP})-(?:white|black)\\b(?:\\/\\d{1,3})?`, "g");
 const BANNED_WEIGHT = /\bfont-(?:black|extrabold)\b/g;
 const ADHOC_SIZE = /\btext-\[\d+(?:\.\d+)?px\]/g;
 
@@ -55,6 +63,8 @@ for (const root of ROOTS) {
     const src = readFileSync(file, "utf8");
     for (const [re, label] of [
       [HEX_CLASS, "hardcoded hex"],
+      [VAR_FALLBACK_HEX, "hex inside a var() fallback"],
+      [NAMED_COLOR, "named colour literal (use a token)"],
       [BANNED_WEIGHT, "banned font weight"],
       [ADHOC_SIZE, "ad-hoc font size"],
     ] as const) {
@@ -87,7 +97,12 @@ function tokens(scope: "root" | "dark"): Record<string, string> {
       : /\.dark\s*\{[^}]*?--c-bg:[^}]*\}/s;
   const block = css.match(re)?.[0] ?? "";
   const map: Record<string, string> = {};
-  for (const m of block.matchAll(/(--c-[a-z-]+):\s*(#[0-9A-Fa-f]{6})/g)) map[m[1]] = m[2];
+  // Tokens are stored channel-form (`--c-bg-rgb: 255 248 238`) so Tailwind can
+  // apply opacity modifiers; convert back to hex for the contrast maths.
+  for (const m of block.matchAll(/(--c-[a-z-]+)-rgb:\s*(\d{1,3})\s+(\d{1,3})\s+(\d{1,3})/g)) {
+    const hex = "#" + [m[2], m[3], m[4]].map((n) => Number(n).toString(16).padStart(2, "0")).join("");
+    map[m[1]] = hex;
+  }
   return map;
 }
 
@@ -104,6 +119,17 @@ const PAIRS: [string, string, number, string][] = [
   ["--c-success-text", "--c-success-soft", 4.5, "success text on success soft"],
   ["--c-danger-text", "--c-danger-soft", 4.5, "danger text on danger soft"],
   ["--c-line", "--c-surface", 1.4, "border vs surface (non-text, must be visible)"],
+  // Foregrounds ON a filled accent (primary CTAs, badges). White fails here in
+  // BOTH themes (2.01 light / 1.48 dark) — that is why --c-on-accent exists.
+  ["--c-on-accent", "--c-accent", 4.5, "on-accent text on accent fill"],
+  ["--c-text", "--c-surface-input", 4.5, "input text on input background"],
+  ["--c-text-muted", "--c-surface-input", 4.5, "placeholder on input background"],
+  ["--c-text-muted", "--c-surface-soft", 4.5, "muted text on soft surface"],
+  ["--c-text-muted", "--c-bg", 4.5, "muted text on bg"],
+  ["--c-text-subtle", "--c-bg", 4.5, "subtle text on bg"],
+  ["--c-accent-text", "--c-bg", 4.5, "accent text on bg"],
+  ["--c-success-text", "--c-surface", 4.5, "success text on surface"],
+  ["--c-danger-text", "--c-surface", 4.5, "danger text on surface"],
 ];
 
 const contrastFails: string[] = [];
@@ -145,4 +171,7 @@ if (contrastFails.length) {
 if (failed) process.exit(1);
 
 console.log("design tokens: no hardcoded colours, no banned weights/sizes");
-console.log(`contrast: all ${PAIRS.length} token pairs pass in both themes`);
+// Be precise about what was actually proven: these are the declared token pairs,
+// not every rendered combination. Literal foregrounds can't appear at all
+// (NAMED_COLOR bans them), which is what makes this claim meaningful.
+console.log(`contrast: ${PAIRS.length} declared token pairs pass AA in both themes`);

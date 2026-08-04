@@ -77,7 +77,7 @@ function OwnerOpenControl({ proof, toggle }: { proof: import("@/lib/betaTypes").
       <p className="text-caption leading-5 text-muted">Invite focused help. Members suggest one observation and one next step; you accept what helps.</p>
       {!open ? (
         <>
-          <input className="w-full rounded-2xl border border-line bg-white px-4 py-3 text-body text-content outline-none focus:border-accent"
+          <input className="w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-body text-content outline-none focus:border-accent"
             value={focus} onChange={(e) => setFocus(e.target.value)} placeholder="Optional focus, e.g. 'make the opening clearer'" />
           <Button className="w-full" onClick={() => toggle(proof.id, true, focus.trim() || undefined)}>Open this proof</Button>
         </>

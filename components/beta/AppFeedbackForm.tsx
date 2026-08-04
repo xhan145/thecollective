@@ -30,7 +30,7 @@ export function AppFeedbackForm() {
             key={item}
             type="button"
             onClick={() => setCategory(item)}
-            className={`min-h-11 rounded-full border px-3 text-body font-semibold capitalize ${category === item ? "border-accent bg-surface-soft text-content" : "border-line bg-white text-muted"}`}
+            className={`min-h-11 rounded-full border px-3 text-body font-semibold capitalize ${category === item ? "border-accent bg-surface-soft text-content" : "border-line bg-surface-input text-muted"}`}
           >
             {item}
           </button>
@@ -46,7 +46,7 @@ export function AppFeedbackForm() {
               type="button"
               onClick={() => setRating(n)}
               aria-label={`${n} out of 5`}
-              className={`h-10 flex-1 rounded-full border text-body font-semibold ${rating === n ? "border-accent bg-surface-soft text-content" : "border-line bg-white text-muted"}`}
+              className={`h-10 flex-1 rounded-full border text-body font-semibold ${rating === n ? "border-accent bg-surface-soft text-content" : "border-line bg-surface-input text-muted"}`}
             >
               {n}
             </button>

@@ -156,7 +156,7 @@ export default function NewCohortPage() {
                 id="cohort-direction"
                 value={directionId}
                 onChange={(e) => setDirectionId(e.target.value)}
-                className="min-h-12 w-full rounded-[18px] border border-line bg-white px-4 text-body text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-surface-soft"
+                className="min-h-12 w-full rounded-[18px] border border-line bg-surface-input px-4 text-body text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-surface-soft"
               >
                 <option value="">No specific direction</option>
                 {snapshot.directions.map((d) => (
@@ -178,7 +178,7 @@ export default function NewCohortPage() {
                   className={`flex cursor-pointer items-center gap-4 rounded-[18px] border p-4 transition-colors ${
                     visibility === value
                       ? "border-accent bg-bg"
-                      : "border-line bg-white"
+                      : "border-line bg-surface-input"
                   }`}
                 >
                   <input

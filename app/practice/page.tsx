@@ -57,7 +57,7 @@ export default function PracticePage() {
             </p>
             <Link
               href={`/proof/new/${nextPrompt.id}`}
-              className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent px-5 text-body font-semibold text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)] transition-all hover:-translate-y-[1px]"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-accent-strong to-accent px-5 text-body font-semibold text-accent-on shadow-[0_10px_24px_rgba(242,169,0,0.32)] transition-all hover:-translate-y-[1px]"
             >
               Begin
             </Link>

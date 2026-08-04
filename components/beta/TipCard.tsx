@@ -96,7 +96,7 @@ export function TipCard({ tip }: { tip: PracticeTip }) {
             type="button"
             onClick={() => toggleUseful(tip.id, "clear", "tip")}
             aria-pressed={useful}
-            className={`${base} ${useful ? "bg-accent text-white" : "bg-surface-soft text-accent-text"}`}
+            className={`${base} ${useful ? "bg-accent text-accent-on" : "bg-surface-soft text-accent-text"}`}
           >
             {useful ? "Marked useful" : "Useful"}
           </button>

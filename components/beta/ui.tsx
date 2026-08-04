@@ -59,7 +59,7 @@ export function Card({
 }
 
 const buttonStyles = {
-  primary: "bg-gradient-to-r from-accent to-accent text-white shadow-[0_10px_24px_rgba(242,169,0,0.32)]",
+  primary: "bg-gradient-to-r from-accent-strong to-accent text-accent-on shadow-[0_10px_24px_rgba(242,169,0,0.32)]",
   secondary: "border border-line bg-bg text-content",
   quiet: "bg-transparent text-muted"
 } as const;
@@ -162,7 +162,7 @@ export function SuccessState({ title, body, cta }: { title: string; body: string
 export function TextArea({ className = "", ...props }: ComponentPropsWithoutRef<"textarea">) {
   return (
     <textarea
-      className={`min-h-32 w-full rounded-[18px] border border-line bg-white px-4 py-3 text-body leading-6 text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-surface-soft ${className}`}
+      className={`min-h-32 w-full rounded-[18px] border border-line bg-surface-input px-4 py-3 text-body leading-6 text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent/30 ${className}`}
       {...props}
     />
   );
@@ -171,7 +171,7 @@ export function TextArea({ className = "", ...props }: ComponentPropsWithoutRef<
 export function TextInput({ className = "", ...props }: ComponentPropsWithoutRef<"input">) {
   return (
     <input
-      className={`min-h-12 w-full rounded-[18px] border border-line bg-white px-4 text-body text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-surface-soft ${className}`}
+      className={`min-h-12 w-full rounded-[18px] border border-line bg-surface-input px-4 text-body text-content outline-none transition placeholder:text-muted focus:border-accent focus:ring-4 focus:ring-accent/30 ${className}`}
       {...props}
     />
   );
@@ -207,7 +207,7 @@ export function ProgressBar({ value, label }: { value: number; label?: string })
     <div>
       {label && <p className="mb-1.5 text-overline uppercase tracking-[0.12em] text-muted">{label}</p>}
       <div className="h-2 overflow-hidden rounded-full bg-accent-soft" role="progressbar" aria-label={label ?? "Progress"} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full bg-gradient-to-r from-accent to-accent transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-gradient-to-r from-accent-strong to-accent transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

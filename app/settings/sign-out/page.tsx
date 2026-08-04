@@ -29,7 +29,7 @@ export default function SignOutPage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full rounded-full bg-danger px-4 py-3 text-center text-body font-semibold text-white transition-colors hover:bg-danger"
+            className="w-full rounded-full bg-danger px-4 py-3 text-center text-body font-semibold text-accent-on transition-colors hover:bg-danger"
           >
             {isDemoUser ? "Leave demo" : "Sign out"}
           </button>

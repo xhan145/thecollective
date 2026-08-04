@@ -6,7 +6,7 @@ import { useBetaApp } from "./AppStateProvider";
 import { Avatar } from "./Avatar";
 import { Button, Card, TextArea } from "./ui";
 
-const field = "w-full rounded-2xl border border-line bg-white px-4 py-3 text-body text-content outline-none focus:border-accent";
+const field = "w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-body text-content outline-none focus:border-accent";
 
 /** Composer shown to eligible non-owners on an open proof. */
 export function ContributeComposer({ proof }: { proof: Proof }) {

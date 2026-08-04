@@ -9,7 +9,7 @@ import { redeemInvite } from "@/lib/beta/redeemInvite";
 import AmbientBackdrop from "@/components/beta/AmbientBackdrop";
 
 const field =
-  "w-full rounded-2xl border border-line bg-white px-4 py-3 text-center text-heading tracking-[0.18em] text-content outline-none focus:border-accent";
+  "w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-center text-heading tracking-[0.18em] text-content outline-none focus:border-accent";
 
 export default function AccessPage() {
   const router = useRouter();

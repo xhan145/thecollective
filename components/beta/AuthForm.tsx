@@ -10,7 +10,7 @@ import { useBetaApp } from "@/components/beta/AppStateProvider";
 import { REQUIRE_INVITE, redeemInvite } from "@/lib/beta/redeemInvite";
 
 const field =
-  "w-full rounded-2xl border border-line bg-white px-4 py-3 text-body text-content outline-none focus:border-accent";
+  "w-full rounded-2xl border border-line bg-surface-input px-4 py-3 text-body text-content outline-none focus:border-accent";
 
 // Official Google "G" mark, inlined locally (no external hotlink to gstatic).
 function GoogleGlyph({ className = "h-5 w-5 shrink-0" }: { className?: string }) {

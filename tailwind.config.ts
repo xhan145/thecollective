@@ -23,9 +23,13 @@ const config: Config = {
         display: ["var(--font-display)", "Georgia", "Cambria", "serif"],
       },
       fontSize: {
+        // display-lg is the marketing-hero step; the app tops out at `display`.
+        "display-lg": ["3.5rem", { lineHeight: "1.05", letterSpacing: "-0.03em", fontWeight: "600" }],
         display: ["2.25rem", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "600" }],
         title: ["1.75rem", { lineHeight: "1.15", letterSpacing: "-0.025em", fontWeight: "600" }],
         heading: ["1.25rem", { lineHeight: "1.25", letterSpacing: "-0.015em", fontWeight: "600" }],
+        // body-xl carries NO fontWeight so large lede copy stays regular (400).
+        "body-xl": ["1.125rem", { lineHeight: "1.6", letterSpacing: "0" }],
         "body-lg": ["1.0625rem", { lineHeight: "1.6", letterSpacing: "0" }],
         body: ["0.9375rem", { lineHeight: "1.6", letterSpacing: "0" }],
         label: ["0.8125rem", { lineHeight: "1.45", letterSpacing: "0", fontWeight: "500" }],
@@ -34,36 +38,39 @@ const config: Config = {
       },
       colors: {
         // ---- semantic tokens (theme-aware) ----
-        bg: "var(--c-bg)",
+        bg: "rgb(var(--c-bg-rgb) / <alpha-value>)",
         surface: {
-          DEFAULT: "var(--c-surface)",
-          soft: "var(--c-surface-soft)",
-          input: "var(--c-surface-input)",
+          DEFAULT: "rgb(var(--c-surface-rgb) / <alpha-value>)",
+          soft: "rgb(var(--c-surface-soft-rgb) / <alpha-value>)",
+          input: "rgb(var(--c-surface-input-rgb) / <alpha-value>)",
         },
         // Text colours are flat so call sites read naturally: text-content,
         // text-secondary, text-muted, text-subtle. (Primary is "content" rather
         // than "ink" because the legacy palette below already owns `ink`.)
-        content: "var(--c-text)",
-        secondary: "var(--c-text-secondary)",
-        muted: "var(--c-text-muted)",
-        subtle: "var(--c-text-subtle)",
+        content: "rgb(var(--c-text-rgb) / <alpha-value>)",
+        secondary: "rgb(var(--c-text-secondary-rgb) / <alpha-value>)",
+        muted: "rgb(var(--c-text-muted-rgb) / <alpha-value>)",
+        subtle: "rgb(var(--c-text-subtle-rgb) / <alpha-value>)",
         accent: {
-          DEFAULT: "var(--c-accent)",
-          text: "var(--c-accent-text)",
-          soft: "var(--c-accent-soft)",
+          DEFAULT: "rgb(var(--c-accent-rgb) / <alpha-value>)",
+          text: "rgb(var(--c-accent-text-rgb) / <alpha-value>)",
+          soft: "rgb(var(--c-accent-soft-rgb) / <alpha-value>)",
+          on: "rgb(var(--c-on-accent-rgb) / <alpha-value>)",
+          strong: "rgb(var(--c-accent-strong-rgb) / <alpha-value>)",
         },
-        line: "var(--c-line)",
+        line: "rgb(var(--c-line-rgb) / <alpha-value>)",
         success: {
-          DEFAULT: "var(--c-success)",
-          text: "var(--c-success-text)",
-          soft: "var(--c-success-soft)",
+          DEFAULT: "rgb(var(--c-success-rgb) / <alpha-value>)",
+          text: "rgb(var(--c-success-text-rgb) / <alpha-value>)",
+          soft: "rgb(var(--c-success-soft-rgb) / <alpha-value>)",
         },
         danger: {
-          DEFAULT: "var(--c-danger)",
-          text: "var(--c-danger-text)",
-          soft: "var(--c-danger-soft)",
+          DEFAULT: "rgb(var(--c-danger-rgb) / <alpha-value>)",
+          text: "rgb(var(--c-danger-text-rgb) / <alpha-value>)",
+          soft: "rgb(var(--c-danger-soft-rgb) / <alpha-value>)",
         },
-        info: { soft: "var(--c-info-soft)" },
+        info: { soft: "rgb(var(--c-info-soft-rgb) / <alpha-value>)" },
+        scrim: "rgb(var(--c-scrim-rgb) / <alpha-value>)",
 
         // ---- LEGACY palette (pre-beta dark design) ----
         // Used only by legacy routes/components (/dashboard, /setup, /feed-system,

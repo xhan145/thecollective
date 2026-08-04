@@ -86,8 +86,8 @@ export default function AdminBetaPage() {
                     </div>
                     <p className="mt-2 text-body leading-6 text-secondary"><span className="font-semibold">{r.authorName}</span>: {r.snippet}{r.snippet.length >= 160 ? "…" : ""}</p>
                     <div className="mt-2 flex gap-2">
-                      <button onClick={() => moderateContent("clear", r.kind, r.targetId)} className="rounded-xl border border-line bg-white px-3 py-1 text-caption font-medium text-content hover:bg-surface-soft">Dismiss</button>
-                      <button onClick={() => moderateContent("limit", r.kind, r.targetId)} className="rounded-xl border border-line bg-white px-3 py-1 text-caption font-medium text-accent-text hover:bg-surface-soft">Limit</button>
+                      <button onClick={() => moderateContent("clear", r.kind, r.targetId)} className="rounded-xl border border-line bg-surface-input px-3 py-1 text-caption font-medium text-content hover:bg-surface-soft">Dismiss</button>
+                      <button onClick={() => moderateContent("limit", r.kind, r.targetId)} className="rounded-xl border border-line bg-surface-input px-3 py-1 text-caption font-medium text-accent-text hover:bg-surface-soft">Limit</button>
                       <button onClick={() => moderateContent("remove", r.kind, r.targetId)} className="rounded-xl bg-danger-soft px-3 py-1 text-caption font-medium text-danger-text hover:bg-danger-soft">Remove</button>
                     </div>
                   </li>
@@ -125,7 +125,7 @@ export default function AdminBetaPage() {
                   <p className="mt-2 text-body leading-6 text-secondary">{f.body}</p>
                   <div className="mt-2">
                     <label className="text-caption font-medium text-muted">Status: </label>
-                    <select value={f.status} onChange={(e) => setStatus(f.id, e.target.value)} className="rounded-xl border border-line bg-white px-2 py-1 text-body font-medium">
+                    <select value={f.status} onChange={(e) => setStatus(f.id, e.target.value)} className="rounded-xl border border-line bg-surface-input px-2 py-1 text-body font-medium">
                       {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
@@ -193,7 +193,7 @@ export default function AdminBetaPage() {
                       <div className="flex shrink-0 gap-2">
                         <button
                           onClick={() => moderateContent("clear", h.kind, h.id)}
-                          className="rounded-xl border border-line bg-white px-3 py-1 text-caption font-medium text-content hover:bg-surface-soft"
+                          className="rounded-xl border border-line bg-surface-input px-3 py-1 text-caption font-medium text-content hover:bg-surface-soft"
                         >
                           Clear
                         </button>

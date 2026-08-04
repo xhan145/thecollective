@@ -149,7 +149,7 @@ export default function OnboardingPage() {
           <p className="text-body leading-6 text-muted">One line, in your words. Optional — you can skip.</p>
           <textarea value={goalText} onChange={(e) => setGoalText(e.target.value)} rows={3}
             placeholder="e.g. Speak up in meetings without overthinking"
-            className="w-full rounded-2xl border border-line bg-white p-4 text-body text-content outline-none focus:border-accent" />
+            className="w-full rounded-2xl border border-line bg-surface-input p-4 text-body text-content outline-none focus:border-accent" />
           <Button className="w-full" onClick={() => setStep(5)}>Continue <ArrowRight size={17} /></Button>
           <Button variant="quiet" className="w-full" onClick={() => setStep((s) => Math.max(0, s - 1))}>Back</Button>
         </div>

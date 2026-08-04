@@ -80,11 +80,11 @@ export default function NotificationsPage() {
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-body font-semibold text-[var(--ink,#111111)]">{n.title}</p>
-                      {n.body && <p className="truncate text-caption text-[var(--muted,#6E6E6E)]">{n.body}</p>}
+                      <p className="truncate text-body font-semibold text-content">{n.title}</p>
+                      {n.body && <p className="truncate text-caption text-muted">{n.body}</p>}
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <span className="text-overline text-[var(--muted,#6E6E6E)]">{timeAgo(n.createdAt)}</span>
+                      <span className="text-overline text-muted">{timeAgo(n.createdAt)}</span>
                       {!n.readAt && <span className="h-2 w-2 rounded-full bg-accent" />}
                     </div>
                   </Card>
